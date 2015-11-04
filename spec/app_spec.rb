@@ -2,6 +2,7 @@ require 'syntax_spray/app'
 
 require 'capybara/rspec'
 require 'capybara/poltergeist'
+Capybara.app            = SyntaxSpray::App.default
 Capybara.default_driver = :poltergeist
 
 RSpec.describe SyntaxSpray::App, type: :feature do
