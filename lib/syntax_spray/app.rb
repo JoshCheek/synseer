@@ -9,6 +9,19 @@ module SyntaxSpray
     end
   end
 
+
+  class Scores
+    attr_accessor :data
+    def initialize(data)
+      self.data = data || {}
+    end
+
+    def for?(game_name)
+      data[game_name]
+    end
+  end
+
+
   class App < Sinatra::Base
     def self.default
       return @default if defined? @default
@@ -20,6 +33,10 @@ module SyntaxSpray
     end
 
     attr_accessor :games
+
+    def scores
+      @scores ||= Scores.new request.cookies['scores']
+    end
 
     def initialize(games, *rest)
       self.games = games
@@ -36,7 +53,11 @@ module SyntaxSpray
             <div class="game">
               <div class="name"><%= game.name %></div>
               <div class="score">
-                <%= game.name %>
+                <% if scores.for? game.name %>
+                  <%= raise 'figure me out!'; scores.for(game.name) %>
+                <% else %>
+                  unattempted
+                <% end %>
               </div>
             </div>
           <% end %>
