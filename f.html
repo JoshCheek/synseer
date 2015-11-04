@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <link rel=stylesheet href="http://codemirror.net/lib/codemirror.css">
+   <link rel=stylesheet href="http://codemirror.net/theme/solarized.css">
+   <script src="http://codemirror.net/lib/codemirror.js"></script>
+   <script src="http://codemirror.net/mode/ruby/ruby.js"></script>
+   <style>
+     body, html, .content, .CodeMirror {
+       margin:  0;
+       padding: 0;
+       width:  100%;
+       height: 100%;
+     }
+
+     .currentElement {
+       background-color: #00495b; /* solarized dark (#002b36) times 1.7 */
+     }
+
+     .CodeMirror {
+       padding-top: 1em;
+     }
+   </style>
+</head>
+
+<body>
+  <div class="content">
+    <textarea class="code" data-lang="ruby">1 + 2
+3 + "a" + "x"
+8</textarea>
+  </div>
+
+  <script>
+    window.cm = (function() {
+      'use strict';
+      var textArea = document.getElementsByTagName('textarea')[0]
+      var cm = CodeMirror.fromTextArea(textArea, {
+        lineNumbers:             true,
+        theme:                   'solarized dark',
+        readOnly:                true,
+        cursorBlinkRate:         -1, // hides the cursor
+        disableInput:            true,
+        showCursorWhenSelecting: false,
+        autofocus:               true,
+        keyMap:                 {call: function(key) { console.log(key) }}, // took me *forever* to figure this one out >.<
+      });
+
+      // example of setting / unsetting a mark, which we are using to highlight code
+      var m = cm.markText({line:0, ch:2},{line:1,ch:8},{className: "currentElement"});
+      setTimeout(function() { m.clear(); }, 2000);
+      return cm;
+    })()
+  </script>
+</div>
+</body>
+</html>
