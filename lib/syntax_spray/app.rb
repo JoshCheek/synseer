@@ -1,5 +1,6 @@
 require 'pathname'
 require 'sinatra'
+require 'json'
 
 module SyntaxSpray
   class Game
@@ -11,6 +12,14 @@ module SyntaxSpray
 
 
   class Scores
+    def self.deserialize(data)
+      new JSON.parse(data||'{}')
+    end
+
+    def serialize
+      JSON.dump data
+    end
+
     attr_accessor :data
     def initialize(data)
       self.data = data || {}
@@ -32,16 +41,15 @@ module SyntaxSpray
       @default = self.new(games)
     end
 
-    attr_accessor :games
-
-    def scores
-      @scores ||= Scores.new request.cookies['scores']
-    end
-
+    attr_reader :games
     def initialize(games, *rest)
-      self.games = games
+      @games = games
       super(*rest)
     end
+
+    attr_reader :scores
+    before { @scores = Scores.deserialize request.cookies['scores'] }
+    after  { response.set_cookie 'scores', scores.serialize }
 
     get '/' do
       template = <<-BODY
