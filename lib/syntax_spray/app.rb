@@ -1,5 +1,5 @@
 require 'pathname'
-require 'erb'
+require 'sinatra'
 
 module SyntaxSpray
   class Game
@@ -9,41 +9,43 @@ module SyntaxSpray
     end
   end
 
-  class App
-
+  class App < Sinatra::Base
     def self.default
       return @default if defined? @default
-      root_dir  = Pathname.new File.expand_path('../..', __dir__)
-      games_dir = root_dir / 'games'
-      games     = games_dir.children.map do |child|
-        name = child.basename.sub_ext('').to_s.gsub("_" , " ")
-        Game.new name, child.read
+      games_dir = Pathname.new File.expand_path('../../games', __dir__)
+      games = games_dir.children.map do |child|
+        Game.new child.basename.sub_ext('').to_s.gsub("_" , " "), child.read
       end
-      @default = new games
+      @default = self.new(games)
     end
 
     attr_accessor :games
 
-    def initialize(games)
+    def initialize(games, *rest)
       self.games = games
+      super(*rest)
     end
 
-    def call(env)
+    get '/' do
       template = <<-BODY
         <!DOCTYPE html>
         <html>
         <body>
         <div class="available_games">
           <% games.each do |game| %>
-            <%= game.name %>
+            <div class="game">
+              <div class="name"><%= game.name %></div>
+              <div class="score">
+                <%= game.name %>
+              </div>
+            </div>
           <% end %>
         </div>
         </body>
         </html>
       BODY
 
-      body = ERB.new(template).result(binding)
-      [200,{'Content-Type' => 'text/html', 'Content-Length' => body.length.to_s},[body]]
+      erb template
     end
   end
 end
