@@ -48,7 +48,7 @@
       });
 
       // example of setting / unsetting a mark, which we are using to highlight code
-      var m = cm.markText({line:0, ch:2},{line:1,ch:8},{className: "currentElement"});
+      var m = cm.markText({line:0, ch:0},{line:0,ch:5},{className: "currentElement"});
       setTimeout(function() { m.clear(); }, 2000);
       return cm;
     })();

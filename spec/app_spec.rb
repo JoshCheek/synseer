@@ -38,6 +38,9 @@ RSpec.describe SyntaxSpray::App, type: :feature do
     expect(time.text).to eq '0:01'
 
     # I see that it is waiting for me to classify the "1 + 2" expression
+    current_element = page.all('.currentElement').map(&:text).join.delete(" ")
+    expect(current_element).to eq '1+2'
+
     # I press "s" for "send", and my "correct" count increases from 0 to 1
 
     # I see that it is waiting for me to classify the "1" expression
