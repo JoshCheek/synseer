@@ -25,10 +25,14 @@
 
 <body>
   <div class="content">
+    <div class="stats">
+      <div class="time">0:00</div>
+    </div>
     <textarea class="code"><%= @game.fetch(:body) %></textarea>
   </div>
 
   <script>
+    // Init CodeMirror
     window.cm = (function() {
       'use strict';
       var textArea = document.getElementsByTagName('textarea')[0]
@@ -47,6 +51,21 @@
       var m = cm.markText({line:0, ch:2},{line:1,ch:8},{className: "currentElement"});
       setTimeout(function() { m.clear(); }, 2000);
       return cm;
+    })();
+
+    // Init timer
+    (function() {
+      var start   = new Date();
+      var display = document.getElementsByClassName('stats')[0].getElementsByClassName('time')[0];
+      function timer() {
+        var millisecondsElapsed = new Date() - start;
+        var totalSecondsElapsed = parseInt(millisecondsElapsed / 1000);
+        var secondsElapsed      = totalSecondsElapsed % 60;
+        var minutesElapsed      = parseInt(totalSecondsElapsed / 60);
+        var text                = "" + minutesElapsed + ":" + (secondsElapsed > 9 ? parseInt(secondsElapsed / 10) : "0") + (secondsElapsed % 10);
+        display.textContent = text;
+      }
+      setInterval(timer, 1000);
     })()
   </script>
 </div>

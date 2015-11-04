@@ -28,7 +28,14 @@ RSpec.describe SyntaxSpray::App, type: :feature do
     expect(page.current_path).to eq '/games/integer_addition'
 
     # There is a code display containing the text "1 + 2"
+    line1 = page.all('.CodeMirror-line:first-of-type').first
+    expect(line1.text).to eq '1 + 2'
+
     # After 1 second, my time has increased from 0 to 1
+    time = page.find('.stats .time')
+    expect(time.text).to eq '0:00'
+    sleep 1
+    expect(time.text).to eq '0:01'
 
     # I see that it is waiting for me to classify the "1 + 2" expression
     # I press "s" for "send", and my "correct" count increases from 0 to 1
