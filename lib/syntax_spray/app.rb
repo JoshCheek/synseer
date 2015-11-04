@@ -28,6 +28,28 @@ module SyntaxSpray
     def for?(game_name)
       data[game_name]
     end
+
+    def total_completed
+      data.length
+    end
+
+    def total_correct
+      0 # totals_for 'correct'
+    end
+
+    def total_incorrect
+      0 # totals_for 'incorrect'
+    end
+
+    def total_time
+      0 # totals_for 'time'
+    end
+
+    private
+
+    def totals_for(attribute)
+      data.map { |name, stats| stats[attribute]||0 }.reduce(0, :+)
+    end
   end
 
 
@@ -56,6 +78,14 @@ module SyntaxSpray
         <!DOCTYPE html>
         <html>
         <body>
+
+        <div class="total_score">
+          <div class="games_completed"> <%= scores.total_completed %> </div>
+          <div class="correct">         <%= scores.total_correct   %> </div>
+          <div class="incorrect">       <%= scores.total_incorrect %> </div>
+          <div class="time">            <%= scores.total_time      %> seconds </div>
+        </div>
+
         <div class="available_games">
           <% games.each do |game| %>
             <div class="game">

@@ -18,7 +18,7 @@ RSpec.describe SyntaxSpray::App, type: :feature do
     end
 
     # I have completed 0 games, and have a total time of 0 seconds, 0 correct, and 0 incorrect
-    expect(page.find '.total_score .games_completed').to have_text '1'
+    expect(page.find '.total_score .games_completed').to have_text '0'
     expect(page.find '.total_score .correct'        ).to have_text '0'
     expect(page.find '.total_score .incorrect'      ).to have_text '0'
     expect(page.find '.total_score .time'           ).to have_text '0 seconds'
