@@ -42,6 +42,11 @@ RSpec.describe SyntaxSpray::App, type: :feature do
     expect(current_element).to eq '1+2'
 
     # I press "s" for "send", and my "correct" count increases from 0 to 1
+    browser = page.find('html').native
+    correct = page.find '.stats .correct'
+    expect(correct.text).to eq '0'
+    browser.send_keys("s")
+    expect(correct.text).to eq '1'
 
     # I see that it is waiting for me to classify the "1" expression
     # I press "s" for "send", and my "correct" count stays at 1 while my "incorrect" count increases from 0 to 1

@@ -27,11 +27,14 @@
   <div class="content">
     <div class="stats">
       <div class="time">0:00</div>
+      <div class="correct">0</div>
     </div>
     <textarea class="code"><%= @game.fetch(:body) %></textarea>
   </div>
 
   <script>
+    var callback;
+
     // Init CodeMirror
     window.cm = (function() {
       'use strict';
@@ -44,7 +47,9 @@
         disableInput:            true,
         showCursorWhenSelecting: false,
         autofocus:               true,
-        keyMap:                 {call: function(key) { console.log(key) }}, // took me *forever* to figure this one out >.<
+        keyMap:                 {call: function(key) {
+          callback(key);
+          console.log(key) }}, // took me *forever* to figure this one out >.<
       });
 
       // example of setting / unsetting a mark, which we are using to highlight code
@@ -66,7 +71,13 @@
         display.textContent = text;
       }
       setInterval(timer, 1000);
-    })()
+    })();
+
+    (function() {
+      var display = document.getElementsByClassName('stats')[0]
+                            .getElementsByClassName('correct')[0];
+      callback = function(key) { display.textContent = '1'; };
+    })();
   </script>
 </div>
 </body>
