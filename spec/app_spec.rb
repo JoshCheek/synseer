@@ -1,10 +1,27 @@
 require 'syntax_spray/app'
 
-RSpec.describe SyntaxSpray::App do
-  describe 'new user plays their first game' do
+require 'capybara/rspec'
+require 'capybara/poltergeist'
+Capybara.default_driver = :poltergeist
+
+RSpec.describe SyntaxSpray::App, type: :feature do
+  example 'new user plays their first game' do
     # When I go to the root page, it shows me a listing of syntax games and scores
+    page.visit '/'
+    game_elements = page.all '.available_games'
+    expect(game_elements).to_not be_empty
+
     # Since I am new, all games are scored as unattempted
-    # I have completed 0 games, and have a total time of 0 seconds
+    game_elements.each do |game_element|
+      expect(game_element.find('.score').text).to eq 'unattempted'
+    end
+
+    # I have completed 0 games, and have a total time of 0 seconds, 0 correct, and 0 incorrect
+    expect(page.find '.total_score .games_completed').to have_text '1'
+    expect(page.find '.total_score .correct'        ).to have_text '0'
+    expect(page.find '.total_score .incorrect'      ).to have_text '0'
+    expect(page.find '.total_score .time'           ).to have_text '0 seconds'
+
     # When I click on the "integer addition" example, it takes me to "/integer_addition"
     # There is a code display containing the text "1 + 2"
 
