@@ -32,7 +32,7 @@ module SyntaxSpray
     after  { response.set_cookie 'scores', scores.serialize }
 
     get '/' do
-      template = <<-BODY
+      erb <<-BODY
         <!DOCTYPE html>
         <html>
         <body>
@@ -61,8 +61,6 @@ module SyntaxSpray
         </body>
         </html>
       BODY
-
-      erb template
     end
   end
 end
