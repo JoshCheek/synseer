@@ -4,25 +4,15 @@ require 'json'
 require 'syntax_spray/scores'
 
 module SyntaxSpray
-  class Game
-    attr_accessor :name, :code
-    def initialize(name, code)
-      self.name, self.code = name, code
-    end
-
-    def path
-      "/games/#{name.gsub(" ", "_")}"
-    end
-  end
-
   class App < Sinatra::Base
     def self.default
       return @default if defined? @default
       games_dir = Pathname.new File.expand_path('../../games', __dir__)
-      games = games_dir.children.map do |child|
-        Game.new child.basename.sub_ext('').to_s.gsub("_" , " "), child.read
+      games     = games_dir.children.map do |child|
+        basename = child.basename.sub_ext('').to_s
+        [basename, {path: "/games/#{basename}", name: basename.gsub('_', ' '), body: child.read}]
       end
-      @default = self.new(games)
+      @default = self.new(games.to_h)
     end
 
     attr_reader :games
@@ -49,16 +39,16 @@ module SyntaxSpray
         </div>
 
         <div class="available_games">
-          <% games.each do |game| %>
+          <% games.each do |_path, game| %>
             <div class="game">
               <div class="name">
-                <a href="<%= game.path %>">
-                  <%= game.name %>
+                <a href="<%= game.fetch(:path) %>">
+                  <%= game.fetch(:name) %>
                 </a>
               </div>
               <div class="score">
-                <% if scores.for? game.name %>
-                  <%= raise 'figure me out!'; scores.for(game.name) %>
+                <% if scores.for? game.fetch(:name) %>
+                  <%= raise 'figure me out!'; scores.for(game.fetch(:name)) %>
                 <% else %>
                   unattempted
                 <% end %>
@@ -72,15 +62,28 @@ module SyntaxSpray
     end
 
     get '/games/:game_name' do
+      @game = games.fetch params[:game_name]
       erb <<-BODY
         <!DOCTYPE html>
         <html>
         <head>
+           <link rel=stylesheet href="http://codemirror.net/lib/codemirror.css">
+           <script src="http://codemirror.net/lib/codemirror.js"></script>
+           <script src="http://codemirror.net/mode/ruby/ruby.js"></script>
         </head>
-        <body>
-          <div class="code">
 
-          </div>
+        <body>
+          <textarea class="code"><%= @game.fetch(:body) %></textarea>
+
+          <script>
+            (function() {
+              var textArea = document.getElementsByTagName('textarea')[0]
+              var editor = CodeMirror.fromTextArea(textArea, {
+                lineNumbers: true
+              });
+              window.syntaxEditor = editor;
+            })()
+          </script>
         </div>
         </body>
         </html>
