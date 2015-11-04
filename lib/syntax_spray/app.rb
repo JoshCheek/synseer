@@ -5,15 +5,20 @@ require 'syntax_spray/scores'
 
 module SyntaxSpray
   class App < Sinatra::Base
+    def self.root_dir
+      games_dir = Pathname.new File.expand_path('../..', __dir__)
+    end
+
     def self.default
       return @default if defined? @default
-      games_dir = Pathname.new File.expand_path('../../games', __dir__)
-      games     = games_dir.children.map do |child|
+      games = (root_dir / 'games').children.map do |child|
         basename = child.basename.sub_ext('').to_s
         [basename, {path: "/games/#{basename}", name: basename.gsub('_', ' '), body: child.read}]
       end
       @default = self.new(games.to_h)
     end
+
+    set :views, root_dir / 'views'
 
     attr_reader :games
     def initialize(games, *rest)
@@ -26,68 +31,12 @@ module SyntaxSpray
     after  { response.set_cookie 'scores', scores.serialize }
 
     get '/' do
-      erb <<-BODY
-        <!DOCTYPE html>
-        <html>
-        <body>
-
-        <div class="total_score">
-          <div class="games_completed"> <%= scores.total_completed %> </div>
-          <div class="correct">         <%= scores.total_correct   %> </div>
-          <div class="incorrect">       <%= scores.total_incorrect %> </div>
-          <div class="time">            <%= scores.total_time      %> seconds </div>
-        </div>
-
-        <div class="available_games">
-          <% games.each do |_path, game| %>
-            <div class="game">
-              <div class="name">
-                <a href="<%= game.fetch(:path) %>">
-                  <%= game.fetch(:name) %>
-                </a>
-              </div>
-              <div class="score">
-                <% if scores.for? game.fetch(:name) %>
-                  <%= raise 'figure me out!'; scores.for(game.fetch(:name)) %>
-                <% else %>
-                  unattempted
-                <% end %>
-              </div>
-            </div>
-          <% end %>
-        </div>
-        </body>
-        </html>
-      BODY
+      erb :root
     end
 
     get '/games/:game_name' do
       @game = games.fetch params[:game_name]
-      erb <<-BODY
-        <!DOCTYPE html>
-        <html>
-        <head>
-           <link rel=stylesheet href="http://codemirror.net/lib/codemirror.css">
-           <script src="http://codemirror.net/lib/codemirror.js"></script>
-           <script src="http://codemirror.net/mode/ruby/ruby.js"></script>
-        </head>
-
-        <body>
-          <textarea class="code"><%= @game.fetch(:body) %></textarea>
-
-          <script>
-            (function() {
-              var textArea = document.getElementsByTagName('textarea')[0]
-              var editor = CodeMirror.fromTextArea(textArea, {
-                lineNumbers: true
-              });
-              window.syntaxEditor = editor;
-            })()
-          </script>
-        </div>
-        </body>
-        </html>
-      BODY
+      erb :game
     end
   end
 end

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<div class="total_score">
+  <div class="games_completed"> <%= scores.total_completed %> </div>
+  <div class="correct">         <%= scores.total_correct   %> </div>
+  <div class="incorrect">       <%= scores.total_incorrect %> </div>
+  <div class="time">            <%= scores.total_time      %> seconds </div>
+</div>
+
+<div class="available_games">
+  <% games.each do |_path, game| %>
+    <div class="game">
+      <div class="name">
+        <a href="<%= game.fetch(:path) %>">
+          <%= game.fetch(:name) %>
+        </a>
+      </div>
+      <div class="score">
+        <% if scores.for? game.fetch(:name) %>
+          <%= raise 'figure me out!'; scores.for(game.fetch(:name)) %>
+        <% else %>
+          unattempted
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>
+</body>
+</html>

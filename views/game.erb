@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <link rel=stylesheet href="http://codemirror.net/lib/codemirror.css">
+   <script src="http://codemirror.net/lib/codemirror.js"></script>
+   <script src="http://codemirror.net/mode/ruby/ruby.js"></script>
+</head>
+
+<body>
+  <textarea class="code"><%= @game.fetch(:body) %></textarea>
+
+  <script>
+    (function() {
+      var textArea = document.getElementsByTagName('textarea')[0]
+      var editor = CodeMirror.fromTextArea(textArea, {
+        lineNumbers: true
+      });
+      window.syntaxEditor = editor;
+    })()
+  </script>
+</div>
+</body>
+</html>
