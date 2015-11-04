@@ -9,6 +9,10 @@ module SyntaxSpray
     def initialize(name, code)
       self.name, self.code = name, code
     end
+
+    def path
+      "/games/#{name.gsub(" ", "_")}"
+    end
   end
 
   class App < Sinatra::Base
@@ -47,7 +51,11 @@ module SyntaxSpray
         <div class="available_games">
           <% games.each do |game| %>
             <div class="game">
-              <div class="name"><%= game.name %></div>
+              <div class="name">
+                <a href="<%= game.path %>">
+                  <%= game.name %>
+                </a>
+              </div>
               <div class="score">
                 <% if scores.for? game.name %>
                   <%= raise 'figure me out!'; scores.for(game.name) %>
@@ -57,6 +65,22 @@ module SyntaxSpray
               </div>
             </div>
           <% end %>
+        </div>
+        </body>
+        </html>
+      BODY
+    end
+
+    get '/games/:game_name' do
+      erb <<-BODY
+        <!DOCTYPE html>
+        <html>
+        <head>
+        </head>
+        <body>
+          <div class="code">
+
+          </div>
         </div>
         </body>
         </html>

@@ -23,9 +23,11 @@ RSpec.describe SyntaxSpray::App, type: :feature do
     expect(page.find '.total_score .incorrect'      ).to have_text '0'
     expect(page.find '.total_score .time'           ).to have_text '0 seconds'
 
-    # When I click on the "integer addition" example, it takes me to "/integer_addition"
-    # There is a code display containing the text "1 + 2"
+    # When I click on the "integer addition" example, it takes me to "/games/integer_addition"
+    page.click_link 'integer addition'
+    expect(page.current_path).to eq '/games/integer_addition'
 
+    # There is a code display containing the text "1 + 2"
     # After 1 second, my time has increased from 0 to 1
 
     # I see that it is waiting for me to classify the "1 + 2" expression
