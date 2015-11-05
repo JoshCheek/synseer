@@ -129,8 +129,8 @@
           if(this._traverse) {
             var ast = this._traverse.ast;
             this._currentElement = this._codeMirror.markText(
-              {line:0, ch:0},
-              {line:0, ch:1},
+              {line: ast.begin_line, ch: ast.begin_col},
+              {line: ast.end_line,   ch: ast.end_col},
               {className: "currentElement"}
             );
           } else {
@@ -161,12 +161,7 @@
                       {lineNumbers: true, theme: 'solarized dark', autofocus: true}
                     ),
         statsView:  new SyntaxSpray.StatsView(document.getElementsByClassName('stats')[0]),
-        ast:        { type: "send", start: 0, stop: 5, message: "+",
-                      children: [
-                       {type: "int", value: "1", start: 0, stop: 1, children: []},
-                       {type: "int", value: "2", start: 4, stop: 5, children: []},
-                      ],
-                    },
+        ast:        <%= @game.fetch :json_ast %>,
         keyMap:     { S: "send",
                       I: "int",
                     },
