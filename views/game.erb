@@ -40,27 +40,25 @@
 
       // =====  StatsView  =====
       SyntaxSpray.StatsView = function(domElement) {
-        this.domElement     = domElement;
+        this.domElement = domElement;
         this.domCorrect = domElement.getElementsByClassName('correct')[0];
         this.domTime    = domElement.getElementsByClassName('time')[0];
       }
 
-      SyntaxSpray.StatsView.prototype.init = function(time) {
-        this._startTime = time; // todo: move this out of the stats view and into the game
-        this.updateTime(time);
+      SyntaxSpray.StatsView.prototype.init = function() {
+        this.updateDuration(0);
         this._numCorrect = -1;
         this.incrementCorrect();
       }
 
-      SyntaxSpray.StatsView.prototype.updateTime = function(time) {
-        this.domTime.textContent = this.formatDuration(time - this._startTime);
+      SyntaxSpray.StatsView.prototype.updateDuration = function(secondsElapsed) {
+        this.domTime.textContent = this.formatDuration(secondsElapsed);
       }
 
-      SyntaxSpray.StatsView.prototype.formatDuration = function(millisecondsElapsed) {
-        var totalSecondsElapsed = parseInt(millisecondsElapsed / 1000);
-        var secondsElapsed      = totalSecondsElapsed % 60;
-        var minutesElapsed      = parseInt(totalSecondsElapsed / 60);
-        return "" + minutesElapsed + ":" + (secondsElapsed > 9 ? parseInt(secondsElapsed / 10) : "0") + (secondsElapsed % 10); // JS apparently has no sprintf or rjust
+      SyntaxSpray.StatsView.prototype.formatDuration = function(secondsElapsed) {
+        var minutes = parseInt(secondsElapsed / 60);
+        var seconds = secondsElapsed % 60;
+        return "" + minutes + ":" + (seconds > 9 ? parseInt(seconds / 10) : "0") + (seconds % 10); // JS apparently has no sprintf or rjust
       }
 
       SyntaxSpray.StatsView.prototype.incrementCorrect = function() {
@@ -78,16 +76,23 @@
       SyntaxSpray.Game.prototype.init = function() {
         this._initCodeMirror();
         this._currentElement = this._codeMirror.markText({line:0, ch:0},{line:0,ch:5},{className: "currentElement"});
-        var statsView = this._statsView
-        statsView.init(new Date());
-        setInterval(function() { statsView.updateTime(new Date()) }, 1000);
+        this._statsView.init();
+      }
+
+      SyntaxSpray.Game.prototype.start = function(getTime, setInterval) {
+        var statsView = this._statsView;
+        var startTime = this._startTime = getTime();
+        setInterval(function() {
+          var milliseconds = getTime() - startTime;
+          var seconds      = parseInt(milliseconds / 1000);
+          statsView.updateDuration(seconds);
+        }, 1000);
       }
 
       SyntaxSpray.Game.prototype._initCodeMirror = function() {
         // seriously no clue why the interface works this way, it makes no sense to me, and took me forever to figure out >.<
-        var game = this
-        var keyMap = {call: function(key) { return function() { game.pressKey(key); return "handled"; }}}; // can also return "multi"
-
+        var game       = this;
+        var keyMap     = {call: function(key) { return function() { game.pressKey(key); return "handled"; }}}; // can also return "multi"
         var codeMirror = this._codeMirror;
         codeMirror.setOption("readOnly",                true);
         codeMirror.setOption("cursorBlinkRate",         -1); // hides the cursor
@@ -119,6 +124,8 @@
       game.init();
       return game;
     })();
+
+    game.start(function() { return new Date() }, setInterval);
   </script>
 </div>
 </body>
