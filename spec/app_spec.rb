@@ -9,12 +9,12 @@ RSpec.describe Synseer::App, type: :feature do
   example 'new user plays their first game' do
     # When I go to the root page, it shows me a listing of syntax games and scores
     page.visit '/'
-    game_elements = page.all '.available_games'
-    expect(game_elements).to_not be_empty
+    scores = page.all '.available_games .score'
+    expect(scores).to_not be_empty
 
     # Since I am new, all games are scored as unattempted
-    game_elements.each do |game_element|
-      expect(game_element.find('.score').text).to eq 'unattempted'
+    scores.each do |game_element|
+      expect(game_element.text).to eq 'unattempted'
     end
 
     # I have completed 0 games, and have a total time of 0 seconds, 0 correct, and 0 incorrect
@@ -96,17 +96,9 @@ RSpec.describe Synseer::App, type: :feature do
     expect(page.current_path).to eq '/'
 
     # Now I see that all games are scored as unattempted, except "integer addition", which shows my score of 1 second, 3 correct, and 2 incorrect
-    game_elements = page.all '.available_games'
-    game_elements.each do |game_element|
-      if game_element.text.downcase.include? 'integer addition'
-        integer_addition_score = game_element.find('.score')
-        expect(integer_addition_score.find('.time').text).to eq '0:01'
-        expect(integer_addition_score.find('.correct').text).to eq '3'
-        expect(integer_addition_score.find('.incorrect').text).to eq '2'
-      else
-        expect(game_element.find('.score').text).to eq 'unattempted'
-      end
-    end
+    expect(page.all('.available_games .score .time').map(&:text)).to eq ['0:01']
+    expect(page.all('.available_games .score .correct').map(&:text)).to eq ['3']
+    expect(page.all('.available_games .score .incorrect').map(&:text)).to eq ['2']
 
     # I have completed 1 game, and have a total of 1 seconds, 3 correct, and 2 incorrect
     expect(page.find '.total_score .games_completed').to have_text '1'
