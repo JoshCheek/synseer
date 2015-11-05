@@ -33,12 +33,12 @@
   </div>
 
   <script>
-    window.cm = (function() {
+    window.game = (function() {
       'use strict';
 
       var SyntaxSpray = {};
 
-      // StatsView
+      // =====  StatsView  =====
       SyntaxSpray.StatsView = function(domElement) {
         this.domElement     = domElement;
         this.domCorrect = domElement.getElementsByClassName('correct')[0];
@@ -46,7 +46,7 @@
       }
 
       SyntaxSpray.StatsView.prototype.init = function(time) {
-        this._startTime = time;
+        this._startTime = time; // todo: move this out of the stats view and into the game
         this.updateTime(time);
         this._numCorrect = -1;
         this.incrementCorrect();
@@ -68,38 +68,56 @@
         this.domCorrect.textContent = this._numCorrect;
       }
 
-      var stats = new SyntaxSpray.StatsView(document.getElementsByClassName('stats')[0]);
-      stats.init(new Date());
-
-      // Fake playing the game
-      var handleKeypress = function(key, cm) {
-        // seriously no clue why the interface works this way, it makes no sense to me, and took me forever to figure out >.<
-        return function() {
-          stats.incrementCorrect();
-          currentElement.clear();
-          currentElement = cm.markText({line:0, ch:0},{line:0,ch:1},{className: "currentElement"});
-          return "handled";
-        };
+      // =====  Game  =====
+      SyntaxSpray.Game = function(attrs) {
+        this._ast        = attrs.ast;
+        this._statsView  = attrs.statsView;
+        this._codeMirror = attrs.codeMirror;
       }
 
-      // Init CodeMirror
-      var cm = CodeMirror.fromTextArea(document.getElementsByTagName('textarea')[0], {
-        lineNumbers:             true,
-        theme:                   'solarized dark',
-        readOnly:                true,
-        cursorBlinkRate:         -1, // hides the cursor
-        disableInput:            true,
-        showCursorWhenSelecting: false,
-        autofocus:               true,
-        keyMap:                  {call: handleKeypress},
+      SyntaxSpray.Game.prototype.init = function() {
+        this._initCodeMirror();
+        this._currentElement = this._codeMirror.markText({line:0, ch:0},{line:0,ch:5},{className: "currentElement"});
+        var statsView = this._statsView
+        statsView.init(new Date());
+        setInterval(function() { statsView.updateTime(new Date()) }, 1000);
+      }
+
+      SyntaxSpray.Game.prototype._initCodeMirror = function() {
+        // seriously no clue why the interface works this way, it makes no sense to me, and took me forever to figure out >.<
+        var game = this
+        var keyMap = {call: function(key) { return function() { game.pressKey(key); return "handled"; }}}; // can also return "multi"
+
+        var codeMirror = this._codeMirror;
+        codeMirror.setOption("readOnly",                true);
+        codeMirror.setOption("cursorBlinkRate",         -1); // hides the cursor
+        codeMirror.setOption("disableInput",            true);
+        codeMirror.setOption("showCursorWhenSelecting", false);
+        codeMirror.setOption("keyMap",                  keyMap);
+      }
+
+      SyntaxSpray.Game.prototype.pressKey = function(key) {
+        this._statsView.incrementCorrect();
+        this._currentElement.clear();
+        this._currentElement = this._codeMirror.markText({line:0, ch:0},{line:0,ch:1},{className: "currentElement"});
+      }
+
+      var game = new SyntaxSpray.Game({
+        codeMirror: CodeMirror.fromTextArea(
+                      document.getElementsByTagName('textarea')[0],
+                      {lineNumbers: true, theme: 'solarized dark', autofocus: true}
+                    ),
+        statsView:  new SyntaxSpray.StatsView(document.getElementsByClassName('stats')[0]),
+        ast:        { type: "send", start: 0, stop: 5, message: "+",
+                      children: [
+                       {type: "int", value: "1", start: 0, stop: 1, children: []},
+                       {type: "int", value: "2", start: 4, stop: 5, children: []},
+                      ],
+                    },
       });
-      var currentElement = currentElement = cm.markText({line:0, ch:0},{line:0,ch:5},{className: "currentElement"});
 
-
-      // Init timer
-      var ast   = <%= @game.fetch(:json_ast) %>;
-      setInterval(function() { stats.updateTime(new Date()) }, 1000);
-      return cm;
+      game.init();
+      return game;
     })();
   </script>
 </div>
