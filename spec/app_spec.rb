@@ -1,11 +1,11 @@
-require 'syntax_spray/app'
+require 'synseer/app'
 
 require 'capybara/rspec'
 require 'capybara/poltergeist'
-Capybara.app            = SyntaxSpray::App.default
+Capybara.app            = Synseer::App.default
 Capybara.default_driver = :poltergeist
 
-RSpec.describe SyntaxSpray::App, type: :feature do
+RSpec.describe Synseer::App, type: :feature do
   example 'new user plays their first game' do
     # When I go to the root page, it shows me a listing of syntax games and scores
     page.visit '/'

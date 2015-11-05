@@ -1,10 +1,10 @@
 require 'pathname'
 require 'sinatra'
 require 'json'
-require 'syntax_spray/scores'
+require 'synseer/scores'
 require 'tilt/erb'
 
-module SyntaxSpray
+module Synseer
   class App < Sinatra::Base
     def self.root_dir
       games_dir = Pathname.new File.expand_path('../..', __dir__)

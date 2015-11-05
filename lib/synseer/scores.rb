@@ -1,7 +1,7 @@
 require 'json'
 
 
-module SyntaxSpray
+module Synseer
   class Scores
     def self.deserialize(data)
       new JSON.parse(data||'{}')

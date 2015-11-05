@@ -38,17 +38,17 @@
     window.game = (function() {
       'use strict';
 
-      var SyntaxSpray = {};
+      var Synseer = {};
 
       // =====  StatsView  =====
-      SyntaxSpray.StatsView = function(domElement) {
+      Synseer.StatsView = function(domElement) {
         this.domElement   = domElement;
         this.domCorrect   = domElement.getElementsByClassName('correct')[0];
         this.domIncorrect = domElement.getElementsByClassName('incorrect')[0];
         this.domTime      = domElement.getElementsByClassName('time')[0];
       }
 
-      SyntaxSpray.StatsView.prototype.init = function() {
+      Synseer.StatsView.prototype.init = function() {
         this.updateDuration(0);
         this._numCorrect = -1;
         this.incrementCorrect();
@@ -56,7 +56,7 @@
         this.incrementIncorrect();
       }
 
-      SyntaxSpray.StatsView.prototype.data = function() {
+      Synseer.StatsView.prototype.data = function() {
         return {
           duration:  this._duration,
           correct:   this._numCorrect,
@@ -64,46 +64,46 @@
         }
       }
 
-      SyntaxSpray.StatsView.prototype.updateDuration = function(secondsElapsed) {
+      Synseer.StatsView.prototype.updateDuration = function(secondsElapsed) {
         this._duration = secondsElapsed;
         this.domTime.textContent = this.formatDuration(secondsElapsed);
       }
 
-      SyntaxSpray.StatsView.prototype.formatDuration = function(secondsElapsed) {
+      Synseer.StatsView.prototype.formatDuration = function(secondsElapsed) {
         var minutes = parseInt(secondsElapsed / 60);
         var seconds = secondsElapsed % 60;
         return "" + minutes + ":" + (seconds > 9 ? parseInt(seconds / 10) : "0") + (seconds % 10); // JS apparently has no sprintf or rjust
       }
 
-      SyntaxSpray.StatsView.prototype.incrementCorrect = function() {
+      Synseer.StatsView.prototype.incrementCorrect = function() {
         this._numCorrect++;
         this.domCorrect.textContent = this._numCorrect;
       }
 
-      SyntaxSpray.StatsView.prototype.incrementIncorrect = function() {
+      Synseer.StatsView.prototype.incrementIncorrect = function() {
         this._numIncorrect++;
         this.domIncorrect.textContent = this._numIncorrect;
       }
 
       // =====  TraverseAst  =====
-      SyntaxSpray.TraverseAst = function(ast, cb) {
+      Synseer.TraverseAst = function(ast, cb) {
         this.ast = ast;
         this._cb = cb;
       }
-      SyntaxSpray.TraverseAst.prototype.successor = function() {
+      Synseer.TraverseAst.prototype.successor = function() {
         if(this.ast.children.length == 0) return (this._cb||function(){})();
         return this.ast.children.reduceRight(
           function(cb, childAst) {
-            return function() { return new SyntaxSpray.TraverseAst(childAst, cb) };
+            return function() { return new Synseer.TraverseAst(childAst, cb) };
           },
           this._cb
         )()
       }
 
       // =====  Game  =====
-      SyntaxSpray.Game = function(attrs) {
+      Synseer.Game = function(attrs) {
         var game         = this;
-        this._traverse   = new SyntaxSpray.TraverseAst(attrs.ast)
+        this._traverse   = new Synseer.TraverseAst(attrs.ast)
         this._statsView  = attrs.statsView;
         this._codeMirror = attrs.codeMirror;
         this._keyMap     = attrs.keyMap;
@@ -111,12 +111,12 @@
         this._isFinished = false;
       }
 
-      SyntaxSpray.Game.prototype.init = function() {
+      Synseer.Game.prototype.init = function() {
         this._initCodeMirror();
         this._statsView.init();
       }
 
-      SyntaxSpray.Game.prototype.start = function(getTime, setInterval) {
+      Synseer.Game.prototype.start = function(getTime, setInterval) {
         this._currentElement  = this._codeMirror.markText({line:0, ch:0},{line:0,ch:5},{className: "currentElement"});
         var game              = this;
         var startTime         = getTime();
@@ -127,18 +127,18 @@
         }, 1000);
       }
 
-      SyntaxSpray.Game.prototype.finish = function() {
+      Synseer.Game.prototype.finish = function() {
         this._isFinished = true;
         window.clearInterval(this._timerIntervalId); // TOOD modifies global state
         this._onFinished();
         jQuery.post(window.location.pathname, {"game": this._statsView.data() }); // TODO more global deps
       }
 
-      SyntaxSpray.Game.prototype.isFinished = function() {
+      Synseer.Game.prototype.isFinished = function() {
         return this._isFinished;
       }
 
-      SyntaxSpray.Game.prototype.pressKey = function(key) {
+      Synseer.Game.prototype.pressKey = function(key) {
         if(this.isFinished()) {
           if(key === 'Enter')
             window.location = window.location.origin;
@@ -165,7 +165,7 @@
         }
       }
 
-      SyntaxSpray.Game.prototype._initCodeMirror = function() {
+      Synseer.Game.prototype._initCodeMirror = function() {
         // seriously no clue why the interface works this way, it makes no sense to me, and took me forever to figure out >.<
         var game       = this;
         var cmKeyMap   = {call: function(key) { return function() { game.pressKey(key); return "handled"; }}}; // can also return "multi"
@@ -179,12 +179,12 @@
 
 
       // =====  Wire it all together  =====
-      var game = new SyntaxSpray.Game({
+      var game = new Synseer.Game({
         codeMirror: CodeMirror.fromTextArea(
                       document.getElementsByTagName('textarea')[0],
                       {lineNumbers: true, theme: 'solarized dark', autofocus: true}
                     ),
-        statsView:  new SyntaxSpray.StatsView(document.getElementsByClassName('stats')[0]),
+        statsView:  new Synseer.StatsView(document.getElementsByClassName('stats')[0]),
         ast:        <%= @game.fetch :json_ast %>,
         keyMap:     { S: "send",
                       I: "int",
