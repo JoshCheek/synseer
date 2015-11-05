@@ -28,6 +28,7 @@
     <div class="stats">
       <div class="time"></div>
       <div class="correct"></div>
+      <div class="incorrect"></div>
     </div>
     <textarea class="code"><%= @game.fetch(:body) %></textarea>
   </div>
@@ -40,15 +41,18 @@
 
       // =====  StatsView  =====
       SyntaxSpray.StatsView = function(domElement) {
-        this.domElement = domElement;
-        this.domCorrect = domElement.getElementsByClassName('correct')[0];
-        this.domTime    = domElement.getElementsByClassName('time')[0];
+        this.domElement   = domElement;
+        this.domCorrect   = domElement.getElementsByClassName('correct')[0];
+        this.domIncorrect = domElement.getElementsByClassName('incorrect')[0];
+        this.domTime      = domElement.getElementsByClassName('time')[0];
       }
 
       SyntaxSpray.StatsView.prototype.init = function() {
         this.updateDuration(0);
         this._numCorrect = -1;
         this.incrementCorrect();
+        this._numIncorrect = -1;
+        this.incrementIncorrect();
       }
 
       SyntaxSpray.StatsView.prototype.updateDuration = function(secondsElapsed) {
@@ -64,6 +68,11 @@
       SyntaxSpray.StatsView.prototype.incrementCorrect = function() {
         this._numCorrect++;
         this.domCorrect.textContent = this._numCorrect;
+      }
+
+      SyntaxSpray.StatsView.prototype.incrementIncorrect = function() {
+        this._numIncorrect++;
+        this.domIncorrect.textContent = this._numIncorrect;
       }
 
       // =====  TraverseAst  =====
@@ -128,8 +137,7 @@
             this.finish();
           }
         } else {
-          // maybe record incorrect guesses?
-          console.log({key: key, selectedType: selectedType, currentType: type});
+          this._statsView.incrementIncorrect();
         }
       }
 

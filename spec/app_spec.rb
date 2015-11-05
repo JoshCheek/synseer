@@ -49,8 +49,21 @@ RSpec.describe SyntaxSpray::App, type: :feature do
     expect(correct.text).to eq '1'
 
     # I see that it is waiting for me to classify the "1" expression
+    current_element = page.all('.currentElement').map(&:text).join.delete(" ")
+    expect(current_element).to eq '1'
+
     # I press "s" for "send", and my "correct" count stays at 1 while my "incorrect" count increases from 0 to 1
+    incorrect = page.find '.stats .incorrect'
+    expect(correct.text).to eq '1'
+    expect(incorrect.text).to eq '0'
+    browser.send_keys("s")
+    expect(correct.text).to eq '1'
+    expect(incorrect.text).to eq '1'
+
     # I press "i" for "integer", and my "correct" count increases from 1 to 2
+    expect(correct.text).to eq '1'
+    browser.send_keys("i")
+    expect(correct.text).to eq '2'
 
     # I see that it is waiting for me to classify the "2" expression
     # I press "s" for "send", and my "correct" count stays at 1 while my "incorrect" count increases from 0 to 1
