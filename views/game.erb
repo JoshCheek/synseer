@@ -66,20 +66,37 @@
         this.domCorrect.textContent = this._numCorrect;
       }
 
+      // =====  TraverseAst  =====
+      SyntaxSpray.TraverseAst = function(ast, cb) {
+        this.ast = ast;
+        this._cb = cb;
+      }
+      SyntaxSpray.TraverseAst.prototype.successor = function() {
+        if(this.ast.children.length == 0) return (this._cb||function(){})();
+        return this.ast.children.reduceRight(
+          function(cb, childAst) {
+            return function() { return new SyntaxSpray.TraverseAst(childAst, cb) };
+          },
+          this._cb
+        )()
+      }
+
       // =====  Game  =====
       SyntaxSpray.Game = function(attrs) {
-        this._ast        = attrs.ast;
+        var game         = this;
+        this._traverse   = new SyntaxSpray.TraverseAst(attrs.ast)
         this._statsView  = attrs.statsView;
         this._codeMirror = attrs.codeMirror;
+        this._keyMap     = attrs.keyMap;
       }
 
       SyntaxSpray.Game.prototype.init = function() {
         this._initCodeMirror();
-        this._currentElement = this._codeMirror.markText({line:0, ch:0},{line:0,ch:5},{className: "currentElement"});
         this._statsView.init();
       }
 
       SyntaxSpray.Game.prototype.start = function(getTime, setInterval) {
+        this._currentElement = this._codeMirror.markText({line:0, ch:0},{line:0,ch:5},{className: "currentElement"});
         var statsView = this._statsView;
         var startTime = this._startTime = getTime();
         setInterval(function() {
@@ -89,24 +106,47 @@
         }, 1000);
       }
 
+      SyntaxSpray.Game.prototype.finish = function() {
+        console.log("FINISHED!");
+      }
+
+      SyntaxSpray.Game.prototype.pressKey = function(key) {
+        var selectedType = this._keyMap[key];
+        var type         = this._traverse.ast.type
+        if(selectedType == type) {
+          this._statsView.incrementCorrect();
+          this._currentElement.clear();
+          this._traverse = this._traverse.successor();
+          if(this._traverse) {
+            var ast = this._traverse.ast;
+            this._currentElement = this._codeMirror.markText(
+              {line:0, ch:0},
+              {line:0, ch:1},
+              {className: "currentElement"}
+            );
+          } else {
+            this.finish();
+          }
+        } else {
+          // maybe record incorrect guesses?
+          console.log({key: key, selectedType: selectedType, currentType: type});
+        }
+      }
+
       SyntaxSpray.Game.prototype._initCodeMirror = function() {
         // seriously no clue why the interface works this way, it makes no sense to me, and took me forever to figure out >.<
         var game       = this;
-        var keyMap     = {call: function(key) { return function() { game.pressKey(key); return "handled"; }}}; // can also return "multi"
+        var cmKeyMap   = {call: function(key) { return function() { game.pressKey(key); return "handled"; }}}; // can also return "multi"
         var codeMirror = this._codeMirror;
         codeMirror.setOption("readOnly",                true);
         codeMirror.setOption("cursorBlinkRate",         -1); // hides the cursor
         codeMirror.setOption("disableInput",            true);
         codeMirror.setOption("showCursorWhenSelecting", false);
-        codeMirror.setOption("keyMap",                  keyMap);
+        codeMirror.setOption("keyMap",                  cmKeyMap);
       }
 
-      SyntaxSpray.Game.prototype.pressKey = function(key) {
-        this._statsView.incrementCorrect();
-        this._currentElement.clear();
-        this._currentElement = this._codeMirror.markText({line:0, ch:0},{line:0,ch:1},{className: "currentElement"});
-      }
 
+      // =====  Wire it all together  =====
       var game = new SyntaxSpray.Game({
         codeMirror: CodeMirror.fromTextArea(
                       document.getElementsByTagName('textarea')[0],
@@ -118,6 +158,9 @@
                        {type: "int", value: "1", start: 0, stop: 1, children: []},
                        {type: "int", value: "2", start: 4, stop: 5, children: []},
                       ],
+                    },
+        keyMap:     { S: "send",
+                      I: "int",
                     },
       });
 
