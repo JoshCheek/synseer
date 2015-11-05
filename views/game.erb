@@ -26,21 +26,64 @@
 <body>
   <div class="content">
     <div class="stats">
-      <div class="time">0:00</div>
-      <div class="correct">0</div>
+      <div class="time"></div>
+      <div class="correct"></div>
     </div>
     <textarea class="code"><%= @game.fetch(:body) %></textarea>
   </div>
 
   <script>
-    var ast = <%= @game.fetch(:json_ast) %>;
-    var callback;
-
-    // Init CodeMirror
     window.cm = (function() {
       'use strict';
-      var textArea = document.getElementsByTagName('textarea')[0]
-      var cm = CodeMirror.fromTextArea(textArea, {
+
+      var SyntaxSpray = {};
+
+      // StatsView
+      SyntaxSpray.StatsView = function(domElement) {
+        this.domElement     = domElement;
+        this.domCorrect = domElement.getElementsByClassName('correct')[0];
+        this.domTime    = domElement.getElementsByClassName('time')[0];
+      }
+
+      SyntaxSpray.StatsView.prototype.init = function(time) {
+        this._startTime = time;
+        this.updateTime(time);
+        this._numCorrect = -1;
+        this.incrementCorrect();
+      }
+
+      SyntaxSpray.StatsView.prototype.updateTime = function(time) {
+        this.domTime.textContent = this.formatDuration(time - this._startTime);
+      }
+
+      SyntaxSpray.StatsView.prototype.formatDuration = function(millisecondsElapsed) {
+        var totalSecondsElapsed = parseInt(millisecondsElapsed / 1000);
+        var secondsElapsed      = totalSecondsElapsed % 60;
+        var minutesElapsed      = parseInt(totalSecondsElapsed / 60);
+        return "" + minutesElapsed + ":" + (secondsElapsed > 9 ? parseInt(secondsElapsed / 10) : "0") + (secondsElapsed % 10); // JS apparently has no sprintf or rjust
+      }
+
+      SyntaxSpray.StatsView.prototype.incrementCorrect = function() {
+        this._numCorrect++;
+        this.domCorrect.textContent = this._numCorrect;
+      }
+
+      var stats = new SyntaxSpray.StatsView(document.getElementsByClassName('stats')[0]);
+      stats.init(new Date());
+
+      // Fake playing the game
+      var handleKeypress = function(key, cm) {
+        // seriously no clue why the interface works this way, it makes no sense to me, and took me forever to figure out >.<
+        return function() {
+          stats.incrementCorrect();
+          currentElement.clear();
+          currentElement = cm.markText({line:0, ch:0},{line:0,ch:1},{className: "currentElement"});
+          return "handled";
+        };
+      }
+
+      // Init CodeMirror
+      var cm = CodeMirror.fromTextArea(document.getElementsByTagName('textarea')[0], {
         lineNumbers:             true,
         theme:                   'solarized dark',
         readOnly:                true,
@@ -48,36 +91,15 @@
         disableInput:            true,
         showCursorWhenSelecting: false,
         autofocus:               true,
-        keyMap:                 {call: function(key) {
-          callback(key);
-          console.log(key) }}, // took me *forever* to figure this one out >.<
+        keyMap:                  {call: handleKeypress},
       });
+      var currentElement = currentElement = cm.markText({line:0, ch:0},{line:0,ch:5},{className: "currentElement"});
 
-      // example of setting / unsetting a mark, which we are using to highlight code
-      var m = cm.markText({line:0, ch:0},{line:0,ch:5},{className: "currentElement"});
-      setTimeout(function() { m.clear(); }, 2000);
+
+      // Init timer
+      var ast   = <%= @game.fetch(:json_ast) %>;
+      setInterval(function() { stats.updateTime(new Date()) }, 1000);
       return cm;
-    })();
-
-    // Init timer
-    (function() {
-      var start   = new Date();
-      var display = document.getElementsByClassName('stats')[0].getElementsByClassName('time')[0];
-      function timer() {
-        var millisecondsElapsed = new Date() - start;
-        var totalSecondsElapsed = parseInt(millisecondsElapsed / 1000);
-        var secondsElapsed      = totalSecondsElapsed % 60;
-        var minutesElapsed      = parseInt(totalSecondsElapsed / 60);
-        var text                = "" + minutesElapsed + ":" + (secondsElapsed > 9 ? parseInt(secondsElapsed / 10) : "0") + (secondsElapsed % 10);
-        display.textContent = text;
-      }
-      setInterval(timer, 1000);
-    })();
-
-    (function() {
-      var display = document.getElementsByClassName('stats')[0]
-                            .getElementsByClassName('correct')[0];
-      callback = function(key) { display.textContent = '1'; };
     })();
   </script>
 </div>
