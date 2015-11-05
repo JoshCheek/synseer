@@ -92,7 +92,7 @@ RSpec.describe Synseer::App, type: :feature do
     # I press "return" and it takes me back to the root page
     expect(page.current_path).to eq '/games/integer_addition'
     browser.send_keys(:Return)
-    sleep 0.01 # surely there's a better wya than this?
+    sleep 0.05 # surely there's a better way than this?
     expect(page.current_path).to eq '/'
 
     # Now I see that all games are scored as unattempted, except "integer addition", which shows my score of 1 second, 3 correct, and 2 incorrect

@@ -25,7 +25,8 @@ module Synseer
       @default = self.new(games.to_h)
     end
 
-    set :views, root_dir / 'views'
+    set :views,      root_dir / 'views'
+    set :public_dir, root_dir / 'public'
 
     attr_reader :games
     def initialize(games, *rest)
