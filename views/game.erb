@@ -5,6 +5,7 @@
    <link rel=stylesheet href="http://codemirror.net/theme/solarized.css">
    <script src="http://codemirror.net/lib/codemirror.js"></script>
    <script src="http://codemirror.net/mode/ruby/ruby.js"></script>
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
    <style>
      body, html, .content, .CodeMirror {
        margin:  0;
@@ -55,7 +56,16 @@
         this.incrementIncorrect();
       }
 
+      SyntaxSpray.StatsView.prototype.data = function() {
+        return {
+          duration:  this._duration,
+          correct:   this._numCorrect,
+          incorrect: this._numIncorrect,
+        }
+      }
+
       SyntaxSpray.StatsView.prototype.updateDuration = function(secondsElapsed) {
+        this._duration = secondsElapsed;
         this.domTime.textContent = this.formatDuration(secondsElapsed);
       }
 
@@ -97,6 +107,8 @@
         this._statsView  = attrs.statsView;
         this._codeMirror = attrs.codeMirror;
         this._keyMap     = attrs.keyMap;
+        this._onFinished = attrs.onFinished;
+        this._isFinished = false;
       }
 
       SyntaxSpray.Game.prototype.init = function() {
@@ -105,21 +117,33 @@
       }
 
       SyntaxSpray.Game.prototype.start = function(getTime, setInterval) {
-        this._currentElement = this._codeMirror.markText({line:0, ch:0},{line:0,ch:5},{className: "currentElement"});
-        var statsView = this._statsView;
-        var startTime = this._startTime = getTime();
-        setInterval(function() {
+        this._currentElement  = this._codeMirror.markText({line:0, ch:0},{line:0,ch:5},{className: "currentElement"});
+        var game              = this;
+        var startTime         = getTime();
+        this._timerIntervalId = setInterval(function() {
           var milliseconds = getTime() - startTime;
           var seconds      = parseInt(milliseconds / 1000);
-          statsView.updateDuration(seconds);
+          game._statsView.updateDuration(seconds);
         }, 1000);
       }
 
       SyntaxSpray.Game.prototype.finish = function() {
-        console.log("FINISHED!");
+        this._isFinished = true;
+        window.clearInterval(this._timerIntervalId); // TOOD modifies global state
+        this._onFinished();
+        jQuery.post(window.location.pathname, {"game": this._statsView.data() }); // TODO more global deps
+      }
+
+      SyntaxSpray.Game.prototype.isFinished = function() {
+        return this._isFinished;
       }
 
       SyntaxSpray.Game.prototype.pressKey = function(key) {
+        if(this.isFinished()) {
+          if(key === 'Enter')
+            window.location = window.location.origin;
+          return;
+        }
         var selectedType = this._keyMap[key];
         var type         = this._traverse.ast.type
         if(selectedType == type) {
@@ -165,6 +189,13 @@
         keyMap:     { S: "send",
                       I: "int",
                     },
+        onFinished: function() {
+                      var domFinished = document.createElement("div");
+                      domFinished.classList.add("summary");
+                      var node = document.createTextNode("This is new.");
+                      domFinished.appendChild(node);
+                      document.getElementsByTagName('body')[0].appendChild(domFinished);
+                    }
       });
 
       game.init();

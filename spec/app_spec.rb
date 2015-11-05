@@ -21,7 +21,7 @@ RSpec.describe SyntaxSpray::App, type: :feature do
     expect(page.find '.total_score .games_completed').to have_text '0'
     expect(page.find '.total_score .correct'        ).to have_text '0'
     expect(page.find '.total_score .incorrect'      ).to have_text '0'
-    expect(page.find '.total_score .time'           ).to have_text '0 seconds'
+    expect(page.find '.total_score .time'           ).to have_text '0:00'
 
     # When I click on the "integer addition" example, it takes me to "/games/integer_addition"
     page.click_link 'integer addition'
@@ -76,16 +76,42 @@ RSpec.describe SyntaxSpray::App, type: :feature do
     expect(correct.text).to eq '2'
     expect(incorrect.text).to eq '2'
 
-    # I press "i" for "integer", and my "correct" count increases from 2 to 3
+    # I press "i" for "integer", and my "correct" count increases from 2 to 3,
+    # and I have completed the challenge
+    expect(page).to_not have_css '.summary'
     expect(correct.text).to eq '2'
     browser.send_keys("i")
     expect(correct.text).to eq '3'
+    expect(page).to have_css '.summary'
 
-    # I see that I have completed the challenge
     # After 1 second, my time has not increased
-    # I press "return" and it takes me back to the root page
+    time = page.find('.stats .time')
+    sleep 1
+    expect(time.text).to eq '0:01'
 
-    # Now I see that all games are scored as unattempted, except "integer addition"
-    # I have completed 1 game, and have a total of 1 seconds, 3 correct, and 1 incorrect
+    # I press "return" and it takes me back to the root page
+    expect(page.current_path).to eq '/games/integer_addition'
+    browser.send_keys(:Return)
+    sleep 0.01 # surely there's a better wya than this?
+    expect(page.current_path).to eq '/'
+
+    # Now I see that all games are scored as unattempted, except "integer addition", which shows my score of 1 second, 3 correct, and 2 incorrect
+    game_elements = page.all '.available_games'
+    game_elements.each do |game_element|
+      if game_element.text.downcase.include? 'integer addition'
+        integer_addition_score = game_element.find('.score')
+        expect(integer_addition_score.find('.time').text).to eq '0:01'
+        expect(integer_addition_score.find('.correct').text).to eq '3'
+        expect(integer_addition_score.find('.incorrect').text).to eq '2'
+      else
+        expect(game_element.find('.score').text).to eq 'unattempted'
+      end
+    end
+
+    # I have completed 1 game, and have a total of 1 seconds, 3 correct, and 2 incorrect
+    expect(page.find '.total_score .games_completed').to have_text '1'
+    expect(page.find '.total_score .correct'        ).to have_text '3'
+    expect(page.find '.total_score .incorrect'      ).to have_text '2'
+    expect(page.find '.total_score .time'           ).to have_text '0:01'
   end
 end

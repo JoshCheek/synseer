@@ -16,8 +16,12 @@ module SyntaxSpray
       self.data = data || {}
     end
 
-    def for?(game_name)
-      data[game_name]
+    def for?(game_id)
+      !!data[game_id]
+    end
+
+    def update(game_id, values)
+      data[game_id] = values
     end
 
     def total_completed
@@ -25,21 +29,31 @@ module SyntaxSpray
     end
 
     def total_correct
-      0 # totals_for 'correct'
+      totals_for 'correct'
     end
 
     def total_incorrect
-      0 # totals_for 'incorrect'
+      totals_for 'incorrect'
     end
 
-    def total_time
-      0 # totals_for 'time'
+    def total_duration
+      totals_for 'duration'
+    end
+
+    def correct_for(game_id)
+      data.fetch(game_id).fetch('correct')
+    end
+    def incorrect_for(game_id)
+      data.fetch(game_id).fetch('incorrect')
+    end
+    def duration_for(game_id)
+      data.fetch(game_id).fetch('duration')
     end
 
     private
 
     def totals_for(attribute)
-      data.map { |name, stats| stats[attribute]||0 }.reduce(0, :+)
+      data.map { |game_id, stats| stats[attribute]||0 }.reduce(0, :+)
     end
   end
 end

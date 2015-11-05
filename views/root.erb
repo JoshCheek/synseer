@@ -6,7 +6,7 @@
   <div class="games_completed"> <%= scores.total_completed %> </div>
   <div class="correct">         <%= scores.total_correct   %> </div>
   <div class="incorrect">       <%= scores.total_incorrect %> </div>
-  <div class="time">            <%= scores.total_time      %> seconds </div>
+  <div class="time">            <%= sprintf '%01d:%02d', scores.total_duration/60, scores.total_duration%60 %></div>
 </div>
 
 <div class="available_games">
@@ -18,8 +18,10 @@
         </a>
       </div>
       <div class="score">
-        <% if scores.for? game.fetch(:name) %>
-          <%= raise 'figure me out!'; scores.for(game.fetch(:name)) %>
+        <% if scores.for? game.fetch(:id) %>
+          <div class="correct">         <%= scores.correct_for   game.fetch :id %></div>
+          <div class="incorrect">       <%= scores.incorrect_for game.fetch :id %></div>
+          <div class="time">            <%= sprintf '%01d:%02d', scores.duration_for(game.fetch :id)/60, scores.duration_for(game.fetch :id)%60 %></div>
         <% else %>
           unattempted
         <% end %>
