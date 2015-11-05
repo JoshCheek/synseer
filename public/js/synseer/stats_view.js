@@ -1,7 +1,6 @@
 'use strict';
 window.Synseer = window.Synseer||{};
 
-// =====  StatsView  =====
 Synseer.StatsView = function(domElement) {
   this.domElement   = domElement;
   this.domCorrect   = domElement.getElementsByClassName('correct')[0];
