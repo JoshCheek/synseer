@@ -13,9 +13,9 @@
   <div class="time">            <%= sprintf '%01d:%02d', scores.total_duration/60, scores.total_duration%60 %></div>
 </div>
 
-<div class="available_games">
+<ul class="available_games">
   <% games.each do |_path, game| %>
-    <div class="game">
+    <li class="game">
       <div class="name">
         <a href="<%= game.fetch(:path) %>">
           <%= game.fetch(:name) %>
