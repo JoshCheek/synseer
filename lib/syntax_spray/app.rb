@@ -14,7 +14,12 @@ module SyntaxSpray
       return @default if defined? @default
       games = (root_dir / 'games').children.map do |child|
         basename = child.basename.sub_ext('').to_s
-        [basename, {path: "/games/#{basename}", name: basename.gsub('_', ' '), body: child.read}]
+        [basename, { path: "/games/#{basename}",
+                     name: basename.gsub('_', ' '),
+                     body: child.read,
+                     json_ast:  nil, # loaded lazily for now
+                   }
+        ]
       end
       @default = self.new(games.to_h)
     end
@@ -37,7 +42,18 @@ module SyntaxSpray
 
     get '/games/:game_name' do
       @game = games.fetch params[:game_name]
+      @game[:json_ast] ||= ast_for(@game.fetch(:body))
       erb :game
+    end
+
+    private
+
+    require 'json'
+    require 'net/http'
+    def ast_for(ruby_code)
+      uri       = URI('http://localhost:3003')
+      uri.query = URI.encode_www_form(code: ruby_code)
+      Net::HTTP.get_response(uri).body # NOTE: can fail, but really I'd like to pull it in locally, anyway
     end
   end
 end

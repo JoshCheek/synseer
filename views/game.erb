@@ -33,6 +33,7 @@
   </div>
 
   <script>
+    var ast = <%= @game.fetch(:json_ast) %>;
     var callback;
 
     // Init CodeMirror
