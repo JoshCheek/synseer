@@ -2,6 +2,7 @@ require 'pathname'
 require 'sinatra'
 require 'json'
 require 'syntax_spray/scores'
+require 'tilt/erb'
 
 module SyntaxSpray
   class App < Sinatra::Base
