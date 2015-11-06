@@ -17,7 +17,12 @@ Synseer.Game.prototype.init = function() {
 }
 
 Synseer.Game.prototype.start = function(getTime, setInterval) {
-  this._currentElement  = this._codeMirror.markText({line:0, ch:0},{line:0,ch:5},{className: "currentElement"});
+  var ast = this._traverse.ast;
+  this._currentElement = this._codeMirror.markText(
+    {line: ast.begin_line, ch: ast.begin_col},
+    {line: ast.end_line,   ch: ast.end_col},
+    {className: "currentElement"}
+  );
   var game              = this;
   var startTime         = getTime();
   this._timerIntervalId = setInterval(function() {

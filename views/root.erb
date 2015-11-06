@@ -16,11 +16,9 @@
 <ul class="available_games">
   <% games.each do |_path, game| %>
     <li class="game">
-      <div class="name">
-        <a href="<%= game.fetch(:path) %>">
-          <%= game.fetch(:name) %>
-        </a>
-      </div>
+      <a class="name" href="<%= game.fetch(:path) %>">
+        <%= game.fetch(:name) %>
+      </a>
       <div class="score">
         <% if scores.for? game.fetch(:id) %>
           <div class="correct">         <%= scores.correct_for   game.fetch :id %></div>

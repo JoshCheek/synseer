@@ -5,21 +5,27 @@ body {
 }
 
 .total_score {
-  background-color: $color-primary-3;
-  color:            $color-primary-1;
+  background-color: $color-secondary-2-0;
+  color:            $color-primary-4;
   padding:          1em;
-  border-bottom:    0.8em solid $color-primary-1;
+  border-bottom:    0.8em solid $color-primary-3;
 }
 
 .available_games {
   padding:          1em;
   padding-top:      2em;
-  background-color: $color-primary-0;
+  background-color: lighten($color-primary-0, 40%);
 
   .game {
-    background-color: $color-secondary-2-0;
     margin-bottom: 1em;
     padding:       0.5em;
-    color:         $color-primary-3;
+    color:         $color-primary-4;
+
+    a.name {
+      text-decoration: none;
+      color:           $color-secondary-2-3;
+      font-size:       1.2em;
+      font-weight:     bold;
+    }
   }
 }
