@@ -1,0 +1,17 @@
+{
+  "private": true,
+  "name": "synseer",
+  "scripts": {
+    "test": "mocha --compilers js:babel/register",
+    "exec": "exec",
+    "env": "env"
+  },
+  "devDependencies": {
+    "babel": "^5.0",
+    "jshint": "^2.8.0",
+    "mocha": "^2.3"
+  },
+  "files": [
+    "src"
+  ]
+}
