@@ -10,6 +10,7 @@
    <script src="/js/synseer/stats_view.js"></script>
    <script src="/js/synseer/traverse_ast.js"></script>
    <script src="/js/synseer/game.js"></script>
+   <script src="/js/synseer/default_keymap.js"></script>
 
    <style>
      body, html, .content, .CodeMirror {
@@ -51,9 +52,7 @@
                     ),
         statsView:  new Synseer.StatsView(document.getElementsByClassName('stats')[0]),
         ast:        <%= @game.fetch :json_ast %>,
-        keyMap:     { S: "send",
-                      I: "int",
-                    },
+        keyMap:     Synseer.DefaultKeymap,
         onFinished: function() {
                       var domFinished = document.createElement("div");
                       domFinished.classList.add("summary");
