@@ -41,22 +41,22 @@ RSpec.describe Synseer::App, type: :feature do
     current_element = page.all('.currentElement').map(&:text).join.delete(" ")
     expect(current_element).to eq '1+2'
 
-    # I press "s" for "send", and my "correct" count increases from 0 to 1
+    # I press "m" for "send" (method), and my "correct" count increases from 0 to 1
     browser = page.find('html').native
     correct = page.find '.stats .correct'
     expect(correct.text).to eq '0'
-    browser.send_keys("s")
+    browser.send_keys("m")
     expect(correct.text).to eq '1'
 
     # I see that it is waiting for me to classify the "1" expression
     current_element = page.all('.currentElement').map(&:text).join.delete(" ")
     expect(current_element).to eq '1'
 
-    # I press "s" for "send", and my "correct" count stays at 1 while my "incorrect" count increases from 0 to 1
+    # I press "m" for "send" (method), and my "correct" count stays at 1 while my "incorrect" count increases from 0 to 1
     incorrect = page.find '.stats .incorrect'
     expect(correct.text).to eq '1'
     expect(incorrect.text).to eq '0'
-    browser.send_keys("s")
+    browser.send_keys("m")
     expect(correct.text).to eq '1'
     expect(incorrect.text).to eq '1'
 
@@ -69,10 +69,10 @@ RSpec.describe Synseer::App, type: :feature do
     current_element = page.all('.currentElement').map(&:text).join.delete(" ")
     expect(current_element).to eq '2'
 
-    # I press "s" for "send", and my "correct" count stays at 2 while my "incorrect" count increases from 1 to 2
+    # I press "s" for "send" (method), and my "correct" count stays at 2 while my "incorrect" count increases from 1 to 2
     expect(correct.text).to eq '2'
     expect(incorrect.text).to eq '1'
-    browser.send_keys("s")
+    browser.send_keys("m")
     expect(correct.text).to eq '2'
     expect(incorrect.text).to eq '2'
 
