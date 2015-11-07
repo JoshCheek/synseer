@@ -40,7 +40,7 @@
   <script>
     window.game = (function() {
       'use strict';
-      window.Synseer = window.Synseer||{};
+      var Synseer = require('synseer');
 
       var game = new Synseer.Game({
         codeMirror: CodeMirror.fromTextArea(

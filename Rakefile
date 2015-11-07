@@ -32,8 +32,10 @@ namespace :build do
 
   desc 'Compile JavaScript'
   task(:js) do
+    mkdir_p 'public/js'
     sh 'browserify', '--transform', 'babelify',
                      '--outfile',   'public/js/synseer.js',
+                     '--require',   './src-js/synseer/index.js:synseer',
                      *FileList['src-js/**/*.js']
   end
 end

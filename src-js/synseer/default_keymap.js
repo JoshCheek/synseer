@@ -1,7 +1,6 @@
 'use strict';
-window.Synseer = window.Synseer||{};
 
-Synseer.DefaultKeymap = {
+module.exports = {
   "M":       "send",
   "I":       "int",
   "A":       "array",
