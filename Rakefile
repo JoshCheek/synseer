@@ -16,14 +16,8 @@ namespace :test do
   task(js: :list_nodes) { sh 'npm test' }
   task(:list_nodes) {
     require 'synseer/parse'
-    node_types = -> ast, list=[] {
-      list << ast.fetch(:type)
-      ast.fetch(:children).each { |child| node_types[child, list] }
-      list
-    }
-    node_types = FileList['games/*']
-      .map { |filename| Synseer::Parse.ast_for File.read filename }
-      .flat_map(&node_types).uniq.sort
+    codes = FileList['games/*'].map { |f| File.read f }
+    node_types = Synseer::Parse.nodes_in(*codes)
     mkdir_p 'tmp'
     File.write 'tmp/node_types', node_types.map { |type| "#{type}\n" }.join
   }

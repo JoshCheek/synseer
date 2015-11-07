@@ -9,4 +9,8 @@ RSpec.describe Synseer::Parse do
       expect(ast).to be_a_kind_of Hash
     end
   end
+
+  it 'can tell you which nodes are in a set of code' do
+    expect(described_class.nodes_in('"a"', '1+1')).to eq [:int, :send, :str]
+  end
 end

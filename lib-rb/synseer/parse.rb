@@ -16,5 +16,20 @@ module Synseer
       end
       to_js_ast.call ::Parser::Ruby22.parse ruby_code
     end
+
+    def nodes_in(*codes)
+      codes.map { |code| ast_for code }
+           .inject([]) { |types, ast| node_types ast, types }
+           .uniq
+           .sort
+    end
+
+    private
+
+    def node_types(ast, list)
+      list << ast.fetch(:type)
+      ast.fetch(:children).each { |child| node_types child, list }
+      list
+    end
   end
 end
