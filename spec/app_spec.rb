@@ -1,11 +1,13 @@
 require 'synseer/app'
 
-require 'capybara/rspec'
-require 'capybara/poltergeist'
-Capybara.app            = Synseer::App.default
-Capybara.default_driver = :poltergeist
+RSpec.describe Synseer::App, integration: true, type: :feature do
+  before :all do
+    require 'capybara/rspec'
+    require 'capybara/poltergeist'
+    Capybara.app            = Synseer::App.default
+    Capybara.default_driver = :poltergeist
+  end
 
-RSpec.describe Synseer::App, type: :feature do
   example 'new user plays their first game' do
     # When I go to the root page, it shows me a listing of syntax games and scores
     page.visit '/'

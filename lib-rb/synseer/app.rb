@@ -49,7 +49,7 @@ module Synseer
       erb :game
     end
 
-    # post for now, b/c jQuery has a convenient shorthand for it
+    # should really be a put, but is a post b/c jQuery has a convenient shorthand for it
     post '/games/:game_name' do
       scores.update params[:game_name],
                     'correct'   => params[:game][:correct].to_i,
@@ -57,7 +57,5 @@ module Synseer
                     'duration'  => params[:game][:duration].to_i
       ''
     end
-
-    private
   end
 end

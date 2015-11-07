@@ -6,21 +6,14 @@ desc 'Run all tests'
 task test: ['test:integration', 'test:ruby', 'test:js']
 
 namespace :test do
-  desc 'Run Phantomjs integration tests'
-  task(:integration) { sh 'bundle', 'exec', 'mrspec' }
+  desc 'Run integration tests (Phantomjs)'
+  task(:integration) { sh 'bundle', 'exec', 'mrspec', '--tag', 'integration' }
 
   desc 'Run Ruby unit tests'
-  task :ruby
+  task(:ruby) { sh 'bundle', 'exec', 'mrspec', '--tag', '~integration' }
 
   desc 'Run JavaScript unit tests'
-  task(js: :list_nodes) { sh 'npm test' }
-  task(:list_nodes) {
-    require 'synseer/parse'
-    codes = FileList['games/*'].map { |f| File.read f }
-    node_types = Synseer::Parse.nodes_in(*codes)
-    mkdir_p 'tmp'
-    File.write 'tmp/node_types', node_types.map { |type| "#{type}\n" }.join
-  }
+  task(js: 'tmp/node_types') { sh 'npm test' }
 end
 
 
@@ -39,13 +32,21 @@ namespace :build do
   task(:css) { sh 'scss', *in_css_dir, '--update', *css_files }
 
   desc 'Compile JavaScript'
-  task(:js) do
+  task :js do
     mkdir_p 'public/js'
     sh 'browserify', '--transform', 'babelify',
                      '--outfile',   'public/js/synseer.js',
                      '--require',   './src-js/synseer/index.js:synseer',
                      *FileList['src-js/**/*.js']
   end
+end
+
+file 'tmp/node_types' do
+  require 'synseer/parse'
+  codes = FileList['games/*'].map { |f| File.read f }
+  node_types = Synseer::Parse.nodes_in(*codes)
+  mkdir_p 'tmp'
+  File.write 'tmp/node_types', node_types.map { |type| "#{type}\n" }.join
 end
 
 
