@@ -36,8 +36,20 @@ module Synseer
     end
 
     attr_reader :scores
-    before { @scores = Scores.deserialize request.cookies['scores'] }
-    after  { response.set_cookie 'scores', value: scores.serialize, path: '/', expires: (Time.now + (365*24*60*60)) }
+    before {
+      if request.cookies['scores'] == "{\"a\":1}"
+        require "pry"
+        binding.pry
+        request.cookies.delete 'scores'
+      end
+      @scores = Scores.deserialize request.cookies['scores'] }
+    after  {
+      if scores.serialize == "{\"a\":1}"
+        require "pry"
+        binding.pry
+      end
+      response.set_cookie 'scores', value: scores.serialize, path: '/', expires: (Time.now + (365*24*60*60))
+    }
 
     get '/' do
       erb :root

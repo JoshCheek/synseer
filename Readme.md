@@ -13,6 +13,11 @@ the significance of a local variable vs an instance variable,
 well, you'll have to teach them the object model
 (which I also have a lot of material for).
 
+## Video
+
+A student goes through the pre-alpha version.
+
+[https://vimeo.com/144960941](https://vimeo.com/144960941)
 
 ## Todo
 
