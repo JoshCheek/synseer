@@ -47,3 +47,8 @@ namespace :build do
                      *FileList['src-js/**/*.js']
   end
 end
+
+
+# =====  Running  =====
+desc 'Run the server'
+task(server: :build) { sh 'bundle', 'exec', 'rackup', 'config.ru' }
