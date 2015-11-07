@@ -7,7 +7,7 @@ such as code structure, or what the code is doing.
 
 The goal is not to understand everything they see,
 it is purely to develop the mechanical ability of
-looking at code and structurally knowing what it is.
+looking at code and syntactically knowing what it is.
 If you then want them to understand something like
 the significance of a local variable vs an instance variable,
 well, you'll have to teach them the object model
