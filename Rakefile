@@ -1,3 +1,4 @@
+$LOAD_PATH.unshift File.expand_path('lib-rb', __dir__)
 task default: :test
 
 # =====  Tests  =====
@@ -12,7 +13,20 @@ namespace :test do
   task :ruby
 
   desc 'Run JavaScript unit tests'
-  task(:js) { sh 'npm test' }
+  task(js: :list_nodes) { sh 'npm test' }
+  task(:list_nodes) {
+    require 'synseer/parse'
+    node_types = -> ast, list=[] {
+      list << ast.fetch(:type)
+      ast.fetch(:children).each { |child| node_types[child, list] }
+      list
+    }
+    node_types = FileList['games/*']
+      .map { |filename| Synseer::Parse.ast_for File.read filename }
+      .flat_map(&node_types).uniq.sort
+    mkdir_p 'tmp'
+    File.write 'tmp/node_types', node_types.map { |type| "#{type}\n" }.join
+  }
 end
 
 

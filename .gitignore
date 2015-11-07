@@ -4,3 +4,4 @@ public/css/synseer/palette.css
 *.css.map
 node_modules
 public/js/synseer.js
+tmp

@@ -13,23 +13,24 @@ the significance of a local variable vs an instance variable,
 well, you'll have to teach them the object model
 (which I also have a lot of material for).
 
+
 ## Video
 
 A student goes through the pre-alpha version.
 
 [https://vimeo.com/144960941](https://vimeo.com/144960941)
 
+
 ## Todo
 
 * Allow ordering of the games
-* Unit testing JS
-* Complete set of keybindings
+* Complete set of keybindings (will require some sort of buffer to support multiple keypresses)
 * Style game page
 * Better gradient of games
 * List keybindings on RHS of game page
 
-## MIT License
 
+## MIT License
 
 ```
 Copyright (c) 2015 Josh Cheek
