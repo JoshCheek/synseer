@@ -28,6 +28,7 @@ A student goes through the pre-alpha version.
 * Style game page
 * Better gradient of games
 * List keybindings on RHS of game page
+* Fix bug where you get dinged for pressing modifier keys
 
 
 ## MIT License
