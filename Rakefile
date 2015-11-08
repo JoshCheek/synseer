@@ -52,4 +52,4 @@ end
 
 # =====  Running  =====
 desc 'Run the server'
-task(server: :build) { sh 'bundle', 'exec', 'rackup', 'config.ru' }
+task(server: :build) { sh 'bundle', 'exec', 'rackup', 'config.ru', '--port', ENV.fetch('PORT', '9293') }
