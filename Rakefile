@@ -1,7 +1,7 @@
 $LOAD_PATH.unshift File.expand_path('rb', __dir__)
 task default: :test
 
-# =====  Tests  =====
+# =====  Scripts  =====
 desc 'Run all tests'
 task test: ['test:ruby', 'test:js', 'test:integration'] # ordered by how long they'll probably take
 
@@ -17,10 +17,8 @@ namespace :test do
 end
 
 
-# =====  Running  =====
 desc 'Run the server'
-task(:server) { sh 'bundle', 'exec', 'rackup', 'config.ru', '--port', ENV.fetch('PORT', '9293') }
-task server: :build if ENV['RACK_ENV'] != 'production'
+task(:server: :build) { sh 'bundle', 'exec', 'rackup', 'config.ru', '--port', ENV.fetch('PORT', '9293') }
 
 
 # =====  Build / Compile  =====
