@@ -1,4 +1,4 @@
-$LOAD_PATH.unshift File.expand_path('lib-rb', __dir__)
+$LOAD_PATH.unshift File.expand_path('rb', __dir__)
 task default: :test
 
 # =====  Tests  =====
@@ -19,26 +19,36 @@ end
 
 # =====  Build / Compile  =====
 desc 'Asset compilation'
-task build: ['build:css', 'build:js']
+task build: ['public/js/synseer.js', 'public/css/main.css', 'public/css/reset.css', 'tmp/node_types']
 
-namespace :build do
-  in_css_dir = ['-I', 'public/css']
-  css_files  = ['public/css/synseer/main.scss:public/css/synseer/main.css']
+directory 'tmp'
+directory 'public'
+directory 'public/js' => 'public'
+directory 'public/css' => 'public'
+file 'js/synseer/index.js'   => [ 'js/synseer/default_keymap.js',
+                                  'js/synseer/game.js',
+                                  'js/synseer/stats_view.js',
+                                  'js/synseer/traverse_ast.js'
+                                ]
+file 'public/js/synseer.js'  => 'js/synseer/index.js'
+file 'public/css/reset.css'  => 'css/reset.css'
+file 'public/css/main.css'   => 'css/synseer/main.scss'
+file 'css/synseer/main.scss' => 'css/synseer/palette.scss'
 
-  desc 'Continually build the files'
-  task(:continually) { sh 'scss', *in_css_dir, '--watch', *css_files }
 
-  desc 'Compile sass into css'
-  task(:css) { sh 'scss', *in_css_dir, '--update', *css_files }
+file 'public/css/main.css' => 'public/css' do
+  sh 'scss', '-I', 'css', '--update', 'css/synseer/main.scss:public/css/synseer/main.css'
+end
 
-  desc 'Compile JavaScript'
-  task :js do
-    mkdir_p 'public/js'
-    sh 'browserify', '--transform', 'babelify',
-                     '--outfile',   'public/js/synseer.js',
-                     '--require',   './src-js/synseer/index.js:synseer',
-                     *FileList['src-js/**/*.js']
-  end
+file 'public/css/reset.css' => 'public/css' do
+  cp 'css/reset.css', 'public/css/reset.css'
+end
+
+file 'public/js/synseer.js' => 'public/js' do
+  sh 'browserify', '--transform', 'babelify',
+                   '--outfile',   'public/js/synseer.js',
+                   '--require',   './js/synseer/index.js:synseer',
+                   *FileList['js/**/*.js']
 end
 
 file 'tmp/node_types' do
@@ -52,4 +62,5 @@ end
 
 # =====  Running  =====
 desc 'Run the server'
-task(server: :build) { sh 'bundle', 'exec', 'rackup', 'config.ru', '--port', ENV.fetch('PORT', '9293') }
+task(:server) { sh 'bundle', 'exec', 'rackup', 'config.ru', '--port', ENV.fetch('PORT', '9293') }
+task server: :build if ENV['RACK_ENV'] != 'production'
