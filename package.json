@@ -6,7 +6,7 @@
     "exec": "exec",
     "env": "env"
   },
-  "devDependencies": {
+  "dependencies": {
     "babel": "^5.0",
     "babelify": "^7.2.0",
     "jshint": "^2.8.0",
