@@ -7,8 +7,6 @@
    <script src="http://codemirror.net/mode/ruby/ruby.js"></script>
    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
 
-   <script src="/js/synseer.js"></script>
-
    <style>
      body, html, .content, .CodeMirror {
        margin:  0;
@@ -34,12 +32,19 @@
       <div class="correct"></div>
       <div class="incorrect"></div>
     </div>
+
+    <div id="stats-react">
+    </div>
+
     <textarea class="code"><%= @game.fetch(:body) %></textarea>
   </div>
+
+  <script src="/js/synseer.js"></script>
 
   <script>
     window.game = (function() {
       'use strict';
+
       var Synseer = require('synseer');
 
       var game = new Synseer.Game({

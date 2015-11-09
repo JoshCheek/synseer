@@ -32,7 +32,8 @@ file 'css/synseer/main.scss' => [ 'css/synseer/palette.scss' ]
 file 'js/synseer/index.js'   => [ 'js/synseer/default_keymap.js',
                                   'js/synseer/game.js',
                                   'js/synseer/stats_view.js',
-                                  'js/synseer/traverse_ast.js'
+                                  'js/synseer/traverse_ast.js',
+                                  'js/synseer/components/stats.js',
                                 ]
 
 CLOBBER.include 'public'
