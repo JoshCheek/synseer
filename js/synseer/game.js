@@ -5,7 +5,6 @@ var $           = require("jquery");
 var Game = function(attrs) {
   var game         = this;
   this._traverse   = new TraverseAst(attrs.ast)
-  this._statsView  = attrs.statsView;
   this._codeMirror = attrs.codeMirror;
   this._keyMap     = attrs.keyMap;
   this._onFinished = attrs.onFinished;
@@ -14,7 +13,6 @@ var Game = function(attrs) {
 
 Game.prototype.init = function() {
   this._initCodeMirror();
-  this._statsView.init();
 }
 
 Game.prototype.start = function(getTime, setInterval) {
@@ -29,7 +27,7 @@ Game.prototype.start = function(getTime, setInterval) {
   this._timerIntervalId = setInterval(function() {
     var milliseconds = getTime() - startTime;
     var seconds      = parseInt(milliseconds / 1000);
-    game._statsView.updateDuration(seconds);
+    $(window).trigger('synseerDuration', {seconds: seconds});
   }, 1000);
 }
 
@@ -37,6 +35,7 @@ Game.prototype.finish = function() {
   this._isFinished = true;
   window.clearInterval(this._timerIntervalId); // TOOD modifies global state
   this._onFinished();
+  // FIXME
   jQuery.post(window.location.pathname, {"game": this._statsView.data() }); // TODO more global deps
 }
 
@@ -55,7 +54,6 @@ Game.prototype.pressKey = function(key) {
   if(selectedType == type) {
     // emit guess event
     $(window).trigger('synseerGuess', {result: 'correct'});
-    this._statsView.incrementCorrect();
     this._currentElement.clear();
     this._traverse = this._traverse.successor();
     if(this._traverse) {
@@ -70,7 +68,6 @@ Game.prototype.pressKey = function(key) {
     }
   } else {
     $(window).trigger('synseerGuess', {result: 'incorrect'});
-    this._statsView.incrementIncorrect();
   }
 }
 

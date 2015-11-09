@@ -31,7 +31,6 @@ task build: ['public/js/synseer.js', 'public/css/main.css', 'public/css/reset.cs
 file 'css/synseer/main.scss' => [ 'css/synseer/palette.scss' ]
 file 'js/synseer/index.js'   => [ 'js/synseer/default_keymap.js',
                                   'js/synseer/game.js',
-                                  'js/synseer/stats_view.js',
                                   'js/synseer/traverse_ast.js',
                                   'js/synseer/components/stats.js',
                                 ]

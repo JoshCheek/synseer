@@ -27,13 +27,7 @@
 
 <body>
   <div class="content">
-    <div class="stats">
-      <div class="time"></div>
-      <div class="correct"></div>
-      <div class="incorrect"></div>
-    </div>
-
-    <div id="stats-react">
+    <div id="stats">
     </div>
 
     <textarea class="code"><%= @game.fetch(:body) %></textarea>
@@ -51,7 +45,7 @@
 
       ReactDOM.render(
         React.createElement(Synseer.Stats, null),
-        document.getElementById('stats-react')
+        document.getElementById('stats')
       );
 
       var game = new Synseer.Game({
@@ -59,7 +53,6 @@
                       document.getElementsByTagName('textarea')[0],
                       {lineNumbers: true, theme: 'solarized dark', autofocus: true}
                     ),
-        statsView:  new Synseer.StatsView(document.getElementsByClassName('stats')[0]),
         ast:        <%= @game.fetch :json_ast %>,
         keyMap:     Synseer.DefaultKeymap,
         onFinished: function() {
