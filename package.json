@@ -8,11 +8,13 @@
   },
   "dependencies": {
     "babel": "^5.0",
+    "babel-preset-react": "^6.1.2",
     "babelify": "^7.2.0",
+    "browserify": "^4.1.2",
     "jshint": "^2.8.0",
     "mocha": "^2.3",
-    "browserify": "^4.1.2"
+    "react": "^0.14.2",
+    "react-dom": "^0.14.2"
   },
-  "files": [
-  ]
+  "files": []
 }

@@ -1,4 +1,6 @@
 $LOAD_PATH.unshift File.expand_path('rb', __dir__)
+
+desc 'Default: Run all tests'
 task default: :test
 
 # =====  Scripts  =====
@@ -43,7 +45,9 @@ file('public/css/main.css'  => 'public/css') { sh 'scss', '--sourcemap=none', '-
 
 directory 'public/js'
 file 'public/js/synseer.js' => ['js/synseer/index.js', 'public/js'] do
-  sh 'browserify', '--transform', 'babelify',
+  sh 'browserify', '--transform', '[',
+                     'babelify', '--presets', '[', 'react', ']',
+                   ']',
                    '--outfile',   'public/js/synseer.js',
                    '--require',   './js/synseer/index.js:synseer',
                    *FileList['js/**/*.js']
