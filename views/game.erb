@@ -45,7 +45,14 @@
     window.game = (function() {
       'use strict';
 
-      var Synseer = require('synseer');
+      var React    = require('react');
+      var ReactDOM = require('react-dom');
+      var Synseer  = require('synseer');
+
+      ReactDOM.render(
+        React.createElement(Synseer.Stats, null),
+        document.getElementById('stats-react')
+      );
 
       var game = new Synseer.Game({
         codeMirror: CodeMirror.fromTextArea(

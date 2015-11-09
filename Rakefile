@@ -51,6 +51,8 @@ file 'public/js/synseer.js' => ['js/synseer/index.js', 'public/js'] do
                    ']',
                    '--outfile',   'public/js/synseer.js',
                    '--require',   './js/synseer/index.js:synseer',
+                   '--require',   'react',
+                   '--require',   'react-dom',
                    *FileList['js/**/*.js']
 end
 

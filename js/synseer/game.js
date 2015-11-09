@@ -1,5 +1,7 @@
 'use strict';
 var TraverseAst = require("./traverse_ast");
+var $           = require("jquery");
+
 var Game = function(attrs) {
   var game         = this;
   this._traverse   = new TraverseAst(attrs.ast)
@@ -51,6 +53,8 @@ Game.prototype.pressKey = function(key) {
   var selectedType = this._keyMap[key];
   var type         = this._traverse.ast.type
   if(selectedType == type) {
+    // emit guess event
+    $(window).trigger('synseerGuess', {result: 'correct'});
     this._statsView.incrementCorrect();
     this._currentElement.clear();
     this._traverse = this._traverse.successor();
@@ -65,6 +69,7 @@ Game.prototype.pressKey = function(key) {
       this.finish();
     }
   } else {
+    $(window).trigger('synseerGuess', {result: 'incorrect'});
     this._statsView.incrementIncorrect();
   }
 }
