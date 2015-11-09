@@ -34,7 +34,7 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
     expect(line1.text).to eq '1 + 2'
 
     # After 1 second, my time has increased from 0 to 1
-    time = page.find('.stats .time')
+    time = page.find('#stats .time')
     expect(time.text).to eq '0:00'
     sleep 1
     expect(time.text).to eq '0:01'
@@ -45,7 +45,7 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
 
     # I press "m" for "send" (method), and my "correct" count increases from 0 to 1
     browser = page.find('html').native
-    correct = page.find '.stats .correct'
+    correct = page.find '#stats .correct'
     expect(correct.text).to eq '0'
     browser.send_keys("m")
     expect(correct.text).to eq '1'
@@ -55,7 +55,7 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
     expect(current_element).to eq '1'
 
     # I press "m" for "send" (method), and my "correct" count stays at 1 while my "incorrect" count increases from 0 to 1
-    incorrect = page.find '.stats .incorrect'
+    incorrect = page.find '#stats .incorrect'
     expect(correct.text).to eq '1'
     expect(incorrect.text).to eq '0'
     browser.send_keys("m")
@@ -87,7 +87,7 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
     expect(page).to have_css '.summary'
 
     # After 1 second, my time has not increased
-    time = page.find('.stats .time')
+    time = page.find('#stats .time')
     sleep 1
     expect(time.text).to eq '0:01'
 

@@ -39,11 +39,10 @@
     window.game = (function() {
       'use strict';
 
-      var React    = require('react');
-      var ReactDOM = require('react-dom');
-      var Synseer  = require('synseer');
-
-      ReactDOM.render(
+      var React     = require('react');
+      var ReactDOM  = require('react-dom');
+      var Synseer   = require('synseer');
+      var component = ReactDOM.render(
         React.createElement(Synseer.Stats, null),
         document.getElementById('stats')
       );
@@ -61,6 +60,7 @@
                       var node = document.createTextNode("This is new.");
                       domFinished.appendChild(node);
                       document.getElementsByTagName('body')[0].appendChild(domFinished);
+                      jQuery.post(window.location.pathname, {"game": component.state}); // TODO more global deps
                     }
       });
 

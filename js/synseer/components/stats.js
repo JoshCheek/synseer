@@ -7,7 +7,7 @@ var Stats = React.createClass({
   componentDidMount: function() {
     var $window = $(window);
 
-    $window.on('synseerGuess', (event, data) => {
+    $window.on('synseerGuess', function(event, data) {
       if(data.result === 'correct') {
         this.setState({correct: this.state.correct+1});
       } else if (data.result === 'incorrect') {
@@ -16,11 +16,11 @@ var Stats = React.createClass({
         console.log(data);
         throw "Got an unexpected synseerGuess result, check the log";
       }
-    });
+    }.bind(this));
 
-    $window.on('synseerDuration', (event, data) => {
+    $window.on('synseerDuration', function(event, data) {
       this.setState({duration: data.seconds});
-    });
+    }.bind(this));
   },
 
   formattedDuration: function() {

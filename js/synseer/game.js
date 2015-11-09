@@ -35,8 +35,6 @@ Game.prototype.finish = function() {
   this._isFinished = true;
   window.clearInterval(this._timerIntervalId); // TOOD modifies global state
   this._onFinished();
-  // FIXME
-  jQuery.post(window.location.pathname, {"game": this._statsView.data() }); // TODO more global deps
 }
 
 Game.prototype.isFinished = function() {
