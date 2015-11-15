@@ -57,5 +57,10 @@ module Synseer
                     'duration'  => params[:game][:duration].to_i
       ''
     end
+
+    get '/js/:filename' do
+      content_type :js
+      File.read (self.class.root_dir / 'js' / params[:filename])
+    end
   end
 end
