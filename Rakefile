@@ -27,13 +27,15 @@ task(server: :build) { sh 'bundle', 'exec', 'rackup', 'config.ru', '--port', ENV
 require 'rake/clean'
 desc 'Asset compilation'
 task build: ['public/js/synseer.js', 'public/css/main.css', 'public/css/reset.css', 'tmp/node_types']
-
 file 'css/synseer/main.scss' => [ 'css/synseer/palette.scss' ]
-file 'js/synseer/index.js'   => [ 'js/synseer/default_keymap.js',
-                                  'js/synseer/game.js',
-                                  'js/synseer/traverse_ast.js',
-                                  'js/synseer/components/stats.js',
-                                ]
+
+index_files = [
+  'js/synseer/default_keymap.js',
+  'js/synseer/game.js',
+  'js/synseer/traverse_ast.js',
+  'js/synseer/components/stats.js',
+]
+file 'js/synseer/index.js' => index_files
 
 CLOBBER.include 'public'
 CLEAN.include '.sass-cache'
@@ -52,7 +54,8 @@ file 'public/js/synseer.js' => ['js/synseer/index.js', 'public/js'] do
                    '--require',   './js/synseer/index.js:synseer',
                    '--require',   'react',
                    '--require',   'react-dom',
-                   *FileList['js/**/*.js']
+                   'js/synseer/index.js',
+                   *index_files
 end
 
 CLEAN.include 'tmp'
@@ -64,3 +67,15 @@ file 'tmp/node_types' do
   mkdir_p 'tmp'
   File.write 'tmp/node_types', node_types.map { |type| "#{type}\n" }.join
 end
+
+# desc 'show the syntax types for the various files'
+# task :show do
+#   require 'synseer/parse'
+#   codes = FileList['games/*'].map { |f| [f, File.read(f)] }
+#                              .to_h
+#   codes.each do |filename, code|
+#     puts "\e[32m#{File.basename filename}\e[0m"
+#     puts Synseer::Parse.nodes_in(code).inspect
+#     puts
+#   end
+# end

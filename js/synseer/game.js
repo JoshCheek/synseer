@@ -49,6 +49,7 @@ Game.prototype.pressKey = function(key) {
   }
   var selectedType = this._keyMap[key];
   var type         = this._traverse.ast.type
+  console.log({expected: type, actual: selectedType, key: key, keymap: this._keyMap});
   if(selectedType == type) {
     // emit guess event
     $(window).trigger('synseerGuess', {result: 'correct'});

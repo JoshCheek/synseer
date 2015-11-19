@@ -11,5 +11,15 @@ module.exports = {
   "Shift-O": "op_asgn",
   "S":       "str",
   "W":       "while",
+  "G":       "arg",
+  "Shift-G": "args",
+  "Shift-B": "block",
+  "C":       "class",
+  "Shift-C": "const",
+  "Shift-F": "false",
+  "V":       "gvar",
+  "H":       "hash",
+  "P":       "pair",
+  "Shift-S": "self",
+  "Y":       "sym",
 }
-
