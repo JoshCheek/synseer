@@ -1,4 +1,4 @@
-import {map} from '../js/synseer/default_keymap';
+const map = require('../js/synseer/default_keymap');
 import assert from 'assert'; // https://github.com/joyent/node/blob/9010dd26529cea60b7ee55ddae12688f81a09fcb/lib/assert.js
 import {readFile} from 'fs';
 
