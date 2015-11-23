@@ -89,18 +89,18 @@ describe('map', ()=>{
 
   xit('clears the input when escape is pressed', ()=> {
     var mapper = new Mapper(map);
-    assert.equal(mapper.keyPressed("a"),      ["and", "arg", "args", "array"]);
-    assert.equal(mapper.keyPressed("r"),      ["arg", "args", "array"]);
+    assertKeyMatch(mapper, "a", ["and", "arg", "args", "array"]);
+    assertKeyMatch(mapper, "r", ["arg", "args", "array"]);
 
     var values = [];
     for (var key in map) { values.push(map[key]); }
-    assert.equal(mapper.keyPressed("escape"), values);
+    assertKeyMatch(mapper, "escape", values);
   });
 
   xit('ignores non-alphanumeric keypresses', () => {
     var mapper = new Mapper(map);
-    assert.equal(mapper.keyPressed("a"), ["and", "arg", "args", "array"]);
-    assert.equal(mapper.keyPressed("1"), ["and", "arg", "args", "array"]);
+    assertKeyMatch("a", ["and", "arg", "args", "array"]);
+    assertKeyMatch("1", ["and", "arg", "args", "array"]);
   });
 
   it('has a keybinding for each type of syntax that we use', (done)=>{
