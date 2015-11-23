@@ -1,7 +1,8 @@
-const map = require('../js/synseer/default_keymap');
+const map    = require('../js/synseer/default_keymap');
 const Mapper = require('../js/synseer/mapper');
 import assert from 'assert'; // https://github.com/joyent/node/blob/9010dd26529cea60b7ee55ddae12688f81a09fcb/lib/assert.js
 import {readFile} from 'fs';
+import {inspect} from 'util';
 
 describe('map', ()=>{
   it('maps each of the keys', ()=>{
@@ -64,24 +65,26 @@ describe('map', ()=>{
     assert.equal("yield"      , map.yield);
   });
 
-function assertKeyMatch(mapper, key, expected) {
-  // length is the same and when I iterate over in order, they both have the same value for each indexOf
-  // otherwise throw an error or something
-  // assert.fail("some explanation")
-}
+  function assertKeyMatch(mapper, key, expected) {
+    var actual = mapper.keyPressed(key);
+    assert.equal(actual.length, expected.length, `Expected ${inspect(actual)} to be like ${inspect(expected)}`);
+    for(var i = expected.length; i<expected.length; ++i) {
+      assert.equal(actual[i], expected[i]);
+    }
+  }
 
   it('remembers my input and gives me back a list of potential matches', ()=> {
     var mapper = new Mapper(map);
     assertKeyMatch(mapper, "a", ["and", "arg", "args", "array"]);
-    assert.equal(mapper.keyPressed("r"), ["arg", "args", "array"]);
-    assert.equal(mapper.keyPressed("r"), ["array"]);
+    assertKeyMatch(mapper, "r", ["arg", "args", "array"]);
+    assertKeyMatch(mapper, "r", ["array"]);
   });
 
   xit('delete removes a character from the end of the input', ()=> {
     var mapper = new Mapper(map);
-    assert.equal(mapper.keyPressed("a"),      ["and", "arg", "args", "array"]);
-    assert.equal(mapper.keyPressed("r"),      ["arg", "args", "array"]);
-    assert.equal(mapper.keyPressed("delete"), ["and", "arg", "args", "array"]);
+    assertKeyMatch(mapper, "a",      ["and", "arg", "args", "array"]);
+    assertKeyMatch(mapper, "r",      ["arg", "args", "array"]);
+    assertKeyMatch(mapper, "delete", ["and", "arg", "args", "array"]);
   });
 
   xit('clears the input when escape is pressed', ()=> {
@@ -100,7 +103,7 @@ function assertKeyMatch(mapper, key, expected) {
     assert.equal(mapper.keyPressed("1"), ["and", "arg", "args", "array"]);
   });
 
-  xit('has a keybinding for each type of syntax that we use', (done)=>{
+  it('has a keybinding for each type of syntax that we use', (done)=>{
     readFile('tmp/node_types', 'utf8', (err, data) => {
       if(err) assert.fail(err);
       var types = data.split("\n");
