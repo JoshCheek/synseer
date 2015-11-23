@@ -59,4 +59,3 @@ module.exports = {
   "while":      "while",
   "yield":      "yield"
 }
-

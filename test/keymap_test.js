@@ -1,4 +1,5 @@
 const map = require('../js/synseer/default_keymap');
+const Mapper = require('../js/synseer/mapper');
 import assert from 'assert'; // https://github.com/joyent/node/blob/9010dd26529cea60b7ee55ddae12688f81a09fcb/lib/assert.js
 import {readFile} from 'fs';
 
@@ -63,9 +64,15 @@ describe('map', ()=>{
     assert.equal("yield"      , map.yield);
   });
 
-  xit('remembers my input and gives me back a list of potential matches', ()=> {
+function assertKeyMatch(mapper, key, expected) {
+  // length is the same and when I iterate over in order, they both have the same value for each indexOf
+  // otherwise throw an error or something
+  // assert.fail("some explanation")
+}
+
+  it('remembers my input and gives me back a list of potential matches', ()=> {
     var mapper = new Mapper(map);
-    assert.equal(mapper.keyPressed("a"), ["and", "arg", "args", "array"]);
+    assertKeyMatch(mapper, "a", ["and", "arg", "args", "array"]);
     assert.equal(mapper.keyPressed("r"), ["arg", "args", "array"]);
     assert.equal(mapper.keyPressed("r"), ["array"]);
   });
