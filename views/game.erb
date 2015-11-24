@@ -3,9 +3,8 @@
 <head>
    <link rel=stylesheet href="http://codemirror.net/lib/codemirror.css">
    <link rel=stylesheet href="http://codemirror.net/theme/solarized.css">
-   <script src="/js/codemirror.js"></script>
-   <script src="/js/codemirror-ruby.js"></script>
-   <script src="/js/jquery-2.1.4-min.js"></script>
+   <script src="/js/dependencies.js"></script>
+   <script src="public/js/synseer.js"></script>
 
    <style>
      body, html, .content, .CodeMirror {
@@ -37,11 +36,43 @@
 
   <script>
     window.game = (function() {
+      // Make the component on .game
+      // Pass the game:
+      //   dispatcher
+      //   codemirror
+      //   ast
+      //   keymap
+      //   onFinished
+      // call start on the game
+      //   it dispatches currentElement with data
+      //     { type:       ast.type,
+      //       begin_line: ast.begin_line,
+      //       begin_col:  ast.begin_col,
+      //       end_line:   ast.end_line,
+      //       end_col:    ast.end_col,
+      //     }
+      // the component for codemirror listens for currentElement and sets
+      //   if(this._currentElement) { _currentElement.clear() }
+      //   this._currentElement = this._codeMirror.markText(
+      //     {line: data.begin_line, ch: data.begin_col},
+      //     {line: data.end_line,   ch: data.end_col},
+      //     {className: "currentElement"}
+      //   );
+      // the component for codemirror registers for key events
+      //   on keypress event, it dispatches
+      //   keypressed
+      // the game listens for keypressed
+      //   passes it into the keymap
+      //   gets back the array of results
+      //   if the array contains one element
+      //     and the element is correct
+      //       it emits correctGuess
+      //       it emits currentElement
+      //       it advances to the next ast
+      //       if there is no next ast
+      //         it emits the finished event
       'use strict';
 
-      var React     = require('react');
-      var ReactDOM  = require('react-dom');
-      var Synseer   = require('synseer');
       var component = ReactDOM.render(
         React.createElement(Synseer.Stats, null),
         document.getElementById('stats')
@@ -60,14 +91,38 @@
                       var node = document.createTextNode("This is new.");
                       domFinished.appendChild(node);
                       document.getElementsByTagName('body')[0].appendChild(domFinished);
-                      jQuery.post(window.location.pathname, {"game": component.state}); // TODO more global deps
+                      jQuery.post(window.location.pathname, {"game": component.state});
                     }
       });
 
       game.init();
       return game;
-    })();
 
+      // load the data from localstorage
+      var appState = {games: []};
+      if(window.location.protocol !== 'file:') {
+        if(localStorage.appState === 'undefined')
+          localStorage.appState = appState;
+        else
+          appState = localStorage.appState;
+      }
+
+      // some fake data
+      appState.games.push({
+        name: "game 1",
+        correct: 3,
+        incorrect: 2,
+        duration: 61});
+
+      var integration = require("browser_integration");
+      integration.game(
+        document.getElementById('stats')
+        document.getElementById('game'),
+        appState.games[0]
+      );
+
+      document.getElementsByClassName('playGame')[0].focus();
+    })();
     game.start(function() { return new Date() }, setInterval);
   </script>
 </div>
