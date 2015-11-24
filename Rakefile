@@ -1,6 +1,4 @@
 $LOAD_PATH.unshift File.expand_path('rb', __dir__)
-
-desc 'Default: Run all tests'
 task default: :test
 
 # =====  Scripts  =====
@@ -25,57 +23,29 @@ task(server: :build) { sh 'bundle', 'exec', 'rackup', 'config.ru', '--port', ENV
 
 # =====  Build / Compile  =====
 require 'rake/clean'
-CLOBBER.include 'public'
-directory 'public'
-directory 'public/js'  => 'public'
-directory 'public/css' => 'public'
-
 desc 'Asset compilation'
-task build: ['public/js/react-bundle.js', 'public/js/synseer.js', 'public/css/main.css', 'public/css/reset.css', 'tmp/node_types']
+task build: ['public/js/synseer.js', 'public/css/main.css', 'public/css/reset.css', 'tmp/node_types']
 file 'css/synseer/main.scss' => [ 'css/synseer/palette.scss' ]
+file 'js/synseer/index.js'   => [ 'js/synseer/default_keymap.js',
+                                  'js/synseer/game.js',
+                                  'js/synseer/stats_view.js',
+                                  'js/synseer/traverse_ast.js'
+                                ]
 
-index_files = [
-  'js/synseer/default_keymap.js',
-  'js/synseer/game.js',
-  'js/synseer/traverse_ast.js',
-  'js/synseer/components/stats.js',
-]
-file 'js/synseer/index.js' => index_files
-
+CLOBBER.include 'public'
 CLEAN.include '.sass-cache'
+directory 'public/css'
 file('public/css/reset.css' => 'css/reset.css')
 file('public/css/main.css'  => 'css/synseer/main.scss')
 file('public/css/reset.css' => 'public/css') { cp 'css/reset.css', 'public/css/reset.css' }
 file('public/css/main.css'  => 'public/css') { sh 'scss', '--sourcemap=none', '-I', 'css', '--update', 'css/synseer/main.scss:public/css/synseer/main.css' }
 
 directory 'public/js'
-file 'public/js/react-bundle.js' => ['public/js'] do
-  sh 'browserify', '--transform', '[',
-                     'babelify', '--presets', '[', 'react', ']',
-                   ']',
-                   '--outfile', 'public/js/dependencies.js',
-                   '--require', 'react',
-                   '--require', 'react-dom',
-                   '--require', './js/codemirror.js:codemirror',
-                   '--require', './js/codemirror-ruby.js:codemirror-ruby',
-                   '--require', './js/jquery-2.1.4-min.js:jquery'
-end
-
-file 'public/js/synseer.js' do
-  sh 'browserify', '--transform', '[',
-                     'babelify', '--presets', '[', 'react', ']',
-                   ']',
-                   '--outfile', 'public/js/synseer.js',
-                   '--require', './js/synseer/index.js:synseer',
-                   '--external', 'react',
-                   '--external', 'react-dom',
-                   'js/synseer/index.js',
-                   *index_files
-end
-
-file "public/js/jquery-2.1.4-min.js" => 'public/js' do
-  cp 'public/js/jquery-2.1.4-min.js',
-     'js/jquery-2.1.4-min.js'
+file 'public/js/synseer.js' => ['js/synseer/index.js', 'public/js'] do
+  sh 'browserify', '--transform', 'babelify',
+                   '--outfile',   'public/js/synseer.js',
+                   '--require',   './js/synseer/index.js:synseer',
+                   *FileList['js/**/*.js']
 end
 
 CLEAN.include 'tmp'
