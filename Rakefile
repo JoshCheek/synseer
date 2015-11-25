@@ -24,8 +24,20 @@ task(server: :build) { sh 'bundle', 'exec', 'rackup', 'config.ru', '--port', ENV
 # =====  Build / Compile  =====
 require 'rake/clean'
 desc 'Asset compilation'
-task build: ['public/js/synseer.js', 'public/css/main.css', 'public/css/reset.css', 'tmp/node_types']
-file 'css/synseer/main.scss' => [ 'css/synseer/palette.scss' ]
+task build: [
+  # css
+  'public/css/main.css',
+  'public/css/reset.css',
+
+  # js
+  'public/js/synseer.js',
+  'public/js/jquery.js',
+
+  # other generated files
+  'tmp/node_types',
+  'public/codemirror',
+]
+
 file 'js/synseer/index.js'   => [ 'js/synseer/default_keymap.js',
                                   'js/synseer/game.js',
                                   'js/synseer/stats_view.js',
@@ -35,17 +47,29 @@ file 'js/synseer/index.js'   => [ 'js/synseer/default_keymap.js',
 CLOBBER.include 'public'
 CLEAN.include '.sass-cache'
 directory 'public/css'
-file('public/css/reset.css' => 'css/reset.css')
-file('public/css/main.css'  => 'css/synseer/main.scss')
-file('public/css/reset.css' => 'public/css') { cp 'css/reset.css', 'public/css/reset.css' }
-file('public/css/main.css'  => 'public/css') { sh 'scss', '--sourcemap=none', '-I', 'css', '--update', 'css/synseer/main.scss:public/css/synseer/main.css' }
-
 directory 'public/js'
+
+file 'public/css/reset.css' => 'css/reset.css' do
+  cp 'css/reset.css', 'public/css/reset.css'
+end
+
+file 'public/css/main.css'  => ['css/synseer/main.scss', 'css/synseer/palette.scss' ] do
+  sh 'scss', '--sourcemap=none', '-I', 'css', '--update', 'css/synseer/main.scss:public/css/synseer/main.css'
+end
+
+directory 'public/codemirror' do
+  cp_r 'node_modules/codemirror/', 'public/codemirror/'
+end
+
 file 'public/js/synseer.js' => ['js/synseer/index.js', 'public/js'] do
   sh 'browserify', '--transform', 'babelify',
                    '--outfile',   'public/js/synseer.js',
                    '--require',   './js/synseer/index.js:synseer',
                    *FileList['js/**/*.js']
+end
+
+file 'public/js/jquery.js' do
+  cp 'js/jquery-2.1.4-min.js', 'public/js/jquery.js'
 end
 
 CLEAN.include 'tmp'
