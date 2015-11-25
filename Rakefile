@@ -26,7 +26,7 @@ require 'rake/clean'
 desc 'Asset compilation'
 task build: [
   # css
-  'public/css/main.css',
+  'public/css/synseer/main.css',
   'public/css/reset.css',
 
   # js
@@ -53,7 +53,7 @@ file 'public/css/reset.css' => 'css/reset.css' do
   cp 'css/reset.css', 'public/css/reset.css'
 end
 
-file 'public/css/main.css'  => ['css/synseer/main.scss', 'css/synseer/palette.scss' ] do
+file 'public/css/synseer/main.css'  => ['css/synseer/main.scss', 'css/synseer/palette.scss' ] do
   sh 'scss', '--sourcemap=none', '-I', 'css', '--update', 'css/synseer/main.scss:public/css/synseer/main.css'
 end
 
