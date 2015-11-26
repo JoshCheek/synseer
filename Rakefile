@@ -38,11 +38,12 @@ task build: [
   'public/codemirror',
 ]
 
-file 'js/synseer/index.js'   => [ 'js/synseer/default_keymap.js',
-                                  'js/synseer/game.js',
-                                  'js/synseer/stats_view.js',
-                                  'js/synseer/traverse_ast.js'
-                                ]
+file('js/synseer/index.js' => [
+  'js/synseer/default_keymap.js',
+  'js/synseer/game.js',
+  'js/synseer/stats_view.js',
+  'js/synseer/traverse_ast.js'
+]) { touch 'js/synseer/index.js' }
 
 CLOBBER.include 'public'
 CLEAN.include '.sass-cache'
@@ -64,8 +65,7 @@ end
 file 'public/js/synseer.js' => ['js/synseer/index.js', 'public/js'] do
   sh 'browserify', '--transform', 'babelify',
                    '--outfile',   'public/js/synseer.js',
-                   '--require',   './js/synseer/index.js:synseer',
-                   *FileList['js/**/*.js']
+                   '--require',   './js/synseer/index.js:synseer'
 end
 
 file 'public/js/jquery.js' do
