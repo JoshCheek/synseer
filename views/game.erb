@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
+   <link rel=stylesheet href="/css/reset.css">
+   <link rel=stylesheet href="/css/synseer/main.css">
    <link rel=stylesheet href="/codemirror/lib/codemirror.css">
    <link rel=stylesheet href="/codemirror/theme/solarized.css">
 
@@ -29,12 +31,16 @@
 
 <body>
   <div class="content">
-    <div class="stats">
-      <div class="time"></div>
-      <div class="correct"></div>
-      <div class="incorrect"></div>
+    <div class="icing">
+      <div class="stats">
+        <div class="time"></div>
+        <div class="correct"></div>
+        <div class="incorrect"></div>
+      </div>
     </div>
-    <textarea class="code"><%= @game.fetch(:body) %></textarea>
+    <div class="cake game-board">
+      <textarea class="not-code"><%= @game.fetch(:body) %></textarea>
+    </div>
   </div>
 
   <script>

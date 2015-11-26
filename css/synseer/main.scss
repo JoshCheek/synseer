@@ -4,18 +4,31 @@ body {
   font-family: sans-serif;
 }
 
-.total_score {
+.content {
+  background-color: lighten($color-primary-0, 40%);
+  width:   100%;
+  height:  100%;
+  display: table;
+}
+
+.icing {
   background-color: $color-secondary-2-0;
   color:            $color-primary-4;
   padding:          1em;
   border-bottom:    0.8em solid $color-primary-3;
+  width:            100%;
+}
+
+.cake {
+  background-color: lighten($color-primary-0, 40%);
+  width:            100%;
+  display:          table-row;
+  height:           100%;
 }
 
 .available_games {
   padding:          1em;
   padding-top:      2em;
-  background-color: lighten($color-primary-0, 40%);
-
   .game {
     margin-bottom: 1em;
     padding:       0.5em;
