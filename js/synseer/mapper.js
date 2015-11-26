@@ -3,18 +3,30 @@ var Mapper = function(map) {
   this.keysPressed = [];
 }
 
-Mapper.prototype.keyPressed = function(input) {
-  this.keysPressed.push(input);
-  var inputWord = this.keysPressed.join("");
-  var matchedWords = [];
-
-  for (var key in this.map) {
-    if (key.substring(0,inputWord.length) == inputWord) {
-      // add word to the collection of matched words
-      matchedWords.push(this.map[key]);
+Mapper.prototype = {
+  keyPressed: function(input) {
+    if(input=="delete") {
+      this.keysPressed.pop();
+    } else if(input == "escape") {
+      this.keysPressed = [];
+    } else {
+      // (/a.b/).exec("axb")
+      this.keysPressed.push(input);
     }
+    var fragment = this.keysPressed.join("");
+    var matchedWords = [];
+
+    for (var keybinding in this.map) {
+      if (this.startsWith(keybinding, fragment)) {
+        matchedWords.push(this.map[keybinding]);
+      }
+    }
+    return matchedWords;
+  },
+
+  startsWith: function(string, fragment) {
+    return fragment == string.substring(0,fragment.length);
   }
-  return matchedWords;
 }
 
 module.exports = Mapper;

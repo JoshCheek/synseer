@@ -80,14 +80,14 @@ describe('map', ()=>{
     assertKeyMatch(mapper, "r", ["array"]);
   });
 
-  xit('delete removes a character from the end of the input', ()=> {
+  it('delete removes a character from the end of the input', ()=> {
     var mapper = new Mapper(map);
     assertKeyMatch(mapper, "a",      ["and", "arg", "args", "array"]);
     assertKeyMatch(mapper, "r",      ["arg", "args", "array"]);
     assertKeyMatch(mapper, "delete", ["and", "arg", "args", "array"]);
   });
 
-  xit('clears the input when escape is pressed', ()=> {
+  it('clears the input when escape is pressed', ()=> {
     var mapper = new Mapper(map);
     assertKeyMatch(mapper, "a", ["and", "arg", "args", "array"]);
     assertKeyMatch(mapper, "r", ["arg", "args", "array"]);
@@ -99,8 +99,9 @@ describe('map', ()=>{
 
   xit('ignores non-alphanumeric keypresses', () => {
     var mapper = new Mapper(map);
-    assertKeyMatch("a", ["and", "arg", "args", "array"]);
-    assertKeyMatch("1", ["and", "arg", "args", "array"]);
+    assertKeyMatch(mapper, "a", ["and", "arg", "args", "array"]);
+    // really, 1 is probably fine, it's more like "shift" that's a problem
+    assertKeyMatch(mapper, "1", ["and", "arg", "args", "array"]);
   });
 
   it('has a keybinding for each type of syntax that we use', (done)=>{
