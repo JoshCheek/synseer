@@ -1,48 +1,35 @@
 'use strict';
 
 var StatsView = function(domElement) {
-  this.domElement   = domElement;
-  this.domCorrect   = domElement.getElementsByClassName('correct')[0];
-  this.domIncorrect = domElement.getElementsByClassName('incorrect')[0];
-  this.domTime      = domElement.getElementsByClassName('time')[0];
+  this.domElement        = domElement;
+  this.domCorrect        = domElement.querySelector('.correct');
+  this.domIncorrect      = domElement.querySelector('.incorrect');
+  this.domTime           = domElement.querySelector('.time');
+  this.domGamesCompleted = domElement.querySelector('.games_completed');
 }
 
 StatsView.prototype = {
-  function init() {
-    this.updateDuration(0);
-    this._numCorrect = -1;
-    this.incrementCorrect();
-    this._numIncorrect = -1;
-    this.incrementIncorrect();
+  setGamesCompleted: function(n) {
+    this.domGamesCompleted.textContent = n;
   },
 
-  function data() {
-    return {
-      duration:  this._duration,
-      correct:   this._numCorrect,
-      incorrect: this._numIncorrect,
-    }
+  setNumCorrect: function(n) {
+    this.domCorrect.textContent = n;
   },
 
-  function updateDuration(secondsElapsed) {
-    this._duration = secondsElapsed;
+  setNumIncorrect: function(n) {
+    this.domIncorrect.textContent = n;
+  },
+
+  setDuration: function(secondsElapsed) {
     this.domTime.textContent = this.formatDuration(secondsElapsed);
   },
 
-  function formatDuration(secondsElapsed) {
+  formatDuration: function(secondsElapsed) {
+    // JS apparently has no sprintf or rjust
     var minutes = parseInt(secondsElapsed / 60);
     var seconds = secondsElapsed % 60;
-    return "" + minutes + ":" + (seconds > 9 ? parseInt(seconds / 10) : "0") + (seconds % 10); // JS apparently has no sprintf or rjust
-  },
-
-  function incrementCorrect() {
-    this._numCorrect++;
-    this.domCorrect.textContent = this._numCorrect;
-  },
-
-  function incrementIncorrect() {
-    this._numIncorrect++;
-    this.domIncorrect.textContent = this._numIncorrect;
+    return "" + minutes + ":" + (seconds > 9 ? parseInt(seconds / 10) : "0") + (seconds % 10);
   }
 }
 

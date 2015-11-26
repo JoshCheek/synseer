@@ -8,11 +8,14 @@ var Game = function(attrs) {
   this._keyMap     = attrs.keyMap;
   this._onFinished = attrs.onFinished;
   this._isFinished = false;
+  this._stats      = {numCorrect: 0, numIncorrect: 0, duration: 0};
 }
 
 Game.prototype.init = function() {
   this._initCodeMirror();
-  this._statsView.init();
+  this._statsView.setNumCorrect(0);
+  this._statsView.setNumIncorrect(0);
+  this._statsView.setDuration(0);
 }
 
 Game.prototype.start = function(getTime, setInterval) {
@@ -22,12 +25,13 @@ Game.prototype.start = function(getTime, setInterval) {
     {line: ast.end_line,   ch: ast.end_col},
     {className: "currentElement"}
   );
-  var game              = this;
-  var startTime         = getTime();
-  this._timerIntervalId = setInterval(function() {
-    var milliseconds = getTime() - startTime;
-    var seconds      = parseInt(milliseconds / 1000);
-    game._statsView.updateDuration(seconds);
+  var game               = this;
+  var startTime          = getTime();
+  this._timerIntervalId  = setInterval(function() {
+    var milliseconds     = getTime() - startTime;
+    var seconds          = parseInt(milliseconds / 1000);
+    game._stats.duration = seconds;
+    game._statsView.setDuration(seconds);
   }, 1000);
 }
 
@@ -51,7 +55,9 @@ Game.prototype.pressKey = function(key) {
   var type         = this._traverse.ast.type
   console.log({expected: type, actual: selectedType, key: key, keymap: this._keyMap});
   if(selectedType == type) {
-    this._statsView.incrementCorrect();
+    this._statsView.setNumCorrect(
+      ++this._stats.numCorrect
+    );
     this._currentElement.clear();
     this._traverse = this._traverse.successor();
     if(this._traverse) {
@@ -65,7 +71,9 @@ Game.prototype.pressKey = function(key) {
       this.finish();
     }
   } else {
-    this._statsView.incrementIncorrect();
+    this._statsView.setNumIncorrect(
+      ++this._stats.numIncorrect
+    );
   }
 }
 
