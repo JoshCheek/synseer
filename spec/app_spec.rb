@@ -16,7 +16,7 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
 
     # Since I am new, all games are scored as unattempted
     scores.each do |game_element|
-      expect(game_element.text).to eq 'unattempted'
+      expect(game_element.text.downcase).to include 'unattempted'
     end
 
     # I have completed 0 games, and have a total time of 0 seconds, 0 correct, and 0 incorrect
@@ -98,9 +98,10 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
     expect(page.current_path).to eq '/'
 
     # Now I see that all games are scored as unattempted, except "integer addition", which shows my score of 1 second, 3 correct, and 2 incorrect
-    expect(page.all('.available_games .score .time').map(&:text)).to eq ['0:01']
-    expect(page.all('.available_games .score .correct').map(&:text)).to eq ['3']
-    expect(page.all('.available_games .score .incorrect').map(&:text)).to eq ['2']
+    expect(page.all('.available_games .completed.score .status').map(&:text)).to eq ['Completed']
+    expect(page.all('.available_games .completed.score .time').map(&:text)).to eq ['0:01']
+    expect(page.all('.available_games .completed.score .correct').map(&:text)).to eq ['3']
+    expect(page.all('.available_games .completed.score .incorrect').map(&:text)).to eq ['2']
 
     # I have completed 1 game, and have a total of 1 seconds, 3 correct, and 2 incorrect
     expect(page.find '.total_score .games_completed').to have_text '1'

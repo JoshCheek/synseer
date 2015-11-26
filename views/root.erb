@@ -8,10 +8,11 @@
 <body>
 
 <div class="total_score stats">
-  <div class="games_completed"> <%= scores.total_completed %> </div>
-  <div class="correct">         <%= scores.total_correct   %> </div>
-  <div class="incorrect">       <%= scores.total_incorrect %> </div>
-  <div class="time">            <%= sprintf '%01d:%02d', scores.total_duration/60, scores.total_duration%60 %></div>
+  <div class="games_completed"></div>
+  <div class="status"></div>
+  <div class="correct"></div>
+  <div class="incorrect"></div>
+  <div class="time"></div>
 </div>
 
 <ul class="available_games">
@@ -21,6 +22,7 @@
         <%= game.fetch(:name) %>
       </a>
       <div class="score" data-id="<%= game.fetch(:id) %>">
+         <div class="status"></div>
          <div class="correct"></div>
          <div class="incorrect"></div>
          <div class="time"></div>
@@ -50,15 +52,35 @@
         }
       }
       if(game) {
+        view.setStatus("Completed");
         view.setNumCorrect(game.numCorrect);
         view.setNumIncorrect(game.numIncorrect);
         view.setDuration(game.duration);
       } else {
+        view.setStatus("Unattempted");
         view.setNumCorrect(0);
         view.setNumIncorrect(0);
         view.setDuration(0);
       }
     })
+
+    var numCorrect     = 0;
+    var numIncorrect   = 0;
+    var duration       = 0;
+    var gamesCompleted = 0;
+    for(var i=0; i<appState.games.length; ++i) {
+      var game = appState.games[i];
+      gamesCompleted++;
+      numIncorrect += game.numIncorrect;
+      numCorrect   += game.numCorrect;
+      duration     += game.duration;
+    }
+
+    var totalStatsView = new Synseer.StatsView(document.querySelector('.total_score'));
+    totalStatsView.setNumCorrect(numCorrect);
+    totalStatsView.setNumIncorrect(numIncorrect);
+    totalStatsView.setDuration(duration);
+    totalStatsView.setGamesCompleted(gamesCompleted);
   </script>
 </div>
 </body>

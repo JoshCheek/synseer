@@ -2,6 +2,7 @@
 
 var StatsView = function(domElement) {
   this.domElement        = domElement;
+  this.domStatus         = domElement.querySelector('.status');
   this.domCorrect        = domElement.querySelector('.correct');
   this.domIncorrect      = domElement.querySelector('.incorrect');
   this.domTime           = domElement.querySelector('.time');
@@ -11,6 +12,11 @@ var StatsView = function(domElement) {
 StatsView.prototype = {
   setGamesCompleted: function(n) {
     this.domGamesCompleted.textContent = n;
+  },
+
+  setStatus: function(status) {
+    this.domElement.classList.add(status.toLowerCase());
+    this.domStatus.textContent = status;
   },
 
   setNumCorrect: function(n) {
