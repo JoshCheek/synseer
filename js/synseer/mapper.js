@@ -1,16 +1,29 @@
+'use strict';
+
 var Mapper = function(map) {
   this.map = map;
   this.keysPressed = [];
 }
 
+Mapper.fromCodemirror = function(key) {
+  let match = (/^SHIFT-(.+)/).exec(key);
+  if(match) return match[1].toUpperCase();
+  return key.toLowerCase();
+}
+
 Mapper.prototype = {
+  accept: function() {
+    this.keysPressed = [];
+  },
+
   keyPressed: function(input) {
-    if(input=="delete") {
+    if(input=="backspace") {
       this.keysPressed.pop();
     } else if(input == "escape") {
       this.keysPressed = [];
+    } else if(!(/^[a-zA-Z]$/).exec(input)) {
+      // noop on meta keys
     } else {
-      // (/a.b/).exec("axb")
       this.keysPressed.push(input);
     }
     var fragment = this.keysPressed.join("");

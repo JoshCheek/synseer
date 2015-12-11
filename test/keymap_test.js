@@ -80,11 +80,11 @@ describe('map', ()=>{
     assertKeyMatch(mapper, "r", ["array"]);
   });
 
-  it('delete removes a character from the end of the input', ()=> {
+  it('backspace removes a character from the end of the input', ()=> {
     var mapper = new Mapper(map);
-    assertKeyMatch(mapper, "a",      ["and", "arg", "args", "array"]);
-    assertKeyMatch(mapper, "r",      ["arg", "args", "array"]);
-    assertKeyMatch(mapper, "delete", ["and", "arg", "args", "array"]);
+    assertKeyMatch(mapper, "a",         ["and", "arg", "args", "array"]);
+    assertKeyMatch(mapper, "r",         ["arg", "args", "array"]);
+    assertKeyMatch(mapper, "backspace", ["and", "arg", "args", "array"]);
   });
 
   it('clears the input when escape is pressed', ()=> {
@@ -97,11 +97,33 @@ describe('map', ()=>{
     assertKeyMatch(mapper, "escape", values);
   });
 
-  xit('ignores non-alphanumeric keypresses', () => {
-    var mapper = new Mapper(map);
-    assertKeyMatch(mapper, "a", ["and", "arg", "args", "array"]);
-    // really, 1 is probably fine, it's more like "shift" that's a problem
-    assertKeyMatch(mapper, "1", ["and", "arg", "args", "array"]);
+  it('ignores non-printable keypresses and tab and enter', () => {
+    let mapper   = new Mapper({agood: "abc", ctrl: "ctrl"});
+    let expected = ['agood'];
+    assertKeyMatch(mapper, "a",                      expected);
+
+    assertKeyMatch(mapper, "alt",                    expected);
+    assertKeyMatch(mapper, "cmd-alt-mod",            expected);
+    assertKeyMatch(mapper, "cmd-ctrl-alt-mod",       expected);
+    assertKeyMatch(mapper, "cmd-ctrl-mod",           expected);
+    assertKeyMatch(mapper, "cmd-mod",                expected);
+    assertKeyMatch(mapper, "ctrl",                   expected);
+    assertKeyMatch(mapper, "ctrl-alt",               expected);
+    assertKeyMatch(mapper, "enter",                  expected);
+    assertKeyMatch(mapper, "shift-alt",              expected);
+    assertKeyMatch(mapper, "shift-cmd-ctrl-alt-mod", expected);
+    assertKeyMatch(mapper, "shift-cmd-ctrl-mod",     expected);
+    assertKeyMatch(mapper, "shift-cmd-mod",          expected);
+    assertKeyMatch(mapper, "shift-ctrl-alt",         expected);
+    assertKeyMatch(mapper, "shift-ctrl-shift",       expected);
+    assertKeyMatch(mapper, "shift-shift",            expected);
+    assertKeyMatch(mapper, "space",                  expected);
+    assertKeyMatch(mapper, "tab",                    expected);
+
+    assertKeyMatch(mapper, "down",                   expected);
+    assertKeyMatch(mapper, "left",                   expected);
+    assertKeyMatch(mapper, "right",                  expected);
+    assertKeyMatch(mapper, "up",                     expected);
   });
 
   it('has a keybinding for each type of syntax that we use', (done)=>{
@@ -121,6 +143,29 @@ describe('map', ()=>{
           assert.fail(`No keybinding for ${type}`)
       }
       done();
+    });
+  });
+
+  it('maps a given key-sequence to the requrested key', () => {
+    var mapper = new Mapper({abc: "lol", def: "wtf"});
+    assertKeyMatch(mapper, "d", ["def"]);
+  });
+
+  it('clears the input when input is accepted', () => {
+    var mapper = new Mapper({ab: 'ab'});
+    assertKeyMatch(mapper, "a", ['ab']);
+    mapper.accept();
+    assertKeyMatch(mapper, "a", ['ab']);
+    assertKeyMatch(mapper, "a", []);
+  });
+
+  describe('.fromCodemirror', () => {
+    it('converts uppercase letters to lowercase letters', () => {
+      assert.equal(Mapper.fromCodemirror("M"), "m");
+    });
+
+    it('converts "SHIFT-" prefixed inputs to uppercase letters', () => {
+      assert.equal(Mapper.fromCodemirror("SHIFT-M"), "M");
     });
   });
 });
