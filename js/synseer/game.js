@@ -70,8 +70,6 @@ Game.prototype.pressKey = function(key) {
   }
   var type = this._traverse.ast.type
 
-  console.log({expected: type, actual: selectedType, key: key, keymap: this._keyMap});
-
   if(selectedType == type) {
     this._statsView.setNumCorrect(
       ++this._stats.numCorrect
