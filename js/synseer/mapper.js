@@ -6,7 +6,7 @@ var Mapper = function(map) {
 }
 
 Mapper.fromCodemirror = function(key) {
-  let match = (/^SHIFT-(.+)/).exec(key);
+  var match = (/^SHIFT-(.+)/).exec(key);
   if(match) return match[1].toUpperCase();
   return key.toLowerCase();
 }

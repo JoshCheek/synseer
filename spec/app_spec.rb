@@ -8,6 +8,20 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
     Capybara.default_driver = :poltergeist
   end
 
+  def guess(type, browser)
+    # currently, these are just enough to make them unique, so they will be accepted
+    case type
+    when :method
+      browser.send_keys("s")
+      browser.send_keys("e")
+      browser.send_keys("n")
+    when :integer
+      browser.send_keys('i')
+      browser.send_keys('n')
+    else raise "WHAT TYPE IS THIS: #{method.inspect}"
+    end
+  end
+
   example 'new user plays their first game' do
     # When I go to the root page, it shows me a listing of syntax games and scores
     page.visit '/'
@@ -47,7 +61,7 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
     browser = page.find('html').native
     correct = page.find '.stats .correct'
     expect(correct.text).to eq '0'
-    browser.send_keys("m")
+    guess :method, browser
     expect(correct.text).to eq '1'
 
     # I see that it is waiting for me to classify the "1" expression
@@ -58,23 +72,23 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
     incorrect = page.find '.stats .incorrect'
     expect(correct.text).to eq '1'
     expect(incorrect.text).to eq '0'
-    browser.send_keys("m")
+    guess :method, browser
     expect(correct.text).to eq '1'
     expect(incorrect.text).to eq '1'
 
     # I press "i" for "integer", and my "correct" count increases from 1 to 2
     expect(correct.text).to eq '1'
-    browser.send_keys("i")
+    guess :integer, browser
     expect(correct.text).to eq '2'
 
     # I see that it is waiting for me to classify the "2" expression
     current_element = page.all('.currentElement').map(&:text).join.delete(" ")
     expect(current_element).to eq '2'
 
-    # I press "s" for "send" (method), and my "correct" count stays at 2 while my "incorrect" count increases from 1 to 2
+    # I press "m" for "send" (method), and my "correct" count stays at 2 while my "incorrect" count increases from 1 to 2
     expect(correct.text).to eq '2'
     expect(incorrect.text).to eq '1'
-    browser.send_keys("m")
+    guess :method, browser
     expect(correct.text).to eq '2'
     expect(incorrect.text).to eq '2'
 
@@ -82,7 +96,7 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
     # and I have completed the challenge
     expect(page).to_not have_css '.summary'
     expect(correct.text).to eq '2'
-    browser.send_keys("i")
+    guess :integer, browser
     expect(correct.text).to eq '3'
     expect(page).to have_css '.summary'
 
