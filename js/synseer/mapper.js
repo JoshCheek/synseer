@@ -14,6 +14,7 @@ Mapper.fromCodemirror = function(key) {
 Mapper.prototype = {
   accept: function() {
     this.keysPressed = [];
+    return this.possibilities();
   },
 
   keyPressed: function(input) {
@@ -26,19 +27,22 @@ Mapper.prototype = {
     } else {
       this.keysPressed.push(input);
     }
+    return this.possibilities();
+  },
+
+  startsWith: function(string, fragment) {
+    return fragment == string.substring(0,fragment.length);
+  },
+
+  possibilities: function() {
     var fragment = this.keysPressed.join("");
     var matchedWords = [];
-
     for (var keybinding in this.map) {
       if (this.startsWith(keybinding, fragment)) {
         matchedWords.push(this.map[keybinding]);
       }
     }
     return matchedWords;
-  },
-
-  startsWith: function(string, fragment) {
-    return fragment == string.substring(0,fragment.length);
   }
 }
 

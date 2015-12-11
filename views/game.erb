@@ -107,29 +107,36 @@
 
       var Synseer = require('synseer');
       var game = new Synseer.Game({
-        codeMirror: CodeMirror.fromTextArea(
-                      document.querySelector('textarea'),
-                      {lineNumbers: true, theme: 'solarized dark', autofocus: true, scrollbarStyle: "null"}
-                    ),
-        statsView:  new Synseer.StatsView(document.querySelector('.stats')),
-        ast:        <%= @game.fetch :json_ast %>,
-        keyMap:     Synseer.DefaultKeymap,
-        onFinished: function() {
-                      // currently this summary does nothing interesting
-                      var domFinished = document.createElement("div");
-                      domFinished.classList.add("summary");
-                      var node = document.createTextNode("This is new.");
-                      domFinished.appendChild(node);
-                      document.querySelector('body').appendChild(domFinished);
+        codeMirror:      CodeMirror.fromTextArea(
+                           document.querySelector('textarea'),
+                           {lineNumbers: true, theme: 'solarized dark', autofocus: true, scrollbarStyle: "null"}
+                         ),
+        statsView:       new Synseer.StatsView(document.querySelector('.stats')),
+        ast:             <%= @game.fetch :json_ast %>,
+        keyMap:          Synseer.DefaultKeymap,
+        onFinished:      function() {
+                           // currently this summary does nothing interesting
+                           var domFinished = document.createElement("div");
+                           domFinished.classList.add("summary");
+                           var node = document.createTextNode("This is new.");
+                           domFinished.appendChild(node);
+                           document.querySelector('body').appendChild(domFinished);
 
-                      // save the data
-                      var gameData  = game._stats;
-                      gameData.id   = <%= @game.fetch(:id).inspect %>;
-                      gameData.name = <%= @game.fetch(:name).inspect %>;
-                      appState.games.push(gameData);
-                      localStorage.appState = JSON.stringify(appState);
-                      // this will send it back to the main page immediately: window.location.pathname = '/';
-                    }
+                           // save the data
+                           var gameData  = game._stats;
+                           gameData.id   = <%= @game.fetch(:id).inspect %>;
+                           gameData.name = <%= @game.fetch(:name).inspect %>;
+                           appState.games.push(gameData);
+                           localStorage.appState = JSON.stringify(appState);
+                           // this will send it back to the main page immediately: window.location.pathname = '/';
+                         },
+        onPossibilities: function(possibilities) {
+                           var newEntries = "";
+                           for(var index in possibilities) {
+                             newEntries += '<div class="potential_entry">' + possibilities[index] + '</div>'
+                           }
+                           $('.potential_entries').html(newEntries);
+                         }
       });
 
       game.init();

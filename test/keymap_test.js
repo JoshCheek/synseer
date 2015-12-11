@@ -146,17 +146,29 @@ describe('map', ()=>{
     });
   });
 
-  it('maps a given key-sequence to the requrested key', () => {
+  it('maps a given key-sequence to the requested key', () => {
     var mapper = new Mapper({abc: "lol", def: "wtf"});
-    assertKeyMatch(mapper, "d", ["def"]);
+    assertKeyMatch(mapper, "d", ["wtf"]);
   });
 
-  it('clears the input when input is accepted', () => {
-    var mapper = new Mapper({ab: 'ab'});
-    assertKeyMatch(mapper, "a", ['ab']);
-    mapper.accept();
-    assertKeyMatch(mapper, "a", ['ab']);
-    assertKeyMatch(mapper, "a", []);
+  describe('#accept', () => {
+    it('clears the input when input is accepted', () => {
+      var mapper = new Mapper({ab: 'ab'});
+      assertKeyMatch(mapper, "a", ['ab']);
+      mapper.accept();
+      assertKeyMatch(mapper, "a", ['ab']);
+      assertKeyMatch(mapper, "a", []);
+    });
+
+    it('returns the full set of possibilities', () => {
+      var mapper = new Mapper({ka: 'a', kb: 'b', ja: 'c'});
+      mapper.keyPressed('k');
+      var results = mapper.accept()
+      assert.equal('a', results[0]);
+      assert.equal('b', results[1]);
+      assert.equal('c', results[2]);
+      assert.equal(3, results.length);
+    });
   });
 
   describe('.fromCodemirror', () => {

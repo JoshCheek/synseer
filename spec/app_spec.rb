@@ -128,6 +128,7 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
   it 'filters my keys to the available options as I type, and accepts my entry once unique', t:true do
     page.visit '/'
     page.click_link 'integer addition'
+    browser = page.find('html').native
 
     get_potentials = -> {
       page.find('.potential_entries').text.split(/\W/)
@@ -142,6 +143,6 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
     expect(get_potentials.call).to eq ["self", "send"]
 
     browser.send_keys("n")
-    expect(get_potentials.call).to be > 10
+    expect(get_potentials.call.length).to be > 10
   end
 end

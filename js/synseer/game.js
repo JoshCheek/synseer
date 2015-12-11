@@ -3,14 +3,15 @@ var Mapper      = require('./mapper');
 var TraverseAst = require("./traverse_ast");
 
 var Game = function(attrs) {
-  var game         = this;
-  this._traverse   = new TraverseAst(attrs.ast)
-  this._statsView  = attrs.statsView;
-  this._codeMirror = attrs.codeMirror;
-  this._keyMap     = new Mapper(attrs.keyMap);
-  this._onFinished = attrs.onFinished;
-  this._isFinished = false;
-  this._stats      = {numCorrect: 0, numIncorrect: 0, duration: 0};
+  var game              = this;
+  this._traverse        = new TraverseAst(attrs.ast)
+  this._statsView       = attrs.statsView;
+  this._codeMirror      = attrs.codeMirror;
+  this._keyMap          = new Mapper(attrs.keyMap);
+  this._onFinished      = attrs.onFinished;
+  this._isFinished      = false;
+  this._stats           = {numCorrect: 0, numIncorrect: 0, duration: 0};
+  this._onPossibilities = attrs.onPossibilities;
 }
 
 Game.prototype.init = function() {
@@ -18,6 +19,7 @@ Game.prototype.init = function() {
   this._statsView.setNumCorrect(0);
   this._statsView.setNumIncorrect(0);
   this._statsView.setDuration(0);
+  this._onPossibilities(this._keyMap.possibilities());
 }
 
 Game.prototype.start = function(getTime, setInterval) {
@@ -57,13 +59,14 @@ Game.prototype.pressKey = function(key) {
 
   key = Mapper.fromCodemirror(key);
   var possibilities = this._keyMap.keyPressed(key);
-  console.log({key: key, possibilities: possibilities});
+  var selectedType  = possibilities[0];
 
-  if(possibilities.length != 1)
+  if(possibilities.length != 1) {
+    this._onPossibilities(possibilities);
     return;
-
-  this._keyMap.accept();
-  var selectedType = possibilities[0];
+  } else {
+    this._onPossibilities(this._keyMap.accept());
+  }
   var type = this._traverse.ast.type
 
   console.log({expected: type, actual: selectedType, key: key, keymap: this._keyMap});
