@@ -25,10 +25,9 @@ A student goes through the pre-alpha version.
 
 * Allow ordering of the games
 * Complete set of keybindings (will require some sort of buffer to support multiple keypresses)
-* Style game page
 * Better gradient of games
-* List keybindings on RHS of game page
-* Fix bug where you get dinged for pressing modifier keys
+* Style the numbers at the top of the page
+* return on the main page takes you to the next challenge, "r" repeats the challenge
 
 
 ## MIT License
