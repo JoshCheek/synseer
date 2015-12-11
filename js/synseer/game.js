@@ -1,11 +1,13 @@
 'use strict';
+var Mapper      = require('./mapper');
 var TraverseAst = require("./traverse_ast");
+
 var Game = function(attrs) {
   var game         = this;
   this._traverse   = new TraverseAst(attrs.ast)
   this._statsView  = attrs.statsView;
   this._codeMirror = attrs.codeMirror;
-  this._keyMap     = attrs.keyMap;
+  this._keyMap     = new Mapper(attrs.keyMap);
   this._onFinished = attrs.onFinished;
   this._isFinished = false;
   this._stats      = {numCorrect: 0, numIncorrect: 0, duration: 0};
@@ -46,14 +48,26 @@ Game.prototype.isFinished = function() {
 }
 
 Game.prototype.pressKey = function(key) {
+  // ........ehhhhhhh..................
   if(this.isFinished()) {
     if(key === 'Enter')
       window.location = window.location.origin;
     return;
   }
-  var selectedType = this._keyMap[key];
-  var type         = this._traverse.ast.type
+
+  key = Mapper.fromCodemirror(key);
+  var possibilities = this._keyMap.keyPressed(key);
+  console.log({key: key, possibilities: possibilities});
+
+  if(possibilities.length != 1)
+    return;
+
+  this._keyMap.accept();
+  var selectedType = possibilities[0];
+  var type = this._traverse.ast.type
+
   console.log({expected: type, actual: selectedType, key: key, keymap: this._keyMap});
+
   if(selectedType == type) {
     this._statsView.setNumCorrect(
       ++this._stats.numCorrect
