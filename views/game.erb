@@ -12,25 +12,64 @@
    <script src="/js/synseer.js"></script>
 
    <style>
-     body, html, .content, .CodeMirror {
+     body, html, .content, .layer, .CodeMirror, .side {
        margin:  0;
        padding: 0;
        width:  100%;
        height: 100%;
+       /* box-sizing: border-box */
+     }
+
+     .layer {
+       display:          table;
+       background-color: #002b36;
+     }
+     .CodeMirror, .side {
+       display: table-cell;
+       vertical-align: top;
+     }
+     .CodeMirror {
+       padding: 1em;
+     }
+     .CodeMirror {
+       margin-bottom: 0;
+     }
+     .layer .CodeMirror-scroll {
+       /* They try really hard to put this there, so I have to use more specificity
+          to remove it. Supposedly this will break things, but when I don't have it,
+          it has big white bars (I assume these are scrollbars) along the bottom,
+          as if the div were mis-aligned. */
+       overflow: hidden !important;
+     }
+
+     .side {
+       background-color: #00495b; /* solarized dark (#002b36) times 1.7 */
+       padding: 1em;
+     }
+     .side .user_entry {
+       width:            5em;
+       background-color: #002b36;
+       padding-left:     0.5em;
+       padding-right:    0.5em;
+       padding-top:      0.25em;
+       padding-bottom:   0.25em;
+       margin-bottom:    0.5em;
+       color:            #ebd2c4;
+     }
+     .side .potential_entries {
+       padding-right: 0.5em;
+       color: #659933; /* green */
      }
 
      .currentElement {
        background-color: #00495b; /* solarized dark (#002b36) times 1.7 */
-     }
-
-     .CodeMirror {
-       padding-top: 1em;
      }
    </style>
 </head>
 
 <body>
   <div class="content">
+
     <div class="icing">
       <div class="stats">
         <div class="time"></div>
@@ -38,9 +77,21 @@
         <div class="incorrect"></div>
       </div>
     </div>
+
     <div class="cake game-board">
-      <textarea class="not-code"><%= @game.fetch(:body) %></textarea>
+
+      <div class="layer">
+        <textarea class="not-code"><%= @game.fetch(:body) %></textarea>
+        <div class="side">
+          <div class="user_entry">se</div>
+          <div class="potential_entries">
+            <div class="potential_entry">send</div>
+            <div class="potential_entry">swap</div>
+          </div>
+        </div>
+      </div>
     </div>
+
   </div>
 
   <script>
@@ -58,7 +109,7 @@
       var game = new Synseer.Game({
         codeMirror: CodeMirror.fromTextArea(
                       document.querySelector('textarea'),
-                      {lineNumbers: true, theme: 'solarized dark', autofocus: true}
+                      {lineNumbers: true, theme: 'solarized dark', autofocus: true, scrollbarStyle: "null"}
                     ),
         statsView:  new Synseer.StatsView(document.querySelector('.stats')),
         ast:        <%= @game.fetch :json_ast %>,

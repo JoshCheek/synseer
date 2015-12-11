@@ -123,4 +123,25 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
     expect(page.find '.total_score .incorrect'      ).to have_text '2'
     expect(page.find '.total_score .time'           ).to have_text '0:01'
   end
+
+
+  it 'filters my keys to the available options as I type, and accepts my entry once unique', t:true do
+    page.visit '/'
+    page.click_link 'integer addition'
+
+    get_potentials = -> {
+      page.find('.potential_entries').text.split(/\W/)
+    }
+
+    expect(get_potentials.call.length).to be > 10
+
+    browser.send_keys("s")
+    expect(get_potentials.call).to eq ["self", "send", "splat", "str", "super", "sym"]
+
+    browser.send_keys("e")
+    expect(get_potentials.call).to eq ["self", "send"]
+
+    browser.send_keys("n")
+    expect(get_potentials.call).to be > 10
+  end
 end

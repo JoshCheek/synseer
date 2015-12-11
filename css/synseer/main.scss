@@ -16,12 +16,10 @@ body {
   color:            $color-primary-4;
   padding:          1em;
   border-bottom:    0.8em solid $color-primary-3;
-  width:            100%;
 }
 
 .cake {
   background-color: lighten($color-primary-0, 40%);
-  width:            100%;
   display:          table-row;
   height:           100%;
 }
