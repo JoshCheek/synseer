@@ -55,6 +55,7 @@
        padding-bottom:   0.25em;
        margin-bottom:    0.5em;
        color:            #ebd2c4;
+       height:           1em;
      }
      .side .potential_entries {
        padding-right: 0.5em;
@@ -83,7 +84,7 @@
       <div class="layer">
         <textarea class="not-code"><%= @game.fetch(:body) %></textarea>
         <div class="side">
-          <div class="user_entry">se</div>
+          <div class="user_entry"></div>
           <div class="potential_entries">
             <div class="potential_entry">send</div>
             <div class="potential_entry">swap</div>
@@ -130,12 +131,13 @@
                            localStorage.appState = JSON.stringify(appState);
                            // this will send it back to the main page immediately: window.location.pathname = '/';
                          },
-        onPossibilities: function(possibilities) {
+        onPossibilities: function(input, possibilities) {
                            var newEntries = "";
                            for(var index in possibilities) {
                              newEntries += '<div class="potential_entry">' + possibilities[index] + '</div>'
                            }
                            $('.potential_entries').html(newEntries);
+                           $('.user_entry').text(input);
                          }
       });
 

@@ -133,16 +133,23 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
     get_potentials = -> {
       page.find('.potential_entries').text.split(/\W/)
     }
+    get_user_input = -> {
+      page.find('.user_entry').text
+    }
 
+    expect(get_user_input.call).to eq ''
     expect(get_potentials.call.length).to be > 10
 
     browser.send_keys("s")
+    expect(get_user_input.call).to eq 's'
     expect(get_potentials.call).to eq ["self", "send", "splat", "str", "super", "sym"]
 
     browser.send_keys("e")
+    expect(get_user_input.call).to eq 'se'
     expect(get_potentials.call).to eq ["self", "send"]
 
     browser.send_keys("n")
+    expect(get_user_input.call).to eq ''
     expect(get_potentials.call.length).to be > 10
   end
 end

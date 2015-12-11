@@ -19,7 +19,7 @@ Game.prototype.init = function() {
   this._statsView.setNumCorrect(0);
   this._statsView.setNumIncorrect(0);
   this._statsView.setDuration(0);
-  this._onPossibilities(this._keyMap.possibilities());
+  this._onPossibilities(this._keyMap.input(), this._keyMap.possibilities());
 }
 
 Game.prototype.start = function(getTime, setInterval) {
@@ -62,10 +62,11 @@ Game.prototype.pressKey = function(key) {
   var selectedType  = possibilities[0];
 
   if(possibilities.length != 1) {
-    this._onPossibilities(possibilities);
+    this._onPossibilities(this._keyMap.input(), possibilities);
     return;
   } else {
-    this._onPossibilities(this._keyMap.accept());
+    var possibilities = this._keyMap.accept();
+    this._onPossibilities(this._keyMap.input(), possibilities);
   }
   var type = this._traverse.ast.type
 

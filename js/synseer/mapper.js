@@ -17,6 +17,10 @@ Mapper.prototype = {
     return this.possibilities();
   },
 
+  input: function() {
+    return this.keysPressed.join('');
+  },
+
   keyPressed: function(input) {
     if(input=="backspace") {
       this.keysPressed.pop();
