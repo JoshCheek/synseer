@@ -23,7 +23,6 @@ A student goes through the pre-alpha version.
 
 ## Todo
 
-* All keybindings can be uniquely entered
 * Keybindings come with a description
 * The description is displayed with the keybinding
 * Can we put jQuery into the npm packages instead of vendoring it?

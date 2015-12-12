@@ -12,14 +12,14 @@ describe('KeyMapper', ()=>{
     assert.equal("array"      , map.array);
     assert.equal("begin"      , map.begin);
     assert.equal("block"      , map.block);
-    assert.equal("block_pass" , map.block_pass);
-    assert.equal("blockarg"   , map.blockarg);
+    assert.equal("block_pass" , map.bpass);
+    assert.equal("blockarg"   , map.barg);
     assert.equal("break"      , map.break);
     assert.equal("case"       , map.case);
     assert.equal("casgn"      , map.casgn);
     assert.equal("class"      , map.class);
     assert.equal("const"      , map.const);
-    assert.equal("def"        , map.def);
+    assert.equal("def"        , map.defn);
     assert.equal("defs"       , map.defs);
     assert.equal("dstr"       , map.dstr);
     assert.equal("ensure"     , map.ensure);
@@ -44,7 +44,7 @@ describe('KeyMapper', ()=>{
     assert.equal("op_asgn"    , map.op_asgn);
     assert.equal("optarg"     , map.optarg);
     assert.equal("or"         , map.or);
-    assert.equal("or_asgn"    , map.or_asgn);
+    assert.equal("or_asgn"    , map.asgnor);
     assert.equal("pair"       , map.pair);
     assert.equal("regexp"     , map.regexp);
     assert.equal("regopt"     , map.regopt);
@@ -75,21 +75,21 @@ describe('KeyMapper', ()=>{
 
   it('remembers my input and gives me back a list of potential matches', ()=> {
     var mapper = new Mapper(map);
-    assertKeyMatch(mapper, "a", ["and", "arg", "args", "array"]);
+    assertKeyMatch(mapper, "a", ["and", "arg", "args", "array", "or_asgn"]);
     assertKeyMatch(mapper, "r", ["arg", "args", "array"]);
     assertKeyMatch(mapper, "r", ["array"]);
   });
 
   it('backspace removes a character from the end of the input', ()=> {
     var mapper = new Mapper(map);
-    assertKeyMatch(mapper, "a",         ["and", "arg", "args", "array"]);
+    assertKeyMatch(mapper, "a",         ["and", "arg", "args", "array", "or_asgn"]);
     assertKeyMatch(mapper, "r",         ["arg", "args", "array"]);
-    assertKeyMatch(mapper, "backspace", ["and", "arg", "args", "array"]);
+    assertKeyMatch(mapper, "backspace", ["and", "arg", "args", "array", "or_asgn"]);
   });
 
   it('clears the input when escape is pressed', ()=> {
     var mapper = new Mapper(map);
-    assertKeyMatch(mapper, "a", ["and", "arg", "args", "array"]);
+    assertKeyMatch(mapper, "a", ["and", "arg", "args", "array", "or_asgn"]);
     assertKeyMatch(mapper, "r", ["arg", "args", "array"]);
 
     var values = [];
@@ -145,6 +145,16 @@ describe('KeyMapper', ()=>{
       done();
     });
   });
+
+  it('throws an error on keymaps that cannot be uniquely entered', () => {
+    assert.throws(       () => new Mapper({abc: "x",   ab:  "y"}), Mapper.KeyConflictError );
+    assert.doesNotThrow( () => new Mapper({abc: "x",   abd: "y"}) );
+    assert.doesNotThrow( () => new Mapper({x:   "abc", y:   "ab"}) );
+  });
+
+  it('allows multiple keybindings to map to the same key', () => {
+    assert.doesNotThrow(() => new Mapper({x: "result", y: "result"}));
+  })
 
   it('maps a given key-sequence to the requested key', () => {
     var mapper = new Mapper({abc: "lol", def: "wtf"});
