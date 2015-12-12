@@ -23,8 +23,15 @@ A student goes through the pre-alpha version.
 
 ## Todo
 
+* All keybindings can be uniquely entered
+* Keybindings come with a description
+* The description is displayed with the keybinding
+* Can we put jQuery into the npm packages instead of vendoring it?
+* Fix bug on main page when aggregating the data (it chooses the best score)
+* Each of the programs can be entered
+* Starts you over when you get it wrong
+* When you get it wrong, it tells you what the node was
 * Allow ordering of the games
-* Complete set of keybindings (will require some sort of buffer to support multiple keypresses)
 * Better gradient of games
 * Style the numbers at the top of the page
 * return on the main page takes you to the next challenge, "r" repeats the challenge
