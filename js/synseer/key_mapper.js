@@ -1,17 +1,17 @@
 'use strict';
 
-var Mapper = function(map) {
+var KeyMapper = function(map) {
   this.map = map;
   this.keysPressed = [];
 }
 
-Mapper.fromCodemirror = function(key) {
+KeyMapper.fromCodemirror = function(key) {
   var match = (/^SHIFT-(.+)/).exec(key);
   if(match) return match[1].toUpperCase();
   return key.toLowerCase();
 }
 
-Mapper.prototype = {
+KeyMapper.prototype = {
   accept: function() {
     this.keysPressed = [];
     return this.possibilities();
@@ -50,4 +50,4 @@ Mapper.prototype = {
   }
 }
 
-module.exports = Mapper;
+module.exports = KeyMapper;

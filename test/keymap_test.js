@@ -1,10 +1,10 @@
 const map    = require('../js/synseer/default_keymap');
-const Mapper = require('../js/synseer/mapper');
+const Mapper = require('../js/synseer/key_mapper');
 import assert from 'assert'; // https://github.com/joyent/node/blob/9010dd26529cea60b7ee55ddae12688f81a09fcb/lib/assert.js
 import {readFile} from 'fs';
 import {inspect} from 'util';
 
-describe('map', ()=>{
+describe('KeyMapper', ()=>{
   it('maps each of the keys', ()=>{
     assert.equal("and"        , map.and);
     assert.equal("arg"        , map.arg);

@@ -40,7 +40,7 @@ task build: [
 
 file('js/synseer/index.js' => [
   'js/synseer/default_keymap.js',
-  'js/synseer/mapper.js',
+  'js/synseer/key_mapper.js',
   'js/synseer/game.js',
   'js/synseer/stats_view.js',
   'js/synseer/traverse_ast.js'

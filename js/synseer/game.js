@@ -1,5 +1,5 @@
 'use strict';
-var Mapper      = require('./mapper');
+var KeyMapper   = require('./key_mapper');
 var TraverseAst = require("./traverse_ast");
 
 var Game = function(attrs) {
@@ -7,7 +7,7 @@ var Game = function(attrs) {
   this._traverse        = new TraverseAst(attrs.ast)
   this._statsView       = attrs.statsView;
   this._codeMirror      = attrs.codeMirror;
-  this._keyMap          = new Mapper(attrs.keyMap);
+  this._keyMap          = new KeyMapper(attrs.keyMap);
   this._onFinished      = attrs.onFinished;
   this._isFinished      = false;
   this._stats           = {numCorrect: 0, numIncorrect: 0, duration: 0};
@@ -57,7 +57,7 @@ Game.prototype.pressKey = function(key) {
     return;
   }
 
-  key = Mapper.fromCodemirror(key);
+  key = KeyMapper.fromCodemirror(key);
   var possibilities = this._keyMap.keyPressed(key);
   var selectedType  = possibilities[0];
 
