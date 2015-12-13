@@ -59,9 +59,9 @@ Game.prototype.pressKey = function(key) {
 
   key = KeyMapper.fromCodemirror(key);
   var possibilities = this._keyMap.keyPressed(key);
-  var selectedType  = possibilities[0];
+  var selectedType  = possibilities[Object.keys(possibilities)[0]];
 
-  if(possibilities.length != 1) {
+  if(Object.keys(possibilities).length != 1) {
     this._onPossibilities(this._keyMap.input(), possibilities);
     return;
   } else {

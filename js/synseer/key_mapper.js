@@ -70,10 +70,10 @@ KeyMapper.prototype = {
 
   possibilities: function() {
     let fragment = this.keysPressed.join("");
-    let matchedWords = [];
+    let matchedWords = {};
     for (let keybinding in this.map) {
       if (this.startsWith(keybinding, fragment)) {
-        matchedWords.push(this.map[keybinding]);
+        matchedWords[keybinding] = this.map[keybinding];
       }
     }
     return matchedWords;

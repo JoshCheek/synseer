@@ -46,8 +46,8 @@
        background-color: #00495b; /* solarized dark (#002b36) times 1.7 */
        padding: 1em;
      }
-     .side .user_entry {
-       width:            5em;
+     .user_entry {
+       width:            10em;
        background-color: #002b36;
        padding-left:     0.5em;
        padding-right:    0.5em;
@@ -57,9 +57,14 @@
        color:            #ebd2c4;
        height:           1em;
      }
-     .side .potential_entries {
+     .potential_entries {
        padding-right: 0.5em;
+     }
+     .potential_entries .keybinding {
        color: #659933; /* green */
+     }
+     .potential_entries .syntax_node {
+       color: #002b36; /* solarized dark */
      }
 
      .currentElement {
@@ -85,10 +90,9 @@
         <textarea class="not-code"><%= @game.fetch(:body) %></textarea>
         <div class="side">
           <div class="user_entry"></div>
-          <div class="potential_entries">
-            <div class="potential_entry">send</div>
-            <div class="potential_entry">swap</div>
-          </div>
+
+          <table class="potential_entries">
+          </table>
         </div>
       </div>
     </div>
@@ -133,8 +137,11 @@
                          },
         onPossibilities: function(input, possibilities) {
                            var newEntries = "";
-                           for(var index in possibilities) {
-                             newEntries += '<div class="potential_entry">' + possibilities[index] + '</div>'
+                           for(var key in possibilities) {
+                             newEntries += '<tr class="potential_entry">' +
+                                             '<td class="keybinding"> '+ key + '</td>' +
+                                             '<td class="syntax_node"> '+ possibilities[key] + '</td>' +
+                                           '</tr>'
                            }
                            $('.potential_entries').html(newEntries);
                            $('.user_entry').text(input);

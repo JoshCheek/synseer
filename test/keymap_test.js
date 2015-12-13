@@ -67,39 +67,39 @@ describe('KeyMapper', ()=>{
 
   function assertKeyMatch(mapper, key, expected) {
     var actual = mapper.keyPressed(key);
-    assert.equal(actual.length, expected.length, `Expected ${inspect(actual)} to be like ${inspect(expected)}`);
-    for(var i = expected.length; i<expected.length; ++i) {
-      assert.equal(actual[i], expected[i]);
+    let message = `Expected ${inspect(actual)} to be like ${inspect(expected)}`
+    assert.equal(Object.keys(actual).length, Object.keys(expected).length, message);
+    for(var key in expected) {
+      assert.equal(actual[key], expected[key], `${message}, but ${key} was actual:${actual[key]}, expected:${expected[key]}`);
     }
   }
 
   it('remembers my input and gives me back a list of potential matches', ()=> {
     var mapper = new Mapper(map);
-    assertKeyMatch(mapper, "a", ["and", "arg", "args", "array", "or_asgn"]);
-    assertKeyMatch(mapper, "r", ["arg", "args", "array"]);
-    assertKeyMatch(mapper, "r", ["array"]);
+    assertKeyMatch(mapper, "a", {and: "and", arg: "arg", ars: "args", array: "array", asgnor: "or_asgn"});
+    assertKeyMatch(mapper, "r", {arg: "arg", ars: "args", array: "array"});
+    assertKeyMatch(mapper, "r", {array: "array"});
   });
 
   it('backspace removes a character from the end of the input', ()=> {
     var mapper = new Mapper(map);
-    assertKeyMatch(mapper, "a",         ["and", "arg", "args", "array", "or_asgn"]);
-    assertKeyMatch(mapper, "r",         ["arg", "args", "array"]);
-    assertKeyMatch(mapper, "backspace", ["and", "arg", "args", "array", "or_asgn"]);
+    assertKeyMatch(mapper, "a",         {and: "and", arg: "arg", ars: "args", array: "array", asgnor: "or_asgn"});
+    assertKeyMatch(mapper, "r",         {arg: "arg", ars: "args", array: "array"});
+    assertKeyMatch(mapper, "backspace", {and: "and", arg: "arg", ars: "args", array: "array", asgnor: "or_asgn"});
   });
 
   it('clears the input when escape is pressed', ()=> {
+    var map    = {aa: 'aa', aba: 'aba', abc: 'abc', b: 'b'};
     var mapper = new Mapper(map);
-    assertKeyMatch(mapper, "a", ["and", "arg", "args", "array", "or_asgn"]);
-    assertKeyMatch(mapper, "r", ["arg", "args", "array"]);
+    assertKeyMatch(mapper, "a", {aa: 'aa', aba: 'aba', abc: 'abc'});
+    assertKeyMatch(mapper, "b", {aba: 'aba', abc: 'abc'});
 
-    var values = [];
-    for (var key in map) { values.push(map[key]); }
-    assertKeyMatch(mapper, "escape", values);
+    assertKeyMatch(mapper, "escape", map);
   });
 
   it('ignores non-printable keypresses and tab and enter', () => {
     let mapper   = new Mapper({agood: "abc", ctrl: "ctrl"});
-    let expected = ['agood'];
+    let expected = {agood: 'abc'};
     assertKeyMatch(mapper, "a",                      expected);
 
     assertKeyMatch(mapper, "alt",                    expected);
@@ -158,26 +158,26 @@ describe('KeyMapper', ()=>{
 
   it('maps a given key-sequence to the requested key', () => {
     var mapper = new Mapper({abc: "lol", def: "wtf"});
-    assertKeyMatch(mapper, "d", ["wtf"]);
+    assertKeyMatch(mapper, "d", {def: "wtf"});
   });
 
   describe('#accept', () => {
     it('clears the input when input is accepted', () => {
       var mapper = new Mapper({ab: 'ab'});
-      assertKeyMatch(mapper, "a", ['ab']);
+      assertKeyMatch(mapper, "a", {ab: 'ab'});
       mapper.accept();
-      assertKeyMatch(mapper, "a", ['ab']);
-      assertKeyMatch(mapper, "a", []);
+      assertKeyMatch(mapper, "a", {ab: 'ab'});
+      assertKeyMatch(mapper, "a", {});
     });
 
     it('returns the full set of possibilities', () => {
       var mapper = new Mapper({ka: 'a', kb: 'b', ja: 'c'});
       mapper.keyPressed('k');
       var results = mapper.accept()
-      assert.equal('a', results[0]);
-      assert.equal('b', results[1]);
-      assert.equal('c', results[2]);
-      assert.equal(3, results.length);
+      assert.equal('a', results.ka);
+      assert.equal('b', results.kb);
+      assert.equal('c', results.ja);
+      assert.equal(3, Object.keys(results).length);
     });
   });
 

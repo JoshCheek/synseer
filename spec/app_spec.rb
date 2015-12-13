@@ -131,7 +131,7 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
     browser = page.find('html').native
 
     get_potentials = -> {
-      page.find('.potential_entries').text.split(/\W/)
+      page.all('.potential_entries .syntax_node').map(&:text)
     }
     get_user_input = -> {
       page.find('.user_entry').text
