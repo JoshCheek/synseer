@@ -7,7 +7,7 @@ task test: ['test:ruby', 'test:js', 'test:integration'] # ordered by how long th
 
 namespace :test do
   desc 'Run integration tests (Phantomjs)'
-  task(integration: :build) { sh 'bundle', 'exec', 'mrspec', '--tag', 'integration' }
+  task(integration: :build) { sh 'bundle', 'exec', 'mrspec', '--tag', 'integration', '--fail-fast' }
 
   desc 'Run Ruby unit tests'
   task(:ruby) { sh 'bundle', 'exec', 'mrspec', '--tag', '~integration' }
