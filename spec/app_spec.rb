@@ -25,6 +25,7 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
   example 'new user plays their first game' do
     # When I go to the root page, it shows me a listing of syntax games and scores
     page.visit '/'
+    browser = page.find('html').native
     scores = page.all '.available_games .score'
     expect(scores).to_not be_empty
 
@@ -32,6 +33,10 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
     scores.each do |game_element|
       expect(game_element.text.downcase).to include 'unattempted'
     end
+
+    # Since I am new, I cannot play a previous game
+    browser.send_keys('r')
+    expect(page.current_path).to eq '/'
 
     # I have completed 0 games, and have a total time of 0 seconds, 0 correct, and 0 incorrect
     expect(page.find '.total_score .games_completed').to have_text '0'
@@ -42,6 +47,7 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
     # When I click on the "integer addition" example, it takes me to "/games/integer_addition"
     page.click_link 'integer addition'
     expect(page.current_path).to eq '/games/integer_addition'
+    browser = page.find('html').native
 
     # There is a code display containing the text "1 + 2"
     line1 = page.all('.CodeMirror-line:first-of-type').first
@@ -58,7 +64,6 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
     expect(current_element).to eq '1+2'
 
     # I press "m" for "send" (method), and my "correct" count increases from 0 to 1
-    browser = page.find('html').native
     correct = page.find '.stats .correct'
     expect(correct.text).to eq '0'
     guess :method, browser
@@ -110,6 +115,7 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
     browser.send_keys(:Return)
     sleep 0.05 # surely there's a better way than this?
     expect(page.current_path).to eq '/'
+    browser = page.find('html').native # since we changed pages, have to do this
 
     # Now I see that all games are scored as unattempted, except "integer addition", which shows my score of 1 second, 3 correct, and 2 incorrect
     expect(page.all('.available_games .completed.score .status').map(&:text)).to eq ['Completed']
@@ -122,10 +128,30 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
     expect(page.find '.total_score .correct'        ).to have_text '3'
     expect(page.find '.total_score .incorrect'      ).to have_text '2'
     expect(page.find '.total_score .time'           ).to have_text '0:01'
+
+    # I press "r" to replay the game
+    browser.send_keys("r")
+    sleep 0.1
+    expect(page.current_path).to eq '/games/integer_addition'
+    browser = page.find('html').native # since we changed pages, have to do this
+
+    # I play the game quickly with no errors
+    guess :method,  browser
+    guess :integer, browser
+    guess :integer, browser
+    browser.send_keys(:Return)
+    sleep 0.1
+    expect(page.current_path).to eq '/'
+
+    # I have completed 1 game, and have a total of less than 1 second, 3 correct, and 0 incorrect
+    # expect(page.find '.total_score .games_completed').to have_text '1'
+    # expect(page.find '.total_score .correct'        ).to have_text '3'
+    # expect(page.find '.total_score .incorrect'      ).to have_text '0'
+    # expect(page.find '.total_score .time'           ).to have_text '0:00'
   end
 
 
-  it 'filters my keys to the available options as I type, and accepts my entry once unique', t:true do
+  it 'filters my keys to the available options as I type, and accepts my entry once unique' do
     page.visit '/'
     page.click_link 'integer addition'
     browser = page.find('html').native

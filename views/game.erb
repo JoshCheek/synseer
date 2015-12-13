@@ -99,6 +99,7 @@
                            gameData.id   = <%= @game.fetch(:id).inspect %>;
                            gameData.name = <%= @game.fetch(:name).inspect %>;
                            appState.games.push(gameData);
+                           appState.lastPlayed = gameData.id
                            localStorage.appState = JSON.stringify(appState);
                            // this will send it back to the main page immediately: window.location.pathname = '/';
                          },

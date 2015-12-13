@@ -31,7 +31,6 @@ A student goes through the pre-alpha version.
 * Allow ordering of the games
 * Better gradient of games
 * Style the numbers at the top of the page
-* return on the main page takes you to the next challenge, "r" repeats the challenge
 
 
 ## MIT License

@@ -32,6 +32,7 @@ task build: [
   # js
   'public/js/synseer.js',
   'public/js/jquery.js',
+  'public/js/mousetrap.js',
 
   # other generated files
   'tmp/node_types',
@@ -71,6 +72,11 @@ file 'public/js/synseer.js' => ['js/synseer/index.js', 'public/js'] do
                    '--outfile',   'public/js/synseer.js',
                    '--require',   './js/synseer/index.js:synseer',
                    '--require',   './js/synseer/browser/keymap_status.js:synseer/keymap_status'
+end
+
+file 'public/js/mousetrap.js' do
+  sh 'browserify', '--outfile', 'public/js/mousetrap.js',
+                   '--require', 'mousetrap:mousetrap'
 end
 
 file 'public/js/jquery.js' do

@@ -4,6 +4,7 @@
     <link rel=stylesheet href="/css/reset.css">
     <link rel=stylesheet href="/css/synseer/main.css">
     <script src="/js/synseer.js"></script>
+    <script src="/js/mousetrap.js"></script>
   </head>
   <style>
     .available_games {
@@ -61,6 +62,9 @@
   var Synseer = require('synseer');
 
   // -----  Add scores to the games  -----
+  var goPrev = function() { /* noop, override this */ };
+  var goNext = function() { /* noop, override this */ };
+
   var forEach = Array.prototype.forEach;
   var scores  = document.querySelectorAll('li.game .score');
   forEach.call(scores, function(domScore) {
@@ -74,12 +78,19 @@
       }
     }
 
-    // update with user's scores
+    // update the game with the appropriate data
     if(game) {
-      view.setStatus("Completed");
+      game.view = view;
+      view.setStatus("Completed"); // swap with a class and change the colouring instead?
       view.setNumCorrect(game.numCorrect);
       view.setNumIncorrect(game.numIncorrect);
       view.setDuration(game.duration);
+
+      if(game.id == appState.lastPlayed) {
+        var prevLink = domScore.parentElement.querySelector('a')
+        goPrev       = function() { prevLink.click(); };
+        goNext       = function() { /* ...figure this out... */ };
+      }
     } else {
       view.setStatus("Unattempted");
       view.setNumCorrect(0);
@@ -108,32 +119,10 @@
   totalStatsView.setGamesCompleted(gamesCompleted);
 
   // -----  Keymap  -----
-  var keymap = {
-    enter: "Next game",
-    r:     "Retry last game",
-  };
-  var keymapStatus = new Synseer.KeymapStatus(document.querySelector('.side'));
-  var keymapper    = new Synseer.KeyMapper(keymap);
-  keymapStatus.update("", keymap);
-
-  // var Mousetrap = require('mousetrap');
-  // var mousetrap = new Mousetrap(document);
-  // var handleKey = mousetrap.handleKey;
-  // mousetrap.handleKey = function(char, modifiers, e) {
-  //   if(e.type == 'keyup') {
-  //     console.log(char);
-  //     var possibilities = keymapper.keyPressed(char);
-  //     var selectedType  = possibilities[Object.keys(possibilities)[0]];
-  //     console.log({selectedType: selectedType, of: Object.keys(possibilities)});
-  //     var length = Object.keys(possibilities).length
-  //     if(length != 1)
-  //       keymapStatus.update(keymapper.input(), possibilities);
-  //     else {
-  //       console.log("and now we do that thing");
-  //     }
-  //   }
-  //   handleKey.apply(this, arguments);
-  // }
+  var Mousetrap = require('mousetrap');
+  var mousetrap = new Mousetrap(document);
+  mousetrap.bind('r',     goPrev);
+  mousetrap.bind('enter', goNext);
 
 </script>
 </body>
