@@ -24,6 +24,10 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
     end
   end
 
+  def browser
+    page.find('html').native
+  end
+
   after :each do
     page.visit '/' unless page.current_url == '/'
     page.execute_script("localStorage.clear()")
@@ -32,7 +36,6 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
   example 'new user plays their first game' do
     # When I go to the root page, it shows me a listing of syntax games and scores
     page.visit '/'
-    browser = page.find('html').native
     scores = page.all '.available_games .score'
     expect(scores).to_not be_empty
 
@@ -50,7 +53,6 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
     # When I click on the "integer addition" example, it takes me to "/games/integer_addition"
     page.click_link 'integer addition'
     expect(page.current_path).to eq '/games/integer_addition'
-    browser = page.find('html').native
 
     # There is a code display containing the text "1 + 2"
     line1 = page.all('.CodeMirror-line:first-of-type').first
@@ -118,7 +120,6 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
     browser.send_keys(:Return)
     sleep 0.05 # surely there's a better way than this?
     expect(page.current_path).to eq '/'
-    browser = page.find('html').native # since we changed pages, have to do this
 
     # Now I see that all games are scored as unattempted, except "integer addition", which shows my score of 1 second, 3 correct, and 2 incorrect
     expect(page.all('.available_games .completed.score .status').map(&:text)).to eq ['Completed']
@@ -137,7 +138,6 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
     # Since I am new, I cannot play a previous game
     page.visit "/"
     expect(page.find '.total_score .games_completed').to have_text '0'
-    browser = page.find('html').native # since we changed pages, have to do this
     browser.send_keys('r')
     expect(page.current_path).to eq '/'
 
@@ -145,11 +145,9 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
       # TODO: page.send_keys :Return
       page.click_link 'integer addition'
       expect(page.current_path).to eq '/games/integer_addition'
-      browser = page.find('html').native # since we changed pages, have to do this
 
     guess :method, :method, :integer, :integer,  browser
     browser.send_keys(:Return)
-    browser = page.find('html').native # since we changed pages, have to do this
     sleep 0.1
     expect(page.current_path).to eq '/'
 
@@ -158,36 +156,30 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
     expect(page.find '.total_score .incorrect'      ).to have_text '1'
 
     # I press "r" to replay the game
-    browser = page.find('html').native # since we changed pages, have to do this
     browser.send_keys("r")
     sleep 0.1
     expect(page.current_path).to eq '/games/integer_addition'
-    browser = page.find('html').native # since we changed pages, have to do this
 
     # I have no errors
     guess :method, :integer, :integer,  browser
     browser.send_keys(:Return)
     sleep 0.1
     expect(page.current_path).to eq '/'
-    browser = page.find('html').native # since we changed pages, have to do this
 
     # better score replaces the worse score
     expect(page.find '.total_score .games_completed').to have_text '1'
     expect(page.find '.total_score .incorrect'      ).to have_text '0'
 
     # I press "r" to replay the game
-    browser = page.find('html').native # since we changed pages, have to do this
     browser.send_keys("r")
     sleep 0.1
     expect(page.current_path).to eq '/games/integer_addition'
-    browser = page.find('html').native # since we changed pages, have to do this
 
     # I play have one error
     guess :method, :method, :integer, :integer,  browser
     browser.send_keys(:Return)
     sleep 0.1
     expect(page.current_path).to eq '/'
-    browser = page.find('html').native # since we changed pages, have to do this
 
     # worse score does not beat the better score
     expect(page.find '.total_score .games_completed').to have_text '1'
@@ -211,7 +203,6 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
   it 'filters my keys to the available options as I type, and accepts my entry once unique' do
     page.visit '/'
     page.click_link 'integer addition'
-    browser = page.find('html').native
 
     get_potentials = -> { page.all('.potential_entries .syntax_node').map(&:text) }
     get_user_input = -> { page.find('.user_entry').text }
