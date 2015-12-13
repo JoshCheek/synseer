@@ -59,15 +59,9 @@
     </div>
 
     <div class="cake game-board">
-
       <div class="layer">
         <textarea class="not-code"><%= @game.fetch(:body) %></textarea>
-        <div class="side keymap_status">
-          <div class="user_entry"></div>
-
-          <table class="potential_entries">
-          </table>
-        </div>
+        <div class="side"></div>
       </div>
     </div>
 
@@ -84,7 +78,11 @@
       else
         appState = JSON.parse(localStorage.appState);
 
-      var Synseer = require('synseer');
+      var Synseer      = require('synseer');
+      var KeymapStatus = require('synseer/keymap_status');
+      var keymapStatus = new KeymapStatus(document.querySelector('.side'))
+      keymapStatus.create();
+
       var game = new Synseer.Game({
         codeMirror:      CodeMirror.fromTextArea(
                            document.querySelector('textarea'),
@@ -109,17 +107,7 @@
                            localStorage.appState = JSON.stringify(appState);
                            // this will send it back to the main page immediately: window.location.pathname = '/';
                          },
-        onPossibilities: function(input, possibilities) {
-                           var newEntries = "";
-                           for(var key in possibilities) {
-                             newEntries += '<tr class="potential_entry">' +
-                                             '<td class="keybinding"> '+ key + '</td>' +
-                                             '<td class="syntax_node"> '+ possibilities[key] + '</td>' +
-                                           '</tr>'
-                           }
-                           $('.potential_entries').html(newEntries);
-                           $('.user_entry').text(input);
-                         }
+        onPossibilities: function(input, possibilities) { keymapStatus.update(input, possibilities); }
       });
 
       game.init();

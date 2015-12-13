@@ -43,7 +43,8 @@ file('js/synseer/index.js' => [
   'js/synseer/key_mapper.js',
   'js/synseer/game.js',
   'js/synseer/stats_view.js',
-  'js/synseer/traverse_ast.js'
+  'js/synseer/traverse_ast.js',
+  'js/synseer/browser/keymap_status.js',
 ]) { touch 'js/synseer/index.js' }
 
 CLOBBER.include 'public'
@@ -68,7 +69,8 @@ file 'public/js/synseer.js' => ['js/synseer/index.js', 'public/js'] do
                      'babelify', '--presets', '[', 'es2015', ']',
                    ']',
                    '--outfile',   'public/js/synseer.js',
-                   '--require',   './js/synseer/index.js:synseer'
+                   '--require',   './js/synseer/index.js:synseer',
+                   '--require',   './js/synseer/browser/keymap_status.js:synseer/keymap_status'
 end
 
 file 'public/js/jquery.js' do
