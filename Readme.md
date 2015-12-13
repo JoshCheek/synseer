@@ -23,11 +23,16 @@ A student goes through the pre-alpha version.
 
 ## Todo
 
+* Style the numbers at the top of the page
+* Keybindings on the game page: work regardless of whether you've clicked the code or elsewhere
+* Keybindings on the game page: don't hijack metakeys (eg cmd+r should refresh)
+* Summary pops up when you finish a game
+* Some sort of info on the main page to tell you about r and return (maybe scroll the screen to the "r" game and then add a "press r to play" in front of it and a "press return to play" in front of the next one)
+* You can press "r" immediately to retry the game
 * Each of the programs can be entered
 * Starts you over when you get it wrong
 * When you get it wrong, it tells you what the answer was
 * Better gradient of games
-* Style the numbers at the top of the page
 
 
 ## MIT License
