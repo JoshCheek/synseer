@@ -61,6 +61,8 @@ Game.prototype.pressKey = function(key) {
   var possibilities = this._keyMap.keyPressed(key);
   var selectedType  = possibilities[Object.keys(possibilities)[0]];
 
+  // *sigh* not sure if this is a consequence of not knowing js
+  // or if this is really how to do things like this
   if(Object.keys(possibilities).length != 1) {
     this._onPossibilities(this._keyMap.input(), possibilities);
     return;

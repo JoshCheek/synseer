@@ -11,6 +11,15 @@ body {
   display: table;
 }
 
+.layer {
+   width:   100%;
+   display: table;
+}
+.layer > * {
+  display: table-cell;
+  vertical-align: top;
+}
+
 .icing {
   background-color: $color-secondary-2-0;
   color:            $color-primary-4;

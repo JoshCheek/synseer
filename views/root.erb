@@ -5,6 +5,11 @@
     <link rel=stylesheet href="/css/synseer/main.css">
     <script src="/js/synseer.js"></script>
   </head>
+  <style>
+    .available_games {
+      width: 100%;
+    }
+  </style>
 <body>
 
 <div class="content">
@@ -18,28 +23,34 @@
     </div>
   </div>
 
+
   <div class="cake">
-    <ul class="available_games">
-      <% games.each do |_path, game| %>
-        <li class="game">
-          <a class="name" href="<%= game.fetch(:path) %>">
-            <%= game.fetch(:name) %>
-          </a>
-          <div class="score" data-id="<%= game.fetch(:id) %>">
-             <div class="status"></div>
-             <div class="correct"></div>
-             <div class="incorrect"></div>
-             <div class="time"></div>
-          </div>
-        </li>
-      <% end %>
-    </ul>
+    <div class="layer">
+
+      <ul class="available_games">
+        <% games.each do |_path, game| %>
+          <li class="game">
+            <a class="name" href="<%= game.fetch(:path) %>">
+              <%= game.fetch(:name) %>
+            </a>
+            <div class="score" data-id="<%= game.fetch(:id) %>">
+               <div class="status"></div>
+               <div class="correct"></div>
+               <div class="incorrect"></div>
+               <div class="time"></div>
+            </div>
+          </li>
+        <% end %>
+      </ul>
+
+      <div class="side"></div>
+    </div> <!-- layer -->
+
   </div>
 </div>
 
 <script>
   'use strict';
-  var Synseer = require('synseer');
   // init/load the data from localstorage
   var appState = {games: []};
   if(localStorage.appState === undefined)
@@ -47,6 +58,9 @@
   else
     appState = JSON.parse(localStorage.appState);
 
+  var Synseer = require('synseer');
+
+  // -----  Add scores to the games  -----
   var forEach = Array.prototype.forEach;
   var scores  = document.querySelectorAll('li.game .score');
   forEach.call(scores, function(domScore) {
@@ -59,6 +73,8 @@
         break;
       }
     }
+
+    // update with user's scores
     if(game) {
       view.setStatus("Completed");
       view.setNumCorrect(game.numCorrect);
@@ -72,6 +88,7 @@
     }
   })
 
+  // -----  total stats  -----
   var numCorrect     = 0;
   var numIncorrect   = 0;
   var duration       = 0;
@@ -89,6 +106,35 @@
   totalStatsView.setNumIncorrect(numIncorrect);
   totalStatsView.setDuration(duration);
   totalStatsView.setGamesCompleted(gamesCompleted);
+
+  // -----  Keymap  -----
+  var keymap = {
+    enter: "Next game",
+    r:     "Retry last game",
+  };
+  var keymapStatus = new Synseer.KeymapStatus(document.querySelector('.side'));
+  var keymapper    = new Synseer.KeyMapper(keymap);
+  keymapStatus.update("", keymap);
+
+  // var Mousetrap = require('mousetrap');
+  // var mousetrap = new Mousetrap(document);
+  // var handleKey = mousetrap.handleKey;
+  // mousetrap.handleKey = function(char, modifiers, e) {
+  //   if(e.type == 'keyup') {
+  //     console.log(char);
+  //     var possibilities = keymapper.keyPressed(char);
+  //     var selectedType  = possibilities[Object.keys(possibilities)[0]];
+  //     console.log({selectedType: selectedType, of: Object.keys(possibilities)});
+  //     var length = Object.keys(possibilities).length
+  //     if(length != 1)
+  //       keymapStatus.update(keymapper.input(), possibilities);
+  //     else {
+  //       console.log("and now we do that thing");
+  //     }
+  //   }
+  //   handleKey.apply(this, arguments);
+  // }
+
 </script>
 </body>
 </html>
