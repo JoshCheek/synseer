@@ -59,6 +59,14 @@
   else
     appState = JSON.parse(localStorage.appState);
 
+  var firstGameId = <%= games.first.last.fetch(:id).inspect %>;
+
+  function playGame(id) {
+    var gameElement = document.querySelector('[data-id="'+id+'"]');
+    var gameLink    = gameElement && gameElement.parentElement.querySelector('a');
+    gameLink && gameLink.click();
+  }
+
   var Synseer = require('synseer');
 
   // -----  Find best games  -----
@@ -73,7 +81,7 @@
 
   // -----  Add scores to the games  -----
   var goPrev = function() { /* noop, override this */ };
-  var goNext = function() { /* noop, override this */ };
+  var goNext = function() { playGame(firstGameId); };
 
   var forEach = Array.prototype.forEach;
   var scores  = document.querySelectorAll('li.game .score');
@@ -90,12 +98,8 @@
       view.setDuration(game.duration);
 
       if(game.id == appState.lastPlayed) {
-        var prevLink    = domScore.parentElement.querySelector('a');
-        var nextElement = document.querySelector('[data-id="'+domScore.dataset['nextGame']+'"]')
-        // var nextElement = nextElement || firstElement;
-        var nextLink    = nextElement && nextElement.parentElement.querySelector('a');
-        goPrev          = function() { prevLink.click(); };
-        goNext          = function() { nextLink && nextLink.click(); };
+        goPrev = function() { playGame(game.id) };
+        goNext = function() { playGame(domScore.dataset['nextGame'] || firstGameId) };
       }
     } else {
       view.setStatus("Unattempted");

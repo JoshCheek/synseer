@@ -39,7 +39,7 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
       capybara.find('html').native
     end
 
-    def cleanup
+    def init_phantom
       capybara.visit '/' unless capybara.current_url == '/'
       capybara.execute_script("localStorage.clear()")
     end
@@ -149,7 +149,7 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
     @synseer ||= Browser.new(page)
   end
 
-  after(:each) { lol.cleanup }
+  before(:each) { lol.init_phantom }
 
   example 'new user plays their first game' do
     # When I go to the root page, it shows me a listing of syntax games and scores
@@ -215,17 +215,17 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
   end
 
 
-  it 'allows me to repeat games with "r", accept next games with "enter", and tracks only my best scores', t: true do
+  it 'allows me to repeat games with "r", accept next games with "enter", and tracks only my best scores' do
     # Since I am new, I cannot play a previous game
     capybara.visit "/"
     lol.assert_totals completed: 0 # sanity check
     browser.send_keys('r')
     expect(capybara.current_path).to eq '/'
 
-    # I play the game with one error
-      # TODO: capybara.send_keys :Return
-      capybara.click_link 'integer addition'
-      expect(capybara.current_path).to eq '/games/integer_addition'
+    # I play the first game, 'integer addition', with one error
+    browser.send_keys :Return
+    sleep 0.1
+    expect(capybara.current_path).to eq '/games/integer_addition'
 
     lol.guess :method, :method, :integer, :integer
     browser.send_keys(:Return)
@@ -278,6 +278,11 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
 
     # I have two games played with no errors
     lol.assert_totals completed: 2, incorrect: 0
+
+    # Enter wraps back around
+    browser.send_keys(:Return)
+    sleep 0.01
+    expect(capybara.current_path).to eq '/games/integer_addition'
   end
 
   it 'filters my keys to the available options as I type, and accepts my entry once unique, clearing when I press esc' do
