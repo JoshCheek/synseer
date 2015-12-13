@@ -1,6 +1,6 @@
 'use strict';
 
-var KeyMapper = function(map) {
+let KeyMapper = function(map) {
   this.map = map;
   this.keysPressed = [];
   KeyMapper.validateMap(map);
@@ -9,7 +9,7 @@ var KeyMapper = function(map) {
 KeyMapper.KeyConflictError = function(conflictingKeys) {
   this.conflictingKeys = conflictingKeys;
   this.name            = 'KeyConflictError';
-  var conflictStr      = conflictingKeys
+  let conflictStr      = conflictingKeys
                            .map(([key, child]) => `[${key}, ${child}]`)
                            .join(", ")
   this.message         = `Conflicts: ${conflictStr}`;
@@ -19,20 +19,20 @@ KeyMapper.KeyConflictError.prototype.constructor = KeyMapper.KeyConflictError;
 
 
 KeyMapper.fromCodemirror = function(key) {
-  var match = (/^SHIFT-(.+)/).exec(key);
+  let match = (/^SHIFT-(.+)/).exec(key);
   if(match) return match[1].toUpperCase();
   return key.toLowerCase();
 }
 
 // http://www.sitepoint.com/exceptional-exception-handling-in-javascript/
 KeyMapper.validateMap = function(map) {
-  var conflictingKeys = [];
-  for(var keybinding in map) {
-    for(var maybeChild in map) {
+  let conflictingKeys = [];
+  for(let keybinding in map) {
+    for(let maybeChild in map) {
       // if length is less, then it can't be a child
       // if length is the same, then it either is keybinding, or takes a different path
       if(maybeChild.length <= keybinding.length) continue;
-      var otherSubstr = maybeChild.substr(0, keybinding.length)
+      let otherSubstr = maybeChild.substr(0, keybinding.length)
       if(otherSubstr === keybinding)
         conflictingKeys.push([keybinding, maybeChild]);
     }
@@ -69,9 +69,9 @@ KeyMapper.prototype = {
   },
 
   possibilities: function() {
-    var fragment = this.keysPressed.join("");
-    var matchedWords = [];
-    for (var keybinding in this.map) {
+    let fragment = this.keysPressed.join("");
+    let matchedWords = [];
+    for (let keybinding in this.map) {
       if (this.startsWith(keybinding, fragment)) {
         matchedWords.push(this.map[keybinding]);
       }
