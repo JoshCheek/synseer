@@ -12,12 +12,11 @@
    <script src="/js/synseer.js"></script>
 
    <style>
-     body, html, .content, .layer, .CodeMirror, .side {
+     body, html, .content, .layer, .CodeMirror {
        margin:  0;
        padding: 0;
        width:  100%;
        height: 100%;
-       /* box-sizing: border-box */
      }
 
      .layer {
@@ -42,31 +41,6 @@
        overflow: hidden !important;
      }
 
-     .side {
-       background-color: #00495b; /* solarized dark (#002b36) times 1.7 */
-       padding: 1em;
-     }
-     .user_entry {
-       width:            10em;
-       background-color: #002b36;
-       padding-left:     0.5em;
-       padding-right:    0.5em;
-       padding-top:      0.25em;
-       padding-bottom:   0.25em;
-       margin-bottom:    0.5em;
-       color:            #ebd2c4;
-       height:           1em;
-     }
-     .potential_entries {
-       padding-right: 0.5em;
-     }
-     .potential_entries .keybinding {
-       color: #659933; /* green */
-     }
-     .potential_entries .syntax_node {
-       color: #002b36; /* solarized dark */
-     }
-
      .currentElement {
        background-color: #00495b; /* solarized dark (#002b36) times 1.7 */
      }
@@ -88,7 +62,7 @@
 
       <div class="layer">
         <textarea class="not-code"><%= @game.fetch(:body) %></textarea>
-        <div class="side">
+        <div class="side keymap_status">
           <div class="user_entry"></div>
 
           <table class="potential_entries">

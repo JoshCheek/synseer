@@ -24,6 +24,37 @@ body {
   height:           100%;
 }
 
+.keymap_status {
+  background-color: #659933;
+  margin:  0;
+  padding: 1em;
+  width:   100%;
+  height:  100%;
+}
+
+.user_entry {
+  width:            10em;
+  background-color: #316005;
+  padding-left:     0.5em;
+  padding-right:    0.5em;
+  padding-top:      0.25em;
+  padding-bottom:   0.25em;
+  margin-bottom:    0.5em;
+  color:            #C98660;
+  height:           1em;
+}
+.potential_entries {
+  padding-right: 0.5em;
+}
+.potential_entries .keybinding {
+  color: #6B2A05;
+}
+.potential_entries .syntax_node {
+  color: #497C18;
+}
+
+
+
 .available_games {
   padding:          1em;
   padding-top:      2em;
