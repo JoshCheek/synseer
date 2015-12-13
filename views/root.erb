@@ -34,7 +34,7 @@
             <a class="name" href="<%= game.fetch(:path) %>">
               <%= game.fetch(:name) %>
             </a>
-            <div class="score" data-id="<%= game.fetch(:id) %>">
+            <div class="score" data-id="<%= game.fetch(:id) %>" data-next-game="<%= game.fetch(:next_game) %>">
                <div class="status"></div>
                <div class="correct"></div>
                <div class="incorrect"></div>
@@ -90,9 +90,12 @@
       view.setDuration(game.duration);
 
       if(game.id == appState.lastPlayed) {
-        var prevLink = domScore.parentElement.querySelector('a')
-        goPrev       = function() { prevLink.click(); };
-        goNext       = function() { /* ...figure this out... */ };
+        var prevLink    = domScore.parentElement.querySelector('a');
+        var nextElement = document.querySelector('[data-id="'+domScore.dataset['nextGame']+'"]')
+        // var nextElement = nextElement || firstElement;
+        var nextLink    = nextElement && nextElement.parentElement.querySelector('a');
+        goPrev          = function() { prevLink.click(); };
+        goNext          = function() { nextLink && nextLink.click(); };
       }
     } else {
       view.setStatus("Unattempted");

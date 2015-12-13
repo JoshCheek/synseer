@@ -26,9 +26,11 @@ A student goes through the pre-alpha version.
 * Each of the programs can be entered
 * Starts you over when you get it wrong
 * When you get it wrong, it tells you what the node was
-* Allow ordering of the games
 * Better gradient of games
 * Style the numbers at the top of the page
+* A large "Synseer" on the header of the main page
+* Escape is broken (doesn't clear input)
+* Return should start the first challenge when you initially show up, and should revert to the first challenge when you hit the end (they wrap around)
 
 
 ## MIT License

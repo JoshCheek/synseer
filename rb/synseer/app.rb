@@ -10,6 +10,25 @@ module Synseer
       games_dir = Pathname.new File.expand_path('../..', __dir__)
     end
 
+    def self.from_test_fixtures
+      self.new 'integer_addition' => {
+                 id:        "integer_addition",
+                 path:      '/games/integer_addition',
+                 name:      'integer addition',
+                 body:      "1 + 2\n",
+                 json_ast:  nil, # loaded lazily for now
+                 next_game: "string_literal",
+               },
+               'string_literal' => {
+                 id:        "string_literal",
+                 path:      "/games/string_literal",
+                 name:      "string literal",
+                 body:      "'abc'\n",
+                 json_ast:  nil, # loaded lazily for now
+                 next_game: nil,
+               }
+    end
+
     def self.default
       return @default if defined? @default
       games = (root_dir / 'games').children.map do |child|
@@ -19,9 +38,11 @@ module Synseer
                      name:      basename.gsub('_', ' '),
                      body:      child.read,
                      json_ast:  nil, # loaded lazily for now
+                     next_game: nil,
                    }
         ]
       end
+      games.each_cons(2) { |(left_id, left), (right_id, right)| left[:next_game] = right_id }
       @default = self.new(games.to_h)
     end
 

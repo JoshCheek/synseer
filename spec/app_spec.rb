@@ -4,7 +4,7 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
   before :all do
     require 'capybara/rspec'
     require 'capybara/poltergeist'
-    Capybara.app            = Synseer::App.default
+    Capybara.app            = Synseer::App.from_test_fixtures
     Capybara.default_driver = :poltergeist
   end
 
@@ -21,12 +21,15 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
       types.each do |type|
         case type
         when :method
-          native.send_keys("s")
-          native.send_keys("e")
-          native.send_keys("n")
+          native.send_keys('s')
+          native.send_keys('e')
+          native.send_keys('n')
         when :integer
           native.send_keys('i')
           native.send_keys('n')
+        when :string
+          native.send_keys('s')
+          native.send_keys('t')
         else raise "WHAT TYPE IS THIS: #{type.inspect}"
         end
       end
@@ -134,22 +137,6 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
     end
   end
 
-  def guess(*types, browser)
-    # currently, these are just enough to make them unique, so they will be accepted
-    types.each do |type|
-      case type
-      when :method
-        browser.send_keys("s")
-        browser.send_keys("e")
-        browser.send_keys("n")
-      when :integer
-        browser.send_keys('i')
-        browser.send_keys('n')
-      else raise "WHAT TYPE IS THIS: #{type.inspect}"
-      end
-    end
-  end
-
   def browser
     page.find('html').native
   end
@@ -240,7 +227,7 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
       capybara.click_link 'integer addition'
       expect(capybara.current_path).to eq '/games/integer_addition'
 
-    guess :method, :method, :integer, :integer,  browser
+    lol.guess :method, :method, :integer, :integer
     browser.send_keys(:Return)
     sleep 0.1
     expect(capybara.current_path).to eq '/'
@@ -254,7 +241,7 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
     expect(capybara.current_path).to eq '/games/integer_addition'
 
     # I have no errors
-    guess :method, :integer, :integer,  browser
+    lol.guess :method, :integer, :integer
     browser.send_keys(:Return)
     sleep 0.1
     expect(capybara.current_path).to eq '/'
@@ -268,7 +255,7 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
     expect(capybara.current_path).to eq '/games/integer_addition'
 
     # I play have one error
-    guess :method, :method, :integer, :integer,  browser
+    lol.guess :method, :method, :integer, :integer
     browser.send_keys(:Return)
     sleep 0.1
     expect(capybara.current_path).to eq '/'
@@ -276,21 +263,24 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
     # worse score does not beat the better score
     lol.assert_totals completed: 1, incorrect: 0
 
-    # TODO:
-    # # I press enter to play the next game
-    # browser.send_keys(:Return)
+    # I press enter to play the next game
+    browser.send_keys(:Return)
+    sleep 0.01
+    expect(capybara.current_path).to eq '/games/string_literal'
 
-    # # I play with no errors
-    # ?? what is the next game?
+    # I play with no errors
+    lol.guess :string
 
-    # # I press return to go to the main capybara
-    # browser.send_keys(:Return)
+    # I press return to go to the main capybara
+    browser.send_keys(:Return)
+    sleep 0.01
+    expect(capybara.current_path).to eq '/'
 
-    # # I have two games played with no errors
-    # lol.assert_totals completed: 2, incorrect: 0
+    # I have two games played with no errors
+    lol.assert_totals completed: 2, incorrect: 0
   end
 
-  it 'filters my keys to the available options as I type, and accepts my entry once unique' do
+  it 'filters my keys to the available options as I type, and accepts my entry once unique, clearing when I press esc' do
     capybara.visit '/'
     capybara.click_link 'integer addition'
 
@@ -311,5 +301,15 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
     browser.send_keys("n")
     expect(get_user_input.call).to eq ''
     expect(get_potentials.call.length).to be > 10
+
+
+    browser.send_keys("s")
+    browser.send_keys("e")
+    expect(get_user_input.call).to eq 'se'
+    expect(get_potentials.call).to eq ["self", "send"]
+    # TODO
+    # browser.send_keys(:Escape)
+    # expect(get_user_input.call).to eq ''
+    # expect(get_potentials.call.length).to be > 10
   end
 end
