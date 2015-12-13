@@ -4,7 +4,7 @@
    <link rel=stylesheet href="/css/reset.css">
    <link rel=stylesheet href="/css/synseer/main.css">
    <link rel=stylesheet href="/codemirror/lib/codemirror.css">
-   <link rel=stylesheet href="/codemirror/theme/solarized.css">
+   <link rel=stylesheet href="/codemirror/theme/base16-light.css">
 
    <script src="/codemirror/lib/codemirror.js"></script>
    <script src="/codemirror/mode/ruby/ruby.js"></script>
@@ -20,26 +20,17 @@
      }
 
      .CodeMirror {
-       display: table-cell;
-       vertical-align: top;
-     }
-     .CodeMirror {
-       padding: 1em;
-     }
-     .CodeMirror {
-       margin-bottom: 0;
-     }
-     .layer .CodeMirror-scroll {
-       /* They try really hard to put this there, so I have to use more specificity
-          to remove it. Supposedly this will break things, but when I don't have it,
-          it has big white bars (I assume these are scrollbars) along the bottom,
-          as if the div were mis-aligned. */
-       overflow: hidden !important;
+       padding:   1em;
+       font-size: 1.5em;
      }
 
-     .currentElement {
-       background-color: #00495b; /* solarized dark (#002b36) times 1.7 */
-     }
+     .layer .CodeMirror-scroll { overflow: hidden !important; } /* They try really hard to put this there, so I have to use more specificity
+                                                                   to remove it. Supposedly this will break things, but when I don't have it,
+                                                                   it has big white bars (I assume these are scrollbars) along the bottom,
+                                                                   as if the div were mis-aligned. */
+     .currentElement { background: #d0c7a7; }                   /* mix($color-secondary-2-0, lighten($color-primary-0, 40%), 20%); */
+     .cake .layer .CodeMirror { background: #ebd2c4; }
+     .cake .layer .CodeMirror-gutters { background: #ebd2c4; }
    </style>
 </head>
 
@@ -81,7 +72,7 @@
       var game = new Synseer.Game({
         codeMirror:      CodeMirror.fromTextArea(
                            document.querySelector('textarea'),
-                           {lineNumbers: true, theme: 'solarized dark', autofocus: true, scrollbarStyle: "null"}
+                           {lineNumbers: true, theme: 'base16-light', autofocus: true, scrollbarStyle: "null"}
                          ),
         statsView:       new Synseer.StatsView(document.querySelector('.stats')),
         ast:             <%= @game.fetch :json_ast %>,
