@@ -28,7 +28,6 @@ A student goes through the pre-alpha version.
 * When you get it wrong, it tells you what the answer was
 * Better gradient of games
 * Style the numbers at the top of the page
-* Escape is broken (doesn't clear input)
 
 
 ## MIT License

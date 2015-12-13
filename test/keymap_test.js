@@ -189,5 +189,9 @@ describe('KeyMapper', ()=>{
     it('converts "SHIFT-" prefixed inputs to uppercase letters', () => {
       assert.equal(Mapper.fromCodemirror("SHIFT-M"), "M");
     });
+
+    it('conversts "Esc" to "escape"', () => {
+      assert.equal(Mapper.fromCodemirror("Esc"), "escape");
+    });
   });
 });

@@ -285,13 +285,14 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
     expect(capybara.current_path).to eq '/games/integer_addition'
   end
 
-  it 'filters my keys to the available options as I type, and accepts my entry once unique, clearing when I press esc' do
+  it 'filters my keys to the available options as I type, accepts my entry once unique, clears when I press esc' do
     capybara.visit '/'
     capybara.click_link 'integer addition'
 
     get_potentials = -> { capybara.all('.potential_entries .syntax_node').map(&:text) }
     get_user_input = -> { capybara.find('.user_entry').text }
 
+    # filters
     expect(get_user_input.call).to eq ''
     expect(get_potentials.call.length).to be > 10
 
@@ -303,18 +304,19 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
     expect(get_user_input.call).to eq 'se'
     expect(get_potentials.call).to eq ["self", "send"]
 
+    # accepts
     browser.send_keys("n")
     expect(get_user_input.call).to eq ''
     expect(get_potentials.call.length).to be > 10
 
-
+    # clears
     browser.send_keys("s")
     browser.send_keys("e")
     expect(get_user_input.call).to eq 'se'
-    expect(get_potentials.call).to eq ["self", "send"]
-    # TODO
-    # browser.send_keys(:Escape)
-    # expect(get_user_input.call).to eq ''
-    # expect(get_potentials.call.length).to be > 10
+    expect(get_potentials.call.length).to be < 10
+
+    browser.send_keys(:Escape)
+    expect(get_user_input.call).to eq ''
+    expect(get_potentials.call.length).to be > 10
   end
 end

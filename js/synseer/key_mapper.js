@@ -19,8 +19,11 @@ KeyMapper.KeyConflictError.prototype.constructor = KeyMapper.KeyConflictError;
 
 
 KeyMapper.fromCodemirror = function(key) {
+  if(key === 'Esc') return 'escape';
+
   let match = (/^SHIFT-(.+)/).exec(key);
   if(match) return match[1].toUpperCase();
+
   return key.toLowerCase();
 }
 
