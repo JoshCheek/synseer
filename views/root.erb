@@ -61,6 +61,16 @@
 
   var Synseer = require('synseer');
 
+  // -----  Find best games  -----
+  var gamesById = {};
+  for(var i=0; i<appState.games.length; ++i) {
+    var game = appState.games[i];
+    gamesById[game.id] = gamesById[game.id] || game;
+    if(game.numIncorrect < gamesById[game.id].numIncorrect)
+      gamesById[game.id] = game;
+  }
+
+
   // -----  Add scores to the games  -----
   var goPrev = function() { /* noop, override this */ };
   var goNext = function() { /* noop, override this */ };
@@ -70,17 +80,10 @@
   forEach.call(scores, function(domScore) {
     // find the current game
     var view = new Synseer.StatsView(domScore);
-    var game = undefined;
-    for(var i=0; i<appState.games.length; ++i) {
-      if(appState.games[i].id === domScore.dataset["id"]) {
-        game = appState.games[i];
-        break;
-      }
-    }
+    var game = gamesById[domScore.dataset["id"]];
 
     // update the game with the appropriate data
     if(game) {
-      game.view = view;
       view.setStatus("Completed"); // swap with a class and change the colouring instead?
       view.setNumCorrect(game.numCorrect);
       view.setNumIncorrect(game.numIncorrect);
@@ -97,19 +100,17 @@
       view.setNumIncorrect(0);
       view.setDuration(0);
     }
-  })
+  });
 
   // -----  total stats  -----
   var numCorrect     = 0;
   var numIncorrect   = 0;
   var duration       = 0;
-  var gamesCompleted = 0;
-  for(var i=0; i<appState.games.length; ++i) {
-    var game = appState.games[i];
-    gamesCompleted++;
-    numIncorrect += game.numIncorrect;
-    numCorrect   += game.numCorrect;
-    duration     += game.duration;
+  var gamesCompleted = Object.keys(gamesById).length;
+  for(var id in gamesById) {
+    numIncorrect += gamesById[id].numIncorrect;
+    numCorrect   += gamesById[id].numCorrect;
+    duration     += gamesById[id].duration;
   }
 
   var totalStatsView = new Synseer.StatsView(document.querySelector('.total_score'));

@@ -8,18 +8,25 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
     Capybara.default_driver = :poltergeist
   end
 
-  def guess(type, browser)
+  def guess(*types, browser)
     # currently, these are just enough to make them unique, so they will be accepted
-    case type
-    when :method
-      browser.send_keys("s")
-      browser.send_keys("e")
-      browser.send_keys("n")
-    when :integer
-      browser.send_keys('i')
-      browser.send_keys('n')
-    else raise "WHAT TYPE IS THIS: #{method.inspect}"
+    types.each do |type|
+      case type
+      when :method
+        browser.send_keys("s")
+        browser.send_keys("e")
+        browser.send_keys("n")
+      when :integer
+        browser.send_keys('i')
+        browser.send_keys('n')
+      else raise "WHAT TYPE IS THIS: #{method.inspect}"
+      end
     end
+  end
+
+  after :each do
+    page.visit '/' unless page.current_url == '/'
+    page.execute_script("localStorage.clear()")
   end
 
   example 'new user plays their first game' do
@@ -33,10 +40,6 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
     scores.each do |game_element|
       expect(game_element.text.downcase).to include 'unattempted'
     end
-
-    # Since I am new, I cannot play a previous game
-    browser.send_keys('r')
-    expect(page.current_path).to eq '/'
 
     # I have completed 0 games, and have a total time of 0 seconds, 0 correct, and 0 incorrect
     expect(page.find '.total_score .games_completed').to have_text '0'
@@ -128,40 +131,90 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
     expect(page.find '.total_score .correct'        ).to have_text '3'
     expect(page.find '.total_score .incorrect'      ).to have_text '2'
     expect(page.find '.total_score .time'           ).to have_text '0:01'
+  end
+
+  it 'allows me to repeat games with "r", accept next games with "enter", and tracks only my best scores', t: true do
+    # Since I am new, I cannot play a previous game
+    page.visit "/"
+    expect(page.find '.total_score .games_completed').to have_text '0'
+    browser = page.find('html').native # since we changed pages, have to do this
+    browser.send_keys('r')
+    expect(page.current_path).to eq '/'
+
+    # I play the game with one error
+      # TODO: page.send_keys :Return
+      page.click_link 'integer addition'
+      expect(page.current_path).to eq '/games/integer_addition'
+      browser = page.find('html').native # since we changed pages, have to do this
+
+    guess :method, :method, :integer, :integer,  browser
+    browser.send_keys(:Return)
+    browser = page.find('html').native # since we changed pages, have to do this
+    sleep 0.1
+    expect(page.current_path).to eq '/'
+
+    # I have one error
+    expect(page.find '.total_score .games_completed').to have_text '1'
+    expect(page.find '.total_score .incorrect'      ).to have_text '1'
 
     # I press "r" to replay the game
+    browser = page.find('html').native # since we changed pages, have to do this
     browser.send_keys("r")
     sleep 0.1
     expect(page.current_path).to eq '/games/integer_addition'
     browser = page.find('html').native # since we changed pages, have to do this
 
-    # I play the game quickly with no errors
-    guess :method,  browser
-    guess :integer, browser
-    guess :integer, browser
+    # I have no errors
+    guess :method, :integer, :integer,  browser
     browser.send_keys(:Return)
     sleep 0.1
     expect(page.current_path).to eq '/'
+    browser = page.find('html').native # since we changed pages, have to do this
 
-    # I have completed 1 game, and have a total of less than 1 second, 3 correct, and 0 incorrect
-    # expect(page.find '.total_score .games_completed').to have_text '1'
-    # expect(page.find '.total_score .correct'        ).to have_text '3'
+    # better score replaces the worse score
+    expect(page.find '.total_score .games_completed').to have_text '1'
+    expect(page.find '.total_score .incorrect'      ).to have_text '0'
+
+    # I press "r" to replay the game
+    browser = page.find('html').native # since we changed pages, have to do this
+    browser.send_keys("r")
+    sleep 0.1
+    expect(page.current_path).to eq '/games/integer_addition'
+    browser = page.find('html').native # since we changed pages, have to do this
+
+    # I play have one error
+    guess :method, :method, :integer, :integer,  browser
+    browser.send_keys(:Return)
+    sleep 0.1
+    expect(page.current_path).to eq '/'
+    browser = page.find('html').native # since we changed pages, have to do this
+
+    # worse score does not beat the better score
+    expect(page.find '.total_score .games_completed').to have_text '1'
+    expect(page.find '.total_score .incorrect'      ).to have_text '0'
+
+    # TODO:
+    # # I press enter to play the next game
+    # browser.send_keys(:Return)
+
+    # # I play with no errors
+    # ?? what is the next game?
+
+    # # I press return to go to the main page
+    # browser.send_keys(:Return)
+
+    # # I have two games played with no errors
+    # expect(page.find '.total_score .games_completed').to have_text '2'
     # expect(page.find '.total_score .incorrect'      ).to have_text '0'
-    # expect(page.find '.total_score .time'           ).to have_text '0:00'
   end
-
 
   it 'filters my keys to the available options as I type, and accepts my entry once unique' do
     page.visit '/'
     page.click_link 'integer addition'
     browser = page.find('html').native
 
-    get_potentials = -> {
-      page.all('.potential_entries .syntax_node').map(&:text)
-    }
-    get_user_input = -> {
-      page.find('.user_entry').text
-    }
+    get_potentials = -> { page.all('.potential_entries .syntax_node').map(&:text) }
+    get_user_input = -> { page.find('.user_entry').text }
 
     expect(get_user_input.call).to eq ''
     expect(get_potentials.call.length).to be > 10

@@ -23,7 +23,6 @@ A student goes through the pre-alpha version.
 
 ## Todo
 
-* Fix bug on main page when aggregating the data (it chooses the best score)
 * Each of the programs can be entered
 * Starts you over when you get it wrong
 * When you get it wrong, it tells you what the node was
