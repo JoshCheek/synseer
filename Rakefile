@@ -64,7 +64,9 @@ directory 'public/codemirror' do
 end
 
 file 'public/js/synseer.js' => ['js/synseer/index.js', 'public/js'] do
-  sh 'browserify', '--transform', 'babelify',
+  sh 'browserify', '--transform', '[',
+                     'babelify', '--presets', '[', 'es2015', ']',
+                   ']',
                    '--outfile',   'public/js/synseer.js',
                    '--require',   './js/synseer/index.js:synseer'
 end
