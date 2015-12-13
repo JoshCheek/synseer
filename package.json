@@ -12,6 +12,7 @@
     "babelify": "^7.2.0",
     "browserify": "^4.1.2",
     "codemirror": "^5.9.0",
+    "jquery": "^2.1.4",
     "jshint": "^2.8.0",
     "mocha": "^2.3",
     "mousetrap": "^1.5.3",

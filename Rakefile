@@ -80,7 +80,8 @@ file 'public/js/mousetrap.js' do
 end
 
 file 'public/js/jquery.js' do
-  cp 'js/jquery-2.1.4-min.js', 'public/js/jquery.js'
+  sh 'browserify', '--outfile', 'public/js/jquery.js',
+                   '--require', 'jquery:jquery'
 end
 
 CLEAN.include 'tmp'
