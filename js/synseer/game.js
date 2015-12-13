@@ -40,9 +40,10 @@ Game.prototype.start = function(getTime, setInterval) {
 }
 
 Game.prototype.finish = function() {
+  let clone = (obj) => JSON.parse(JSON.stringify(obj))
   this._isFinished = true;
   window.clearInterval(this._timerIntervalId); // TOOD modifies global state
-  this._onFinished();
+  this._onFinished(clone(this._stats));
 }
 
 Game.prototype.isFinished = function() {

@@ -86,7 +86,7 @@
         statsView:       new Synseer.StatsView(document.querySelector('.stats')),
         ast:             <%= @game.fetch :json_ast %>,
         keyMap:          Synseer.DefaultKeymap,
-        onFinished:      function() {
+        onFinished:      function(stats) {
                            // currently this summary does nothing interesting
                            var domFinished = document.createElement("div");
                            domFinished.classList.add("summary");
@@ -95,9 +95,9 @@
                            document.querySelector('body').appendChild(domFinished);
 
                            // save the data
-                           var gameData  = game._stats;
-                           gameData.id   = <%= @game.fetch(:id).inspect %>;
-                           gameData.name = <%= @game.fetch(:name).inspect %>;
+                           var gameData        = stats;
+                           gameData.id         = <%= @game.fetch(:id).inspect %>;
+                           gameData.name       = <%= @game.fetch(:name).inspect %>;
                            appState.games.push(gameData);
                            appState.lastPlayed = gameData.id
                            localStorage.appState = JSON.stringify(appState);
