@@ -28,7 +28,9 @@ StatsView.prototype = {
   },
 
   setDuration: function(secondsElapsed) {
-    this.domTime.textContent = this.formatDuration(secondsElapsed);
+    if(typeof secondsElapsed === "number")
+      secondsElapsed = this.formatDuration(secondsElapsed);
+    this.domTime.textContent = secondsElapsed
   },
 
   formatDuration: function(secondsElapsed) {
