@@ -93,6 +93,7 @@ Game.prototype.pressKey = function(key) {
 }
 
 
+// ----- TODO: Can we push this down into traverse_ast with some callbacks? -----
 Game.prototype._clearElement = function() {
   if(this._currentElement) this._currentElement.clear();
 }

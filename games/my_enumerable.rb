@@ -1,3 +1,5 @@
+# TODO: Go through this and find the interesting ones,
+# try to cut it down to < 30 loc
 module MyEnumerable
   def to_a
     each_with_object([]) { |e, array| array << e }

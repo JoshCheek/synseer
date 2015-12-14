@@ -23,8 +23,10 @@ A student goes through the pre-alpha version.
 
 ## Todo
 
-* Each of the programs can be entered
 * Better gradient of games
+  * A game for each type
+  * A game for each group of types
+* Make sure each of the programs can be entered
 
 ## MIT License
 

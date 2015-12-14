@@ -1,13 +1,13 @@
 module Notifier
   def self.extended(klass)
     decorator = Module.new do
-      # initialize with the first arg being the queue (idk if I actually like this, or would rather the class make it explicit)
       def initialize(event_queue, *rest, &block)
         @event_queue = event_queue
         super(*rest, &block)
       end
     end
-    klass.const_set :NotificationDecorations, decorator # Give it a pretty inspect
+    # set it as a const to give it a pretty inspect
+    klass.const_set :NotificationDecorations, decorator
     klass.prepend decorator
   end
 

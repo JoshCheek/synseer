@@ -31,18 +31,61 @@ module Synseer
 
     def self.default
       return @default if defined? @default
-      games = (root_dir / 'games').children.map do |child|
-        basename = child.basename.sub_ext('').to_s
-        [basename, { id:        basename,
-                     path:      "/games/#{basename}",
-                     name:      basename.gsub('_', ' '),
-                     body:      child.read,
-                     json_ast:  nil, # loaded lazily for now
-                     next_game: nil,
-                   }
-        ]
+      # TODO: Add introductory games, whose purpose is to allow them to
+      #       explore some of the syntaxes in the small, outside of these
+      #       gists I copied in
+      order = %w[
+        integer_addition
+        a_test
+        object_model_as_linked_list_of_hashes
+        linked_list
+        ] +
+
+        # intermediate
+        %w[
+        indentation_guide1
+        bubble_sort1
+        indentation_guide2
+        bubble_sort2
+        indentation_guide3
+        push_dependencies_up_the_callstack
+        seedzzz
+        ] +
+
+        # not are more tedious than hard
+        %w[
+        decorators
+        active_record_normal
+        active_record_harder
+        couchdb_and_google_calendar
+        env_hash_injection
+        ] +
+
+        # These need to be gone through, they're way too much
+        %w[
+        my_enumerable
+      ]
+
+      games = (root_dir / 'games')
+        .children
+        .map     { |path| [path, path.basename.sub_ext('').to_s] }
+        .select  { |path, basename| order.include? basename }
+        .sort_by { |path, basename| order.index(basename) || raise(basename.inspect) }
+        .map     { |path, basename|
+          [basename, { id:        basename,
+                       path:      "/games/#{basename}",
+                       name:      basename.gsub('_', ' '),
+                       body:      path.read,
+                       json_ast:  nil, # loaded lazily for now
+                       next_game: nil,
+                     }
+          ]
+        }
+
+      games.each_cons(2) do |(left_id, left), (right_id, right)|
+        left[:next_game] = right_id
       end
-      games.each_cons(2) { |(left_id, left), (right_id, right)| left[:next_game] = right_id }
+
       @default = self.new(games.to_h)
     end
 
