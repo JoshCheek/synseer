@@ -24,7 +24,6 @@ A student goes through the pre-alpha version.
 ## Todo
 
 * Keybindings on the game page: work regardless of whether you've clicked the code or elsewhere
-* Keybindings on the game page: don't hijack metakeys (eg cmd+r should refresh)
 * Summary pops up when you finish a game
 * Some sort of info on the main page to tell you about r and return (maybe scroll the screen to the "r" game and then add a "press r to play" in front of it and a "press return to play" in front of the next one)
 * You can press "r" immediately to retry the game

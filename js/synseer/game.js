@@ -99,7 +99,7 @@ Game.prototype.pressKey = function(key) {
 Game.prototype._initCodeMirror = function() {
   // seriously no clue why the interface works this way, it makes no sense to me, and took me forever to figure out >.<
   var game       = this;
-  var cmKeyMap   = {call: function(key) { return function() { game.pressKey(key); return "handled"; }}}; // can also return "multi"
+  var cmKeyMap   = {call: function(key) { return function() { game.pressKey(key); }}};
   var codeMirror = this._codeMirror;
   codeMirror.setOption("readOnly",                true);
   codeMirror.setOption("cursorBlinkRate",         -1); // hides the cursor
