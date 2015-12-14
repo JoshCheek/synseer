@@ -10,18 +10,45 @@
    <script src="/codemirror/mode/ruby/ruby.js"></script>
    <script src="/js/jquery.js"></script>
    <script src="/js/synseer.js"></script>
+   <script src="/js/mousetrap.js"></script>
 
    <style>
      body, html, .content, .layer, .CodeMirror {
        margin:  0;
        padding: 0;
-       width:  100%;
-       height: 100%;
+       width:   100%;
+       height:  100%;
      }
 
      .CodeMirror {
        padding:   1em;
        font-size: 1.5em;
+     }
+
+     textarea.cm {
+       position: relative;
+       width:    100%;
+     }
+     .CodeMirror {
+       box-sizing: border-box;
+     }
+     .cm-cage {
+       height:   100%;
+       width:    100%;
+       margin:   0;
+       padding:  0;
+       position: relative;
+     }
+     .cm-screen {
+       background: none;
+       position:   absolute;
+       z-index:    100;
+       border:     0;
+       left:       0;
+       right:      0;
+       top:        0;
+       bottom:     0;
+       outline:    none;
      }
 
      .layer .CodeMirror-scroll { overflow: hidden !important; } /* They try really hard to put this there, so I have to use more specificity
@@ -64,7 +91,13 @@
 
     <div class="cake game-board">
       <div class="layer">
-        <textarea class="not-code"><%= @game.fetch(:body) %></textarea>
+        <div class="cm-cage">
+          <!-- I know this is stupid, but I can't figure out how else to keep
+               CodeMirror from consuming keystrokes
+          -->
+          <div class="cm-screen" tabindex="-1"></div>
+          <textarea class="cm"><%= @game.fetch(:body) %></textarea>
+        </div>
         <div class="side"></div>
       </div>
     </div>
@@ -72,53 +105,88 @@
   </div>
 
   <script>
-    window.game = (function() {
+    (function() {
       'use strict';
 
-      // init/load the data from localstorage
+      // -----  init/load the data from localstorage  -----
       var appState = {games: []};
       if(localStorage.appState === undefined)
         localStorage.appState = JSON.stringify(appState);
       else
         appState = JSON.parse(localStorage.appState);
 
+      // -----  Keymap  -----
+      var Mousetrap = require('mousetrap');
+      var mousetrap = new Mousetrap(document);
+      var state     = 'playing'
+      mousetrap.bind('r',     (function() {
+        console.log("R pressed");
+        // playGame();
+      }));
+      mousetrap.bind('enter', (function() {
+        returnToIndex();
+      }));
+
+      mousetrap.handleKey = function(character, modifiers, event) {
+        console.log(character + " " + event.type);
+
+        if(game.isFinished())
+          mousetrap._handleKey(character, modifiers, event);
+        else if(event.type === 'keyup' && window.game)
+          window.game.pressKey(character);
+      }
+
+
+      // -----  play  -----
       var Synseer      = require('synseer');
       var KeymapStatus = require('synseer/keymap_status');
-      var keymapStatus = new KeymapStatus(document.querySelector('.side'))
+      playGame();
 
-      var game = new Synseer.Game({
-        codeMirror:      CodeMirror.fromTextArea(
-                           document.querySelector('textarea'),
-                           {lineNumbers: true, theme: 'base16-light', autofocus: true, scrollbarStyle: "null"}
-                         ),
-        statsView:       new Synseer.StatsView(document.querySelector('.stats')),
-        ast:             <%= @game.fetch :json_ast %>,
-        keyMap:          Synseer.DefaultKeymap,
-        onFinished:      function(stats) {
-                           // currently this summary does nothing interesting
-                           var domFinished = document.createElement("div");
-                           domFinished.classList.add("summary");
-                           var node = document.createTextNode("This is new.");
-                           domFinished.appendChild(node);
-                           document.querySelector('body').appendChild(domFinished);
+      // -----  functions  -----
 
-                           // save the data
-                           var gameData        = stats;
-                           gameData.id         = <%= @game.fetch(:id).inspect %>;
-                           gameData.name       = <%= @game.fetch(:name).inspect %>;
-                           appState.games.push(gameData);
-                           appState.lastPlayed = gameData.id
-                           localStorage.appState = JSON.stringify(appState);
-                           // this will send it back to the main page immediately: window.location.pathname = '/';
-                         },
-        onPossibilities: function(input, possibilities) { keymapStatus.update(input, possibilities); }
-      });
+      function returnToIndex() {
+        window.location = window.location.origin;
+      }
 
-      game.init();
-      return game;
-    })();
+      function playGame() {
+        var keymapStatus = new KeymapStatus(document.querySelector('.side'))
 
-    game.start(function() { return new Date() }, setInterval);
+        var game = new Synseer.Game({
+          codeMirror:      CodeMirror.fromTextArea(
+                             document.querySelector('textarea.cm'),
+                             { lineNumbers:    true,
+                               theme:          'base16-light',
+                               autofocus:      false,
+                               scrollbarStyle: "null"
+                             }
+                           ),
+          statsView:       new Synseer.StatsView(document.querySelector('.stats')),
+          ast:             <%= @game.fetch :json_ast %>,
+          keyMap:          Synseer.DefaultKeymap,
+          onFinished:      function(stats) {
+                             // currently this summary does nothing interesting
+                             var domFinished = document.createElement("div");
+                             domFinished.classList.add("summary");
+                             var node = document.createTextNode("This is new.");
+                             domFinished.appendChild(node);
+                             document.querySelector('body').appendChild(domFinished);
+
+                             // save the data
+                             var gameData        = stats;
+                             gameData.id         = <%= @game.fetch(:id).inspect %>;
+                             gameData.name       = <%= @game.fetch(:name).inspect %>;
+                             appState.games.push(gameData);
+                             appState.lastPlayed = gameData.id
+                             localStorage.appState = JSON.stringify(appState);
+                             // this will send it back to the main page immediately: window.location.pathname = '/';
+                           },
+          onPossibilities: function(input, possibilities) { keymapStatus.update(input, possibilities); }
+        });
+        window.game = game;
+        game.init();
+        game.start(function() { return new Date() }, setInterval);
+      }
+    })()
   </script>
 </div>
 </body>

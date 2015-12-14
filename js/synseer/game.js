@@ -51,12 +51,7 @@ Game.prototype.isFinished = function() {
 }
 
 Game.prototype.pressKey = function(key) {
-  // ........ehhhhhhh..................
-  if(this.isFinished()) {
-    if(key === 'Enter')
-      window.location = window.location.origin;
-    return;
-  }
+  if(this.isFinished()) return;
 
   key = KeyMapper.fromCodemirror(key);
   var possibilities = this._keyMap.keyPressed(key);
@@ -97,15 +92,17 @@ Game.prototype.pressKey = function(key) {
 }
 
 Game.prototype._initCodeMirror = function() {
-  // seriously no clue why the interface works this way, it makes no sense to me, and took me forever to figure out >.<
-  var game       = this;
-  var cmKeyMap   = {call: function(key) { return function() { game.pressKey(key); }}};
   var codeMirror = this._codeMirror;
   codeMirror.setOption("readOnly",                true);
   codeMirror.setOption("cursorBlinkRate",         -1); // hides the cursor
   codeMirror.setOption("disableInput",            true);
   codeMirror.setOption("showCursorWhenSelecting", false);
-  codeMirror.setOption("keyMap",                  cmKeyMap);
+
+  codeMirror.setOption("keyMap", {
+    call: function(key) {
+      return function() { }
+    }
+  });
 }
 
 module.exports = Game;
