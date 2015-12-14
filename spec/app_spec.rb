@@ -21,15 +21,14 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
       types.each do |type|
         case type
         when :method
+          native.send_keys('m')
           native.send_keys('s')
-          native.send_keys('e')
-          native.send_keys('n')
         when :integer
+          native.send_keys('l')
           native.send_keys('i')
-          native.send_keys('n')
         when :string
+          native.send_keys('l')
           native.send_keys('s')
-          native.send_keys('t')
         else raise "WHAT TYPE IS THIS: #{type.inspect}"
         end
       end
@@ -336,24 +335,20 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
 
     browser.send_keys("s")
     expect(get_user_input.call).to eq 's'
-    expect(get_potentials.call).to eq ["self", "send", "splat", "str", "super", "sym"]
+    expect(get_potentials.call).to eq ["casgn", "masgn", "ivasgn", "lvasgn", "op_asgn", "or_asgn", "splat"]
 
-    browser.send_keys("e")
-    expect(get_user_input.call).to eq 'se'
-    expect(get_potentials.call).to eq ["self", "send"]
+    browser.send_keys("o")
+    expect(get_user_input.call).to eq 'so'
+    expect(get_potentials.call).to eq ["op_asgn", "or_asgn"]
 
-    # accepts
-    browser.send_keys("n")
+    # clears
+    browser.send_keys(:Escape)
     expect(get_user_input.call).to eq ''
     expect(get_potentials.call.length).to be > 10
 
-    # clears
+    # accepts
+    browser.send_keys("m")
     browser.send_keys("s")
-    browser.send_keys("e")
-    expect(get_user_input.call).to eq 'se'
-    expect(get_potentials.call.length).to be < 10
-
-    browser.send_keys(:Escape)
     expect(get_user_input.call).to eq ''
     expect(get_potentials.call.length).to be > 10
   end
