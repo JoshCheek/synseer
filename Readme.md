@@ -23,10 +23,8 @@ A student goes through the pre-alpha version.
 
 ## Todo
 
-* Better keybindings
 * Each of the programs can be entered
 * Better gradient of games
-
 
 ## MIT License
 

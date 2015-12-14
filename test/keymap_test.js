@@ -50,7 +50,7 @@ describe('KeyMapper', ()=>{
     assert.equal("regopt"     , map.lo);
     assert.equal("resbody"    , map.crb);
     assert.equal("rescue"     , map.crs);
-    assert.equal("restarg"    , map.cra);
+    assert.equal("restarg"    , map.ar);
     assert.equal("return"     , map.cre);
     assert.equal("self"       , map.os);
     assert.equal("send"       , map.ms);
