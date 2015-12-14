@@ -38,6 +38,7 @@ module Synseer
         integer_addition
         a_test
         object_model_as_linked_list_of_hashes
+        lol
         linked_list
         ] +
 
