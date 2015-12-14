@@ -87,6 +87,11 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
       expect(capybara.find('.stats .time').text).to eq after
     end
 
+    def assert_message(matcher)
+      info_box = capybara.find('.infoBox')
+      expect(info_box.text).to match matcher
+    end
+
     def assert_completed_games(times: nil, corrects: nil, incorrects: nil)
       expect(
         capybara.all('.available_games .completed.stats .status').map(&:text)
@@ -153,6 +158,10 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
     page
   end
 
+  def ss
+    capybara.save_and_open_screenshot
+  end
+
   def lol
     @synseer ||= Browser.new(page)
   end
@@ -183,15 +192,19 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
     lol.assert_score_change before_correct: 0, guesses: [:method], after_correct: 1
 
     # I see that it is waiting for me to classify the "1" expression
-    current_element = capybara.all('.currentElement').map(&:text).join.delete(" ")
-    expect(current_element).to eq '1'
+    lol.assert_current_game_task '1'
 
-    # I press "m" for "send" (method), and my "correct" count stays at 1 while my "incorrect" count increases from 0 to 1
+    # I incorrectly press "m" for "send" (method),
+    # my "correct" count stays at 1 while my "incorrect" count increases from 0 to 1
+    # It has tells me what the correct answer is and starts me over
     lol.assert_score_change guesses: [:method],
                             before_correct: 1, before_incorrect: 0,
                             after_correct:  1, after_incorrect:  1
+    lol.assert_message /int/i
+    lol.assert_current_game_task '1+2'
 
-    # I press "i" for "integer", and my "correct" count increases from 1 to 2
+    # I get back to where I was and press "i" for "integer", and my "correct" count increases from 1 to 2
+    lol.guess :method
     lol.assert_score_change before_correct: 1, guesses: [:integer], after_correct: 2
 
     # I see that it is waiting for me to classify the "2" expression
@@ -202,8 +215,10 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
                             before_correct: 2, before_incorrect: 1,
                             after_correct:  2, after_incorrect:  2
 
-    # I press "i" for "integer", and my "correct" count increases from 2 to 3,
+    # I get back to where I was and
+    # press "i" for "integer", and my "correct" count increases from 2 to 3,
     # and I have completed the challenge
+    lol.guess :method, :integer
     lol.assert_score_change guesses: [:integer],
                             before_correct: 2,
                             after_correct:  3,
@@ -228,14 +243,16 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
       capybara.visit "/"
       lol.assert_totals completed: 0 # sanity check
       browser.send_keys('r')
+      sleep 0.01
       expect(capybara.current_path).to eq '/'
 
     # I play the first game, 'integer addition', with one error
       browser.send_keys :Return
-      sleep 0.1
+      sleep 0.01
       expect(capybara.current_path).to eq '/games/integer_addition'
 
-      lol.guess :method, :method, :integer, :integer
+      lol.guess :method, :method
+      lol.guess :method, :integer, :integer
       browser.send_keys(:Return)
       sleep 0.1
       expect(capybara.current_path).to eq '/'
@@ -244,6 +261,7 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
       lol.assert_totals completed: 1, incorrect: 1
 
     # I press "r" to replay the game
+
       browser.send_keys("r")
       sleep 0.1
       expect(capybara.current_path).to eq '/games/integer_addition'
@@ -263,7 +281,8 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
       expect(capybara.current_path).to eq '/games/integer_addition'
 
       # I play have one error
-      lol.guess :method, :method, :integer, :integer
+      lol.guess :method, :method
+      lol.guess :method, :integer, :integer
       browser.send_keys(:Return)
       sleep 0.1
       expect(capybara.current_path).to eq '/'
@@ -273,7 +292,7 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
 
     # I press enter to play the next game
       browser.send_keys(:Return)
-      sleep 0.01
+      sleep 0.1
       expect(capybara.current_path).to eq '/games/string_literal'
 
       # I play with no errors
@@ -281,7 +300,7 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
 
     # I press enter to go to the main page
       browser.send_keys(:Return)
-      sleep 0.01
+      sleep 0.1
       expect(capybara.current_path).to eq '/'
 
       # I have two games played with no errors
@@ -289,7 +308,7 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
 
     # Enter wraps back around
       browser.send_keys(:Return)
-      sleep 0.01
+      sleep 0.1
       expect(capybara.current_path).to eq '/games/integer_addition'
 
     # I can press "r" to retry, without going back to the main page
@@ -299,6 +318,7 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
       lol.guess :integer
       lol.assert_game_over
       browser.send_keys("r")
+      sleep 0.1
       lol.assert_game_in_progress
       lol.assert_current_game_task '1+2'
   end

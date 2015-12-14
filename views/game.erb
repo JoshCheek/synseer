@@ -24,7 +24,7 @@
        position:     absolute;
        z-index:      10;
        width:        100%;
-       padding-top:  5em;
+       padding-top:  10em;
      }
      .postgame_info {
        display:        block;
@@ -49,8 +49,8 @@
      }
 
      .CodeMirror {
-       padding:   1em;
-       font-size: 1.5em;
+       padding:     1em;
+       font-size:   1.5em;
      }
 
      .layer .CodeMirror-scroll { overflow: hidden !important; } /* They try really hard to put this there, so I have to use more specificity
@@ -101,7 +101,10 @@
           </div>
         </div>
 
-        <textarea class="cm"><%= @game.fetch(:body) %></textarea>
+        <div class="col">
+          <div class="infoBox">Place messages here</div>
+          <textarea class="cm"><%= @game.fetch(:body) %></textarea>
+        </div>
         <div class="side"></div>
       </div>
     </div>
@@ -112,12 +115,18 @@
     (function() {
       'use strict';
 
+      document.body.onload = playGame;
+
       // -----  init/load the data from localstorage  -----
       var appState = {games: []};
       if(localStorage.appState === undefined)
         localStorage.appState = JSON.stringify(appState);
       else
         appState = JSON.parse(localStorage.appState);
+
+      // -----  InfoBox  -----
+      var infoBox= document.querySelector('.infoBox');
+      infoBox.style.display = 'none';
 
       // -----  Keymap  -----
       var Mousetrap = require('mousetrap');
@@ -171,7 +180,13 @@
           statsView:       statsView,
           ast:             <%= @game.fetch :json_ast %>,
           keyMap:          Synseer.DefaultKeymap,
-          onPossibilities: function(input, possibilities) { keymapStatus.update(input, possibilities); },
+          onPossibilities: function(input, possibilities) {
+                             keymapStatus.update(input, possibilities);
+                           },
+          setMessage:      function(message) {
+                             infoBox.innerText = message;
+                             infoBox.style.display = 'inline-block';
+                           },
           onFinished:      function(stats) {
                              summary.innerText = 'Summary: ' + stats.duration + ' seconds, ' + stats.numCorrect + ' correct, ' + stats.numIncorrect + ' incorrect';
                              postgame_info.style.display = 'block';
@@ -189,9 +204,6 @@
         game.init();
         game.start(function() { return new Date() }, setInterval);
       }
-
-      // -----  play  -----
-      playGame();
     })()
   </script>
 </div>

@@ -80,8 +80,9 @@ body {
 
 
 .available_games {
+  display:          inline-block;
   padding:          1em;
-  padding-top:      2em;
+
   width:            100%;
   th {
     text-decoration: none;
@@ -109,3 +110,24 @@ body {
     }
   }
 }
+
+.infoBox {
+  /* a lot of this is duplicated for postgame_info in views/game.erb */
+  padding:        0.5em;
+  margin:         1em;
+  margin-bottom:  0;
+  display:        inline-block;
+  border-radius:  0.3em;
+  font-weight:    bold;
+  font-size:      1.25em;
+  color:          #6B2A05;
+  background:     rgba(170, 98, 57, 0.4); /* primary0 */
+}
+
+
+.col {
+  width: 100%;
+  border-size: border-box;
+  overflow: hidden;
+}
+

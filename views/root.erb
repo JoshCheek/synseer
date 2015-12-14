@@ -6,24 +6,6 @@
     <script src="/js/synseer.js"></script>
     <script src="/js/mousetrap.js"></script>
   </head>
-
-  <style>
-    .infoBox {
-      /* a lot of this is duplicated for postgame_info in views/game.erb */
-      margin:         1em;
-      padding:        0.5em;
-      display:        inline-block;
-      border-radius:  0.3em;
-      font-weight:    bold;
-      font-size:      1.25em;
-      color:          #6B2A05;
-      background:     rgba(170, 98, 57, 0.4); /* primary0 */
-    }
-    .available_games {
-      display: inline-block;
-      padding-top: 0;
-    }
-  </style>
 <body>
 
 <div class="content">
@@ -180,10 +162,16 @@
   // -----  Keymap  -----
   var Mousetrap = require('mousetrap');
   var mousetrap = new Mousetrap(document);
-  setTimeout(function() {
-    mousetrap.bind('r',     goPrev, 'keyup');
-    mousetrap.bind('enter', goNext, 'keyup');
-  }, 100); // let any key events have a chance to clear, eg from pressing "return" in the url bar,
+
+  var firstDownThenUp = function(key, cb) {
+    // you can erroneously get an up w/o a down, eg from pressing enter in the address bar
+    // and you can pass them forward without consuming their keyup event, thus sending it to the next page,
+    // so... here we are
+    var bindUp = function() { mousetrap.bind(key, cb, 'keyup'); }
+    mousetrap.bind(key, bindUp, 'keydown');
+  }
+  firstDownThenUp('r',     goPrev);
+  firstDownThenUp('enter', goNext);
 
 </script>
 </body>

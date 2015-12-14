@@ -24,8 +24,6 @@ A student goes through the pre-alpha version.
 ## Todo
 
 * Each of the programs can be entered
-* Starts you over when you get it wrong
-* When you get it wrong, it tells you what the answer was
 * Better gradient of games
 
 

@@ -4,7 +4,8 @@ var TraverseAst = require("./traverse_ast");
 
 var Game = function(attrs) {
   var game              = this;
-  this._traverse        = new TraverseAst(attrs.ast)
+  this._setMessage      = attrs.setMessage;
+  this._ast             = attrs.ast;
   this._statsView       = attrs.statsView;
   this._codeMirror      = attrs.codeMirror;
   this._keyMap          = new KeyMapper(attrs.keyMap);
@@ -12,6 +13,7 @@ var Game = function(attrs) {
   this._isFinished      = false;
   this._stats           = {numCorrect: 0, numIncorrect: 0, duration: 0};
   this._onPossibilities = attrs.onPossibilities;
+  this._maxStepsTraversed = 0;
 }
 
 Game.prototype.init = function() {
@@ -23,12 +25,7 @@ Game.prototype.init = function() {
 }
 
 Game.prototype.start = function(getTime, setInterval) {
-  var ast = this._traverse.ast;
-  this._currentElement = this._codeMirror.markText(
-    {line: ast.begin_line, ch: ast.begin_col},
-    {line: ast.end_line,   ch: ast.end_col},
-    {className: "currentElement"}
-  );
+  this.resetTraversal();
   var game               = this;
   var startTime          = getTime();
   this._timerIntervalId  = setInterval(function() {
@@ -43,6 +40,7 @@ Game.prototype.finish = function() {
   let clone = (obj) => JSON.parse(JSON.stringify(obj))
   this._isFinished = true;
   window.clearInterval(this._timerIntervalId); // TOOD modifies global state
+  this.finishTraversal();
   this._onFinished(clone(this._stats));
 }
 
@@ -55,7 +53,8 @@ Game.prototype.pressKey = function(key) {
 
   key = KeyMapper.fromCodemirror(key);
   var possibilities = this._keyMap.keyPressed(key);
-  var selectedType  = possibilities[Object.keys(possibilities)[0]];
+  var entry         = Object.keys(possibilities)[0];
+  var selectedType  = possibilities[entry];
 
   // *sigh* not sure if this is a consequence of not knowing js
   // or if this is really how to do things like this
@@ -69,26 +68,61 @@ Game.prototype.pressKey = function(key) {
   var type = this._traverse.ast.type
 
   if(selectedType == type) {
-    this._statsView.setNumCorrect(
-      ++this._stats.numCorrect
-    );
-    this._currentElement.clear();
+    if(this.isFirstTraversal())
+      this._statsView.setNumCorrect(++this._stats.numCorrect);
     this._traverse = this._traverse.successor();
     if(this._traverse) {
-      var ast = this._traverse.ast;
-      this._currentElement = this._codeMirror.markText(
-        {line: ast.begin_line, ch: ast.begin_col},
-        {line: ast.end_line,   ch: ast.end_col},
-        {className: "currentElement"}
-      );
+      this.advanceTraversal();
     } else {
       this.finish();
     }
   } else {
-    this._statsView.setNumIncorrect(
-      ++this._stats.numIncorrect
-    );
+    this._statsView.setNumIncorrect(++this._stats.numIncorrect);
+    var expectedEntry = null;
+    for(var k in this._keyMap.map) {
+      if(this._keyMap.map[k] === type) {
+        expectedEntry = k;
+        break;
+      }
+    }
+    // type expectedEntry selectedType entry
+    this._setMessage(`${expectedEntry}, ${type}`);
+    this.resetTraversal();
   }
+}
+
+
+Game.prototype._clearElement = function() {
+  if(this._currentElement) this._currentElement.clear();
+}
+Game.prototype.finishTraversal = function() {
+  this._clearElement();
+}
+Game.prototype.isFirstTraversal = function() {
+  return this._stepsTraversed == this._maxStepsTraversed;
+}
+Game.prototype.advanceTraversal = function() {
+  this._clearElement();
+  this._stepsTraversed++;
+  if(this._maxStepsTraversed < this._stepsTraversed)
+    this._maxStepsTraversed = this._stepsTraversed;
+  var ast = this._traverse.ast;
+  this._currentElement = this._codeMirror.markText(
+    {line: ast.begin_line, ch: ast.begin_col},
+    {line: ast.end_line,   ch: ast.end_col},
+    {className: "currentElement"}
+  );
+}
+Game.prototype.resetTraversal = function() {
+  this._clearElement();
+  this._stepsTraversed = 0;
+  var ast = this._ast;
+  this._traverse = new TraverseAst(ast);
+  this._currentElement = this._codeMirror.markText(
+    {line: ast.begin_line, ch: ast.begin_col},
+    {line: ast.end_line,   ch: ast.end_col},
+    {className: "currentElement"}
+  );
 }
 
 Game.prototype._initCodeMirror = function() {
