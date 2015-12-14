@@ -20,6 +20,35 @@
        height:  100%;
      }
 
+     #postgame_info_container {
+       position:     absolute;
+       z-index:      10;
+       width:        100%;
+       padding-top:  5em;
+     }
+     .postgame_info {
+       display:        block;
+       width:          25em;
+       padding:        1em;
+       text-align:     center;
+       margin-left:    auto;
+       margin-right:   auto;
+
+       color:          #e5c4b1;
+       border-radius:  0.3em;
+       font-weight:    bold;
+       font-size:      1.25em;
+       color:          #6B2A05;
+       background:     rgba(170, 98, 57, 0.4); /* primary0 */
+     }
+     .postgame_info .summary {
+       padding-bottom: 0.5em;
+       border-bottom:  2px solid #C98660; /* $color-primary-2 */
+     }
+     .postgame_info .options {
+       padding-top: 0.5em;
+     }
+
      .CodeMirror {
        padding:   1em;
        font-size: 1.5em;
@@ -65,9 +94,12 @@
 
     <div class="cake game-board">
       <div class="layer">
-        <div class="postgame_info">
-          <div class="summary"></div>
-          <div class="options">"Enter" goes to the index, "r" replays this game.</div>
+
+        <div id="postgame_info_container">
+          <div class="postgame_info">
+            <div class="summary"></div>
+            <div class="options">"Enter" goes to the index, "r" replays this game.</div>
+          </div>
         </div>
 
         <textarea class="cm"><%= @game.fetch(:body) %></textarea>
@@ -143,7 +175,7 @@
           onPossibilities: function(input, possibilities) { keymapStatus.update(input, possibilities); },
           onFinished:      function(stats) {
                              summary.innerText = 'Summary: ' + stats.duration + ' seconds, ' + stats.numCorrect + ' correct, ' + stats.numIncorrect + ' incorrect';
-                             postgame_info.style.display = 'inline-block';
+                             postgame_info.style.display = 'block';
 
                              // save the data
                              var gameData        = stats;
