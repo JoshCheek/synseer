@@ -6,6 +6,24 @@
     <script src="/js/synseer.js"></script>
     <script src="/js/mousetrap.js"></script>
   </head>
+
+  <style>
+    .infoBox {
+      /* a lot of this is duplicated for postgame_info in views/game.erb */
+      margin:         1em;
+      padding:        0.5em;
+      display:        inline-block;
+      border-radius:  0.3em;
+      font-weight:    bold;
+      font-size:      1.25em;
+      color:          #6B2A05;
+      background:     rgba(170, 98, 57, 0.4); /* primary0 */
+    }
+    .available_games {
+      display: inline-block;
+      padding-top: 0;
+    }
+  </style>
 <body>
 
 <div class="content">
@@ -36,47 +54,44 @@
 
 
   <div class="cake">
-    <div class="layer">
+    <div class="infoBox"></div>
 
-      <table class="available_games">
-        <tr class="headers">
-          <th>Correct</th>
-          <th>Incorrect</th>
-          <th>Time</th>
-          <th>Name</th>
-        </tr>
+    <table class="available_games">
+      <tr class="headers">
+        <th>Correct</th>
+        <th>Incorrect</th>
+        <th>Time</th>
+        <th>Name</th>
+      </tr>
 
-        <% games.each do |_path, game| %>
-          <tr class="game stats"
-              data-id="<%= game.fetch(:id) %>"
-              data-next-game="<%= game.fetch(:next_game) %>"
-              >
+      <% games.each do |_path, game| %>
+        <tr class="game stats"
+            data-id="<%= game.fetch(:id) %>"
+            data-next-game="<%= game.fetch(:next_game) %>"
+            >
 
-            <td class="stat">
-              <span class="correct"></span>
-            </td>
+          <td class="stat">
+            <span class="correct"></span>
+          </td>
 
-            <td class="stat">
-              <span class="incorrect"></span>
-            </td>
+          <td class="stat">
+            <span class="incorrect"></span>
+          </td>
 
-            <td class="stat">
-              <span class="time"></span>
-            </td>
+          <td class="stat">
+            <span class="time"></span>
+          </td>
 
-            <td>
-              <a class="name" href="<%= game.fetch(:path) %>">
-                <%= game.fetch(:name) %>
-              </a>
-            </td>
-          </li>
-        <% end %>
-      </table>
-
-      <div class="side"></div>
-    </div> <!-- layer -->
-
+          <td>
+            <a class="name" href="<%= game.fetch(:path) %>">
+              <%= game.fetch(:name) %>
+            </a>
+          </td>
+        </li>
+      <% end %>
+    </table>
   </div>
+
 </div>
 
 <script>
@@ -111,8 +126,10 @@
 
 
   // -----  Add scores to the games  -----
-  var goPrev = function() { /* noop, override this */ };
-  var goNext = function() { goToGame(firstGameId); };
+  var goPrev  = function() { /* noop, override this */ };
+  var goNext  = function() { goToGame(firstGameId); };
+  var infoBox = document.querySelector('.infoBox');
+  infoBox.innerText = 'Press "Enter" to play ' + firstGameId;
 
   var forEach = Array.prototype.forEach;
   var scores  = document.querySelectorAll('.game.stats');
@@ -129,8 +146,11 @@
       view.setDuration(game.duration);
 
       if(game.id == appState.lastPlayed) {
+        var next_game_id  = domScore.dataset['nextGame'] || firstGameId;
+        infoBox.innerText = "Press " + '"r" to retry ' + game.id + ', "Enter" to play ' + next_game_id;
+
         goPrev = function() { goToGame(game.id) };
-        goNext = function() { goToGame(domScore.dataset['nextGame'] || firstGameId) };
+        goNext = function() { goToGame(next_game_id) };
       }
     } else {
       view.setStatus("Unattempted");
@@ -160,8 +180,10 @@
   // -----  Keymap  -----
   var Mousetrap = require('mousetrap');
   var mousetrap = new Mousetrap(document);
-  mousetrap.bind('r',     goPrev, 'keyup');
-  mousetrap.bind('enter', goNext, 'keyup');
+  setTimeout(function() {
+    mousetrap.bind('r',     goPrev, 'keyup');
+    mousetrap.bind('enter', goNext, 'keyup');
+  }, 100); // let any key events have a chance to clear, eg from pressing "return" in the url bar,
 
 </script>
 </body>
