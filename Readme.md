@@ -23,7 +23,7 @@ A student goes through the pre-alpha version.
 
 ## Todo
 
-* Style the numbers at the top of the page
+* unplayed games get a dash instead of a 0
 * Keybindings on the game page: work regardless of whether you've clicked the code or elsewhere
 * Keybindings on the game page: don't hijack metakeys (eg cmd+r should refresh)
 * Summary pops up when you finish a game

@@ -81,19 +81,19 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
 
     def assert_completed_games(times: nil, corrects: nil, incorrects: nil)
       expect(
-        capybara.all('.available_games .completed.score .status').map(&:text)
+        capybara.all('.available_games .completed.stats .status').map(&:text)
       ).to be_all { |text| text == 'Completed' }
 
       times and expect(
-        capybara.all('.available_games .completed.score .time').map(&:text)
+        capybara.all('.available_games .completed.stats .time').map(&:text)
       ).to eq times
 
       corrects and expect(
-        capybara.all('.available_games .completed.score .correct').map(&:text)
+        capybara.all('.available_games .completed.stats .correct').map(&:text)
       ).to eq corrects
 
       incorrects and expect(
-        capybara.all('.available_games .completed.score .incorrect').map(&:text)
+        capybara.all('.available_games .completed.stats .incorrect').map(&:text)
       ).to eq incorrects
     end
 

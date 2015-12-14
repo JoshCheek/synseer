@@ -6,20 +6,31 @@
     <script src="/js/synseer.js"></script>
     <script src="/js/mousetrap.js"></script>
   </head>
-  <style>
-    .available_games { width: 100%; }
-  </style>
 <body>
 
 <div class="content">
   <div class="icing">
     <div class="app_name"></div>
     <div class="total_score stats">
-      <div class="games_completed"></div>
-      <div class="status"></div>
-      <div class="correct"></div>
-      <div class="incorrect"></div>
-      <div class="time"></div>
+      <span class="stat">
+        <span class="games_completed"></span>
+        Completed
+      </span>
+
+      <span class="stat">
+        <span class="correct"></span>
+        Correct
+      </span>
+
+      <span class="stat">
+        <span class="incorrect"></span>
+        Incorrect
+      </span>
+
+      <span class="stat">
+        <span class="time"></span>
+        Total Time
+      </span>
     </div>
   </div>
 
@@ -27,21 +38,44 @@
   <div class="cake">
     <div class="layer">
 
-      <ul class="available_games">
+      <table class="available_games">
+        <tr class="headers">
+          <th>Status</th>
+          <th>Correct</th>
+          <th>Incorrect</th>
+          <th>Time</th>
+          <th>Name</th>
+        </tr>
+
         <% games.each do |_path, game| %>
-          <li class="game">
-            <a class="name" href="<%= game.fetch(:path) %>">
-              <%= game.fetch(:name) %>
-            </a>
-            <div class="score" data-id="<%= game.fetch(:id) %>" data-next-game="<%= game.fetch(:next_game) %>">
-               <div class="status"></div>
-               <div class="correct"></div>
-               <div class="incorrect"></div>
-               <div class="time"></div>
-            </div>
+          <tr class="game stats"
+              data-id="<%= game.fetch(:id) %>"
+              data-next-game="<%= game.fetch(:next_game) %>">
+
+            <td class="stat">
+              <span class="status"></span>
+            </td>
+
+            <td class="stat">
+              <span class="correct"></span>
+            </td>
+
+            <td class="stat">
+              <span class="incorrect"></span>
+            </td>
+
+            <td class="stat">
+              <span class="time"></span>
+            </td>
+
+            <td>
+              <a class="name" href="<%= game.fetch(:path) %>">
+                <%= game.fetch(:name) %>
+              </a>
+            </td>
           </li>
         <% end %>
-      </ul>
+      </table>
 
       <div class="side"></div>
     </div> <!-- layer -->
@@ -62,7 +96,7 @@
 
   function playGame(id) {
     var gameElement = document.querySelector('[data-id="'+id+'"]');
-    var gameLink    = gameElement && gameElement.parentElement.querySelector('a');
+    var gameLink    = gameElement && gameElement.querySelector('a');
     gameLink && gameLink.click();
   }
 
@@ -83,7 +117,7 @@
   var goNext = function() { playGame(firstGameId); };
 
   var forEach = Array.prototype.forEach;
-  var scores  = document.querySelectorAll('li.game .score');
+  var scores  = document.querySelectorAll('.game.stats');
   forEach.call(scores, function(domScore) {
     // find the current game
     var view = new Synseer.StatsView(domScore);
