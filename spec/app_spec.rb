@@ -35,6 +35,14 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
       end
     end
 
+    def assert_game_over
+      expect(capybara).to have_css '.summary'
+    end
+
+    def assert_game_in_progress
+      expect(capybara).to have_no_css '.summary'
+    end
+
     def native
       capybara.find('html').native
     end
@@ -126,7 +134,7 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
       after_correct    and expect(correct.text  ).to eq after_correct.to_s
       after_incorrect  and expect(incorrect.text).to eq after_incorrect.to_s
       after_time       and expect(time.text     ).to eq after_time.to_s
-      summary          and expect(capybara.find('.summary').text).to eq summary.to_s
+      summary          and expect(capybara.find('.summary').text).to match summary.to_s
     end
 
     def assert_totals(completed: nil, correct: nil, incorrect: nil, time: nil)
@@ -199,7 +207,7 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
     lol.assert_score_change guesses: [:integer],
                             before_correct: 2,
                             after_correct:  3,
-                            summary: 'This is new.' # FIXME (implement)
+                            summary: /./ # FIXME (implement)
 
     # After 1 second, my time has not increased
     lol.assert_time_change before: '0:01', sleep_for: 1, after: '0:01'
@@ -217,72 +225,82 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
 
   it 'allows me to repeat games with "r", accept next games with "enter", and tracks only my best scores' do
     # Since I am new, I cannot play a previous game
-    capybara.visit "/"
-    lol.assert_totals completed: 0 # sanity check
-    browser.send_keys('r')
-    expect(capybara.current_path).to eq '/'
+      capybara.visit "/"
+      lol.assert_totals completed: 0 # sanity check
+      browser.send_keys('r')
+      expect(capybara.current_path).to eq '/'
 
     # I play the first game, 'integer addition', with one error
-    browser.send_keys :Return
-    sleep 0.1
-    expect(capybara.current_path).to eq '/games/integer_addition'
+      browser.send_keys :Return
+      sleep 0.1
+      expect(capybara.current_path).to eq '/games/integer_addition'
 
-    lol.guess :method, :method, :integer, :integer
-    browser.send_keys(:Return)
-    sleep 0.1
-    expect(capybara.current_path).to eq '/'
+      lol.guess :method, :method, :integer, :integer
+      browser.send_keys(:Return)
+      sleep 0.1
+      expect(capybara.current_path).to eq '/'
 
-    # I have one error
-    lol.assert_totals completed: 1, incorrect: 1
+      # I have one error
+      lol.assert_totals completed: 1, incorrect: 1
 
     # I press "r" to replay the game
-    browser.send_keys("r")
-    sleep 0.1
-    expect(capybara.current_path).to eq '/games/integer_addition'
+      browser.send_keys("r")
+      sleep 0.1
+      expect(capybara.current_path).to eq '/games/integer_addition'
 
-    # I have no errors
-    lol.guess :method, :integer, :integer
-    browser.send_keys(:Return)
-    sleep 0.1
-    expect(capybara.current_path).to eq '/'
+      # I have no errors
+      lol.guess :method, :integer, :integer
+      browser.send_keys(:Return)
+      sleep 0.1
+      expect(capybara.current_path).to eq '/'
 
     # better score replaces the worse score
-    lol.assert_totals completed: 1, incorrect: 0
+      lol.assert_totals completed: 1, incorrect: 0
 
-    # I press "r" to replay the game
-    browser.send_keys("r")
-    sleep 0.1
-    expect(capybara.current_path).to eq '/games/integer_addition'
+      # I press "r" to replay the game
+      browser.send_keys("r")
+      sleep 0.1
+      expect(capybara.current_path).to eq '/games/integer_addition'
 
-    # I play have one error
-    lol.guess :method, :method, :integer, :integer
-    browser.send_keys(:Return)
-    sleep 0.1
-    expect(capybara.current_path).to eq '/'
+      # I play have one error
+      lol.guess :method, :method, :integer, :integer
+      browser.send_keys(:Return)
+      sleep 0.1
+      expect(capybara.current_path).to eq '/'
 
     # worse score does not beat the better score
-    lol.assert_totals completed: 1, incorrect: 0
+      lol.assert_totals completed: 1, incorrect: 0
 
     # I press enter to play the next game
-    browser.send_keys(:Return)
-    sleep 0.01
-    expect(capybara.current_path).to eq '/games/string_literal'
+      browser.send_keys(:Return)
+      sleep 0.01
+      expect(capybara.current_path).to eq '/games/string_literal'
 
-    # I play with no errors
-    lol.guess :string
+      # I play with no errors
+      lol.guess :string
 
-    # I press return to go to the main capybara
-    browser.send_keys(:Return)
-    sleep 0.01
-    expect(capybara.current_path).to eq '/'
+    # I press enter to go to the main page
+      browser.send_keys(:Return)
+      sleep 0.01
+      expect(capybara.current_path).to eq '/'
 
-    # I have two games played with no errors
-    lol.assert_totals completed: 2, incorrect: 0
+      # I have two games played with no errors
+      lol.assert_totals completed: 2, incorrect: 0
 
     # Enter wraps back around
-    browser.send_keys(:Return)
-    sleep 0.01
-    expect(capybara.current_path).to eq '/games/integer_addition'
+      browser.send_keys(:Return)
+      sleep 0.01
+      expect(capybara.current_path).to eq '/games/integer_addition'
+
+    # I can press "r" to retry, without going back to the main page
+      lol.assert_current_game_task '1+2'
+      lol.guess :method, :integer
+      lol.assert_current_game_task '2'
+      lol.guess :integer
+      lol.assert_game_over
+      browser.send_keys("r")
+      lol.assert_game_in_progress
+      lol.assert_current_game_task '1+2'
   end
 
   it 'filters my keys to the available options as I type, accepts my entry once unique, clears when I press esc' do

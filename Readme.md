@@ -25,7 +25,6 @@ A student goes through the pre-alpha version.
 
 * Summary pops up when you finish a game
 * Some sort of info on the main page to tell you about r and return (maybe scroll the screen to the "r" game and then add a "press r to play" in front of it and a "press return to play" in front of the next one)
-* You can press "r" immediately to retry the game
 * Each of the programs can be entered
 * Starts you over when you get it wrong
 * When you get it wrong, it tells you what the answer was

@@ -65,6 +65,7 @@
 
     <div class="cake game-board">
       <div class="layer">
+        <div class="summary">Game Over, something about 'enter' and 'r'</div>
         <textarea class="cm"><%= @game.fetch(:body) %></textarea>
         <div class="side"></div>
       </div>
@@ -92,52 +93,50 @@
         if(window.game && !window.game.isFinished())
           window.game.pressKey(character);
         else if(character == 'r')
-          console.log('play again'); // playGame()
+          playGame();
         else if(character == 'enter')
           returnToIndex();
       }
 
+      // -----  CodeMirror  -----
+      var cm = CodeMirror.fromTextArea(
+        document.querySelector('textarea.cm'),
+        { lineNumbers:    true,
+          theme:          'base16-light',
+          autofocus:      false,
+          scrollbarStyle: "null",
+        }
+      )
 
-      // -----  play  -----
+      // don't hijack my keys!
+      function ignoreEvent(x, e) { e.codemirrorIgnore = true; }
+      cm.on("keydown",  ignoreEvent);
+      cm.on("keypress", ignoreEvent);
+      cm.on("keyup",    ignoreEvent);
+
+
+      // -----  Reusable Game Objects  -----
       var Synseer      = require('synseer');
       var KeymapStatus = require('synseer/keymap_status');
-      playGame();
+      var statsView    = new Synseer.StatsView(document.querySelector('.stats'));
+      var summary      = document.querySelector('.summary');
+      var keymapStatus = new KeymapStatus(document.querySelector('.side'))
 
-      // -----  functions  -----
+      // -----  Functions  -----
       function returnToIndex() {
         window.location = window.location.origin;
       }
 
       function playGame() {
-        var keymapStatus = new KeymapStatus(document.querySelector('.side'))
-
-        var cm = CodeMirror.fromTextArea(
-          document.querySelector('textarea.cm'),
-          { lineNumbers:    true,
-            theme:          'base16-light',
-            autofocus:      false,
-            scrollbarStyle: "null",
-          }
-        )
-
-        // don't hijack my keys!
-        function ignoreEvent(x, e) { e.codemirrorIgnore = true; }
-        cm.on("keydown",  ignoreEvent);
-        cm.on("keypress", ignoreEvent);
-        cm.on("keyup",    ignoreEvent);
+        summary.style.display = 'none';
 
         var game = new Synseer.Game({
           codeMirror:      cm,
-          statsView:       new Synseer.StatsView(document.querySelector('.stats')),
+          statsView:       statsView,
           ast:             <%= @game.fetch :json_ast %>,
           keyMap:          Synseer.DefaultKeymap,
           onFinished:      function(stats) {
-                             // currently this summary does nothing interesting
-                             var domFinished = document.createElement("div");
-                             domFinished.classList.add("summary");
-                             var node = document.createTextNode("This is new.");
-                             domFinished.appendChild(node);
-                             document.querySelector('body').appendChild(domFinished);
+                             summary.style.display = 'inline-block';
 
                              // save the data
                              var gameData        = stats;
@@ -154,6 +153,9 @@
         game.init();
         game.start(function() { return new Date() }, setInterval);
       }
+
+      // -----  play  -----
+      playGame();
     })()
   </script>
 </div>
