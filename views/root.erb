@@ -40,7 +40,6 @@
 
       <table class="available_games">
         <tr class="headers">
-          <th>Status</th>
           <th>Correct</th>
           <th>Incorrect</th>
           <th>Time</th>
@@ -50,11 +49,8 @@
         <% games.each do |_path, game| %>
           <tr class="game stats"
               data-id="<%= game.fetch(:id) %>"
-              data-next-game="<%= game.fetch(:next_game) %>">
-
-            <td class="stat">
-              <span class="status"></span>
-            </td>
+              data-next-game="<%= game.fetch(:next_game) %>"
+              >
 
             <td class="stat">
               <span class="correct"></span>

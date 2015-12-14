@@ -100,9 +100,10 @@ body {
     margin-bottom: 1em;
     padding:       0.5em;
     color:         $color-primary-4;
-    a.name {
+    &.unattempted .name { color: $color-primary-3;     }
+    &.completed   .name { color: $color-secondary-2-3; }
+    .name {
       text-decoration: none;
-      color:           $color-secondary-2-3;
       font-size:       1.2em;
       font-weight:     bold;
     }

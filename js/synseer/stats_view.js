@@ -16,7 +16,8 @@ StatsView.prototype = {
 
   setStatus: function(status) {
     this.domElement.classList.add(status.toLowerCase());
-    this.domStatus.textContent = status;
+    if(this.domStatus)
+      this.domStatus.textContent = status;
   },
 
   setNumCorrect: function(n) {
