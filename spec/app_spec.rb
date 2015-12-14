@@ -243,12 +243,12 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
       capybara.visit "/"
       lol.assert_totals completed: 0 # sanity check
       browser.send_keys('r')
-      sleep 0.01
+      sleep 0.1
       expect(capybara.current_path).to eq '/'
 
     # I play the first game, 'integer addition', with one error
       browser.send_keys :Return
-      sleep 0.01
+      sleep 0.1
       expect(capybara.current_path).to eq '/games/integer_addition'
 
       lol.guess :method, :method

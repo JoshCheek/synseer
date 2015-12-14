@@ -20,6 +20,74 @@
        height:  100%;
      }
 
+     .positive_reinforcement {
+       -webkit-animation-duration:  1s;
+       -moz-animation-duration:     1s;
+       -o-animation-duration:       1s;
+       animation-duration:          1s;
+
+       -webkit-animation-name:      positive_reinforcement;
+       -moz-animation-name:         positive_reinforcement;
+       -o-animation-name:           positive_reinforcement;
+       animation-name:              positive_reinforcement;
+
+       -webkit-animation-fill-mode: backwards;
+       -moz-animation-fill-mode:    backwards;
+       -o-animation-fill-mode:      backwards;
+       animation-fill-mode:         backwards;
+     }
+     @-webkit-keyframes positive_reinforcement {
+       from { background-color: rgb(101, 153, 51); }
+       to { }
+     }
+     @-moz-keyframes positive_reinforcement {
+       from { background-color: rgb(101, 153, 51); }
+       to { }
+     }
+     @-o-keyframes positive_reinforcement {
+       from { background-color: rgb(101, 153, 51); }
+       to { }
+     }
+     @keyframes positive_reinforcement {
+       from { background-color: rgb(101, 153, 51); }
+       to { }
+     }
+
+     .negative_reinforcement {
+       -webkit-animation-duration:  1s;
+       -moz-animation-duration:     1s;
+       -o-animation-duration:       1s;
+       animation-duration:          1s;
+
+       -webkit-animation-name:      negative_reinforcement;
+       -moz-animation-name:         negative_reinforcement;
+       -o-animation-name:           negative_reinforcement;
+       animation-name:              negative_reinforcement;
+
+       -webkit-animation-fill-mode: backwards;
+       -moz-animation-fill-mode:    backwards;
+       -o-animation-fill-mode:      backwards;
+       animation-fill-mode:         backwards;
+     }
+     @-webkit-keyframes negative_reinforcement {
+       from { background-color: #F00; }
+       to { }
+     }
+     @-moz-keyframes negative_reinforcement {
+       from { background-color: #F00; }
+       to { }
+     }
+     @-o-keyframes negative_reinforcement {
+       from { background-color: #F00; }
+       to { }
+     }
+     @keyframes negative_reinforcement {
+       from { background-color: #F00; }
+       to { }
+     }
+
+
+
      .postgame_info_container {
        position:     absolute;
        z-index:      10;
@@ -102,7 +170,10 @@
         </div>
 
         <div class="col">
-          <div class="infoBox">Place messages here</div>
+          <div class="infoBox">
+            Classify each of these.
+            If you don't know, guess and use the error message as feedback.
+          </div>
           <textarea class="cm"><%= @game.fetch(:body) %></textarea>
         </div>
         <div class="side"></div>
@@ -126,7 +197,6 @@
 
       // -----  InfoBox  -----
       var infoBox= document.querySelector('.infoBox');
-      infoBox.style.display = 'none';
 
       // -----  Keymap  -----
       var Mousetrap = require('mousetrap');
@@ -183,9 +253,19 @@
           onPossibilities: function(input, possibilities) {
                              keymapStatus.update(input, possibilities);
                            },
-          setMessage:      function(message) {
+          setMessage:      function(message, type) {
                              infoBox.innerText = message;
-                             infoBox.style.display = 'inline-block';
+                             infoBox.classList.remove('negative_reinforcement');
+                             infoBox.classList.remove('positive_reinforcement');
+
+                             // not sure why we need the set timeout but it has no transition if we don't
+                             setTimeout(function() {
+                               if(type === 'negative') {
+                                 infoBox.classList.add('negative_reinforcement')
+                               } else if(type === 'positive') {
+                                 infoBox.classList.add('positive_reinforcement')
+                               }
+                             }, 0);
                            },
           onFinished:      function(stats) {
                              summary.innerText = 'Summary: ' + stats.duration + ' seconds, ' + stats.numCorrect + ' correct, ' + stats.numIncorrect + ' incorrect';

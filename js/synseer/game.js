@@ -71,6 +71,7 @@ Game.prototype.pressKey = function(key) {
     if(this.isFirstTraversal())
       this._statsView.setNumCorrect(++this._stats.numCorrect);
     this._traverse = this._traverse.successor();
+    this._setMessage(`${entry}, ${type}`, 'positive');
     if(this._traverse) {
       this.advanceTraversal();
     } else {
@@ -86,7 +87,7 @@ Game.prototype.pressKey = function(key) {
       }
     }
     // type expectedEntry selectedType entry
-    this._setMessage(`${expectedEntry}, ${type}`);
+    this._setMessage(`${expectedEntry}, ${type}`, 'negative');
     this.resetTraversal();
   }
 }
