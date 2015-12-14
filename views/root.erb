@@ -90,7 +90,7 @@
 
   var firstGameId = <%= games.first.last.fetch(:id).inspect %>;
 
-  function playGame(id) {
+  function goToGame(id) {
     var gameElement = document.querySelector('[data-id="'+id+'"]');
     var gameLink    = gameElement && gameElement.querySelector('a');
     gameLink && gameLink.click();
@@ -102,15 +102,17 @@
   var gamesById = {};
   for(var i=0; i<appState.games.length; ++i) {
     var game = appState.games[i];
-    gamesById[game.id] = gamesById[game.id] || game;
-    if(game.numIncorrect < gamesById[game.id].numIncorrect)
-      gamesById[game.id] = game;
+    var best = gamesById[game.id] || game;
+    if     (best.numIncorrect < game.numIncorrect) /* noop */;
+    else if(best.numIncorrect > game.numIncorrect) best = game;
+    else if(best.duration     > game.duration)     best = game; // <-- there is no test on this one
+    gamesById[game.id] = best
   }
 
 
   // -----  Add scores to the games  -----
   var goPrev = function() { /* noop, override this */ };
-  var goNext = function() { playGame(firstGameId); };
+  var goNext = function() { goToGame(firstGameId); };
 
   var forEach = Array.prototype.forEach;
   var scores  = document.querySelectorAll('.game.stats');
@@ -127,8 +129,8 @@
       view.setDuration(game.duration);
 
       if(game.id == appState.lastPlayed) {
-        goPrev = function() { playGame(game.id) };
-        goNext = function() { playGame(domScore.dataset['nextGame'] || firstGameId) };
+        goPrev = function() { goToGame(game.id) };
+        goNext = function() { goToGame(domScore.dataset['nextGame'] || firstGameId) };
       }
     } else {
       view.setStatus("Unattempted");
@@ -158,8 +160,8 @@
   // -----  Keymap  -----
   var Mousetrap = require('mousetrap');
   var mousetrap = new Mousetrap(document);
-  mousetrap.bind('r',     goPrev);
-  mousetrap.bind('enter', goNext);
+  mousetrap.bind('r',     goPrev, 'keyup');
+  mousetrap.bind('enter', goNext, 'keyup');
 
 </script>
 </body>

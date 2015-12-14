@@ -19,12 +19,12 @@ KeyMapper.KeyConflictError.prototype.constructor = KeyMapper.KeyConflictError;
 
 
 KeyMapper.fromCodemirror = function(key) {
-  if(key === 'Esc') return 'escape';
+  key = key.toLowerCase();
+  if(key === 'esc') return 'escape';
 
-  let match = (/^SHIFT-(.+)/).exec(key);
+  let match = (/^shift-(.+)/).exec(key);
   if(match) return match[1].toUpperCase();
-
-  return key.toLowerCase();
+  return key;
 }
 
 // http://www.sitepoint.com/exceptional-exception-handling-in-javascript/

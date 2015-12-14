@@ -25,32 +25,6 @@
        font-size: 1.5em;
      }
 
-     textarea.cm {
-       position: relative;
-       width:    100%;
-     }
-     .CodeMirror {
-       box-sizing: border-box;
-     }
-     .cm-cage {
-       height:   100%;
-       width:    100%;
-       margin:   0;
-       padding:  0;
-       position: relative;
-     }
-     .cm-screen {
-       background: none;
-       position:   absolute;
-       z-index:    100;
-       border:     0;
-       left:       0;
-       right:      0;
-       top:        0;
-       bottom:     0;
-       outline:    none;
-     }
-
      .layer .CodeMirror-scroll { overflow: hidden !important; } /* They try really hard to put this there, so I have to use more specificity
                                                                    to remove it. Supposedly this will break things, but when I don't have it,
                                                                    it has big white bars (I assume these are scrollbars) along the bottom,
@@ -91,13 +65,7 @@
 
     <div class="cake game-board">
       <div class="layer">
-        <div class="cm-cage">
-          <!-- I know this is stupid, but I can't figure out how else to keep
-               CodeMirror from consuming keystrokes
-          -->
-          <div class="cm-screen" tabindex="-1"></div>
-          <textarea class="cm"><%= @game.fetch(:body) %></textarea>
-        </div>
+        <textarea class="cm"><%= @game.fetch(:body) %></textarea>
         <div class="side"></div>
       </div>
     </div>
@@ -118,22 +86,15 @@
       // -----  Keymap  -----
       var Mousetrap = require('mousetrap');
       var mousetrap = new Mousetrap(document);
-      var state     = 'playing'
-      mousetrap.bind('r',     (function() {
-        console.log("R pressed");
-        // playGame();
-      }));
-      mousetrap.bind('enter', (function() {
-        returnToIndex();
-      }));
-
       mousetrap.handleKey = function(character, modifiers, event) {
-        console.log(character + " " + event.type);
+        if(event.type !== 'keyup') return;
 
-        if(game.isFinished())
-          mousetrap._handleKey(character, modifiers, event);
-        else if(event.type === 'keyup' && window.game)
+        if(window.game && !window.game.isFinished())
           window.game.pressKey(character);
+        else if(character == 'r')
+          console.log('play again'); // playGame()
+        else if(character == 'enter')
+          returnToIndex();
       }
 
 
@@ -143,7 +104,6 @@
       playGame();
 
       // -----  functions  -----
-
       function returnToIndex() {
         window.location = window.location.origin;
       }
@@ -151,15 +111,23 @@
       function playGame() {
         var keymapStatus = new KeymapStatus(document.querySelector('.side'))
 
+        var cm = CodeMirror.fromTextArea(
+          document.querySelector('textarea.cm'),
+          { lineNumbers:    true,
+            theme:          'base16-light',
+            autofocus:      false,
+            scrollbarStyle: "null",
+          }
+        )
+
+        // don't hijack my keys!
+        function ignoreEvent(x, e) { e.codemirrorIgnore = true; }
+        cm.on("keydown",  ignoreEvent);
+        cm.on("keypress", ignoreEvent);
+        cm.on("keyup",    ignoreEvent);
+
         var game = new Synseer.Game({
-          codeMirror:      CodeMirror.fromTextArea(
-                             document.querySelector('textarea.cm'),
-                             { lineNumbers:    true,
-                               theme:          'base16-light',
-                               autofocus:      false,
-                               scrollbarStyle: "null"
-                             }
-                           ),
+          codeMirror:      cm,
           statsView:       new Synseer.StatsView(document.querySelector('.stats')),
           ast:             <%= @game.fetch :json_ast %>,
           keyMap:          Synseer.DefaultKeymap,

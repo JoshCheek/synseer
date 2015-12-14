@@ -192,6 +192,7 @@ describe('KeyMapper', ()=>{
 
     it('conversts "Esc" to "escape"', () => {
       assert.equal(Mapper.fromCodemirror("Esc"), "escape");
+      assert.equal(Mapper.fromCodemirror("esc"), "escape");
     });
   });
 });
