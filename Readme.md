@@ -23,7 +23,6 @@ A student goes through the pre-alpha version.
 
 ## Todo
 
-* Summary pops up when you finish a game
 * Some sort of info on the main page to tell you about r and return (maybe scroll the screen to the "r" game and then add a "press r to play" in front of it and a "press return to play" in front of the next one)
 * Each of the programs can be entered
 * Starts you over when you get it wrong

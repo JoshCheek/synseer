@@ -207,7 +207,7 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
     lol.assert_score_change guesses: [:integer],
                             before_correct: 2,
                             after_correct:  3,
-                            summary: /./ # FIXME (implement)
+                            summary: /\b2 incorrect\b/i # just some stat that should be in it
 
     # After 1 second, my time has not increased
     lol.assert_time_change before: '0:01', sleep_for: 1, after: '0:01'

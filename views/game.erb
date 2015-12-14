@@ -65,7 +65,11 @@
 
     <div class="cake game-board">
       <div class="layer">
-        <div class="summary">Game Over, something about 'enter' and 'r'</div>
+        <div class="postgame_info">
+          <div class="summary"></div>
+          <div class="options">"Enter" goes to the index, "r" replays this game.</div>
+        </div>
+
         <textarea class="cm"><%= @game.fetch(:body) %></textarea>
         <div class="side"></div>
       </div>
@@ -116,10 +120,11 @@
 
 
       // -----  Reusable Game Objects  -----
-      var Synseer      = require('synseer');
-      var KeymapStatus = require('synseer/keymap_status');
-      var statsView    = new Synseer.StatsView(document.querySelector('.stats'));
-      var summary      = document.querySelector('.summary');
+      var Synseer       = require('synseer');
+      var KeymapStatus  = require('synseer/keymap_status');
+      var statsView     = new Synseer.StatsView(document.querySelector('.stats'));
+      var postgame_info = document.querySelector('.postgame_info');
+      var summary       = postgame_info.querySelector('.summary');
       var keymapStatus = new KeymapStatus(document.querySelector('.side'))
 
       // -----  Functions  -----
@@ -128,15 +133,17 @@
       }
 
       function playGame() {
-        summary.style.display = 'none';
+        postgame_info.style.display = 'none';
 
         var game = new Synseer.Game({
           codeMirror:      cm,
           statsView:       statsView,
           ast:             <%= @game.fetch :json_ast %>,
           keyMap:          Synseer.DefaultKeymap,
+          onPossibilities: function(input, possibilities) { keymapStatus.update(input, possibilities); },
           onFinished:      function(stats) {
-                             summary.style.display = 'inline-block';
+                             summary.innerText = 'Summary: ' + stats.duration + ' seconds, ' + stats.numCorrect + ' correct, ' + stats.numIncorrect + ' incorrect';
+                             postgame_info.style.display = 'inline-block';
 
                              // save the data
                              var gameData        = stats;
@@ -145,9 +152,7 @@
                              appState.games.push(gameData);
                              appState.lastPlayed = gameData.id
                              localStorage.appState = JSON.stringify(appState);
-                             // this will send it back to the main page immediately: window.location.pathname = '/';
                            },
-          onPossibilities: function(input, possibilities) { keymapStatus.update(input, possibilities); }
         });
         window.game = game;
         game.init();
