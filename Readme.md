@@ -46,7 +46,6 @@ Assume most decisions are incidental, not intentional (I'm figuring it out as I 
 
 ## Todo
 
-* Swap the side-box to the other side
 * Add an about page
 * Some better explanation
 * Backspace sends you to the previous page... that shouldn't happen -.^

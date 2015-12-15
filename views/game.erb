@@ -128,6 +128,7 @@
      .currentElement { background: #d0c7a7; }                   /* mix($color-secondary-2-0, lighten($color-primary-0, 40%), 20%); */
      .cake .layer .CodeMirror { background: #ebd2c4; }
      .cake .layer .CodeMirror-gutters { background: #ebd2c4; }
+     .side { width: 10em; }
    </style>
 </head>
 
@@ -169,14 +170,14 @@
           </div>
         </div>
 
+        <div class="side"></div>
         <div class="col">
           <div class="infoBox">
-            Classify each of these.
-            If you don't know, guess and use the error message as feedback.
+            Type the characters you think match the description
+            of the highlighted poriton.
           </div>
           <textarea class="cm"><%= @game.fetch(:body) %></textarea>
         </div>
-        <div class="side"></div>
       </div>
     </div>
 
