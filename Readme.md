@@ -34,6 +34,10 @@ After changing CSS or JavaScript, you need to rebuild: `$ rake build`
 You don't need to restart the server unless you edit the Ruby files.
 If you ever need to regenerate from scratch: `$ rake clobber; rake build`
 
+The ruby you classify is in the "games" directory.
+To add one or change the order, see the `default` method in `rb/synseer/app.rb`
+After working on these, you need to restart a server.
+
 To run tests `$ rake` Ruby code is tested in the `spec` directory,
 JS unit tests are in the `test` directory, and integration tests are
 done with phantom as part of the Ruby integration tests.

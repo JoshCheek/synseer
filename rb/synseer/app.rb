@@ -34,11 +34,16 @@ module Synseer
       # TODO: Add introductory games, whose purpose is to allow them to
       #       explore some of the syntaxes in the small, outside of these
       #       gists I copied in
+
       order = %w[
         integer_addition
+        puts
+        require_statements
         a_test
+	      common_examples
         object_model_as_linked_list_of_hashes
         lol
+        redcarpet
         linked_list
         ] +
 
@@ -49,6 +54,7 @@ module Synseer
         indentation_guide2
         bubble_sort2
         indentation_guide3
+        chisel
         push_dependencies_up_the_callstack
         seedzzz
         ] +
