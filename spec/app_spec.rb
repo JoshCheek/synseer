@@ -195,15 +195,14 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
 
     # I incorrectly press "m" for "send" (method),
     # my "correct" count stays at 1 while my "incorrect" count increases from 0 to 1
-    # It has tells me what the correct answer is and starts me over
     lol.assert_score_change guesses: [:method],
                             before_correct: 1, before_incorrect: 0,
                             after_correct:  1, after_incorrect:  1
+    # It tells me what the correct answer is,
     lol.assert_message /int/i
-    lol.assert_current_game_task '1+2'
+    # lol.assert_message /correct.*int/i
 
-    # I get back to where I was and press "i" for "integer", and my "correct" count increases from 1 to 2
-    lol.guess :method
+    # I press "i" for "integer", and my "correct" count increases from 1 to 2
     lol.assert_score_change before_correct: 1, guesses: [:integer], after_correct: 2
 
     # I see that it is waiting for me to classify the "2" expression
@@ -214,10 +213,8 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
                             before_correct: 2, before_incorrect: 1,
                             after_correct:  2, after_incorrect:  2
 
-    # I get back to where I was and
-    # press "i" for "integer", and my "correct" count increases from 2 to 3,
+    # I press "i" for "integer", and my "correct" count increases from 2 to 3,
     # and I have completed the challenge
-    lol.guess :method, :integer
     lol.assert_score_change guesses: [:integer],
                             before_correct: 2,
                             after_correct:  3,
@@ -250,7 +247,7 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
       sleep 0.1
       expect(capybara.current_path).to eq '/games/integer_addition'
 
-      lol.guess :method, :method
+      lol.guess :method # <- error
       lol.guess :method, :integer, :integer
       browser.send_keys(:Return)
       sleep 0.1
@@ -280,7 +277,7 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
       expect(capybara.current_path).to eq '/games/integer_addition'
 
       # I play have one error
-      lol.guess :method, :method
+      lol.guess :integer # <-- error
       lol.guess :method, :integer, :integer
       browser.send_keys(:Return)
       sleep 0.1
