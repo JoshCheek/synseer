@@ -20,9 +20,31 @@ A student goes through the pre-alpha version.
 
 [https://vimeo.com/144960941](https://vimeo.com/144960941)
 
+## Contributing
+
+I really don't know what I'm doing with most of this technology,
+so I'm figuring it out as I go. You'll need Ruby and Node.
+How you get them is up to you.
+
+After cloning, install dependencies with: `$ bundle install; npm install`
+
+To start a server: `$ rake server`
+
+After changing CSS or JavaScript, you need to rebuild: `$ rake build`
+You don't need to restart the server unless you edit the Ruby files.
+If you ever need to regenerate from scratch: `$ rake clobber; rake build`
+
+To run tests `$ rake` Ruby code is tested in the `spec` directory,
+JS unit tests are in the `test` directory, and integration tests are
+done with phantom as part of the Ruby integration tests.
+
+Assume most decisions are incidental, not intentional (I'm figuring it out as I go)
 
 ## Todo
 
+* Swap the side-box to the other side
+* Add an about page
+* Some better explanation
 * Backspace sends you to the previous page... that shouldn't happen -.^
 * When you get a node wrong, only send you back three nodes instead of back to the beginning
 * Better gradient of games
