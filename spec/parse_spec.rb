@@ -5,8 +5,13 @@ RSpec.describe Synseer::Parse do
   # "smoke" test
   it 'parses the code from all of the games', integration: true do
     Dir[File.join(games_dir, '*')].each do |file|
-      ast = described_class.ast_for File.read(file)
-      expect(ast).to be_a_kind_of Hash
+      begin
+        ast = described_class.ast_for File.read(file)
+        expect(ast).to be_a_kind_of Hash
+      rescue
+        $!.message << "FROM THE FILE #{file.inspect}"
+        raise
+      end
     end
   end
 

@@ -23,6 +23,8 @@ A student goes through the pre-alpha version.
 
 ## Todo
 
+* Backspace sends you to the previous page... that shouldn't happen -.^
+* When you get a node wrong, only send you back three nodes instead of back to the beginning
 * Better gradient of games
   * A game for each type
   * A game for each group of types

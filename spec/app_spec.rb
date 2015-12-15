@@ -322,7 +322,7 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
       lol.assert_current_game_task '1+2'
   end
 
-  it 'filters my keys to the available options as I type, accepts my entry once unique, clears when I press esc' do
+  it 'filters my keys to the available options as I type, accepts my entry once unique, clears when I press esc, deletes when I press backspace' do
     capybara.visit '/'
     capybara.click_link 'integer addition'
 
@@ -345,6 +345,15 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
     browser.send_keys(:Escape)
     expect(get_user_input.call).to eq ''
     expect(get_potentials.call.length).to be > 10
+
+    # deletes
+    browser.send_keys("s")
+    browser.send_keys("o")
+    expect(get_user_input.call).to eq 'so'
+    browser.send_keys(:Backspace)
+    expect(get_user_input.call).to eq 's'
+    browser.send_keys(:Backspace)
+    expect(get_user_input.call).to eq ''
 
     # accepts
     browser.send_keys("m")
