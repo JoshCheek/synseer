@@ -71,7 +71,7 @@ Game.prototype.pressKey = function(key) {
     if(this.isFirstTraversal())
       this._statsView.setNumCorrect(++this._stats.numCorrect);
     this._traverse = this._traverse.successor();
-    this._setMessage(`${entry}, ${type}`, 'positive');
+    this._setMessage(`Correct: ${entry}, ${type}`, 'positive');
     if(this._traverse) {
       this.advanceTraversal();
     } else {
@@ -81,13 +81,13 @@ Game.prototype.pressKey = function(key) {
     this._statsView.setNumIncorrect(++this._stats.numIncorrect);
     var expectedEntry = null;
     for(var k in this._keyMap.map) {
-      if(this._keyMap.map[k][0] === type) {
+      if(this._keyMap.map[k] === type) {
         expectedEntry = k;
         break;
       }
     }
     // type expectedEntry selectedType entry
-    this._setMessage(`${expectedEntry}, ${type}`, 'negative');
+    this._setMessage(`Incorrect: ${expectedEntry}, ${type}`, 'negative');
   }
 }
 

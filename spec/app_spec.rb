@@ -167,7 +167,7 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
 
   before(:each) { lol.init_phantom }
 
-  example 'new user plays their first game' do
+  example 'new user plays their first game', t:true do
     # When I go to the root page, it shows me a listing of syntax games and scores
     capybara.visit '/'
     lol.assert_completed_games times: [], corrects: [], incorrects: []
@@ -187,8 +187,9 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
     # I see that it is waiting for me to classify the "1 + 2" expression
     lol.assert_current_game_task '1+2'
 
-    # I press "m" for "send" (method), and my "correct" count increases from 0 to 1
+    # I press "m" for "send" (method), and my "correct" count increases from 0 to 1, it confirms my answer
     lol.assert_score_change before_correct: 0, guesses: [:method], after_correct: 1
+    lol.assert_message /\bcorrect.*sen/i
 
     # I see that it is waiting for me to classify the "1" expression
     lol.assert_current_game_task '1'
@@ -199,8 +200,7 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
                             before_correct: 1, before_incorrect: 0,
                             after_correct:  1, after_incorrect:  1
     # It tells me what the correct answer is,
-    lol.assert_message /int/i
-    # lol.assert_message /correct.*int/i
+    lol.assert_message /\bincorrect.*int/i
 
     # I press "i" for "integer", and my "correct" count increases from 1 to 2
     lol.assert_score_change before_correct: 1, guesses: [:integer], after_correct: 2
