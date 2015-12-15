@@ -19,11 +19,12 @@ body {
   border-bottom: 0.8em solid $color-primary-3;
 
   .app_name {
-    &:before { content: "Synseer"; }
+    color:         $color-primary-4;
     font-size:     3em;
     font-weight:   bold;
     display:       inline-block;
     padding-right: 0.33em;
+    text-decoration: none;
   }
   .stats {
     display: inline-block;
