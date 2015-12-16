@@ -128,7 +128,10 @@
      .currentElement { background: #d0c7a7; }                   /* mix($color-secondary-2-0, lighten($color-primary-0, 40%), 20%); */
      .cake .layer .CodeMirror { background: #ebd2c4; }
      .cake .layer .CodeMirror-gutters { background: #ebd2c4; }
-     .side { width: 10em; }
+     .side { width: 10em; } /* actually, it's the user_entry that determines this */
+     .keymap_status .user_entry {
+       width: 20em;
+     }
 
      .cake .cm-s-base16-light span.cm-string { color: #aa759f; }
    </style>
