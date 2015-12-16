@@ -1,74 +1,86 @@
 'use strict';
 
-module.exports = {
+const Keybinding = require('./keybinding');
+
+function keybindingFor(keysequence, data, english) {
+  return new Keybinding({
+    keysequence: keysequence,
+    data:        data,
+    english:     english,
+  });
+}
+
+const sm =  [
   // setters
-  "sc":    "casgn",     // set constant
-  "sm":    "masgn",     // set constant... uhm, idk
-  "si":    "ivasgn",    // set instance variable
-  "sl":    "lvasgn",    // set local variable
-  "sop":   "op_asgn",   // set with an operator
-  "sor":   "or_asgn",   // set with ||
+  keybindingFor("sc",  "casgn",   'set constant'),
+  keybindingFor("sm",  "masgn",   'set constant... uhm, idk'),
+  keybindingFor("si",  "ivasgn",  'set instance variable'),
+  keybindingFor("sl",  "lvasgn",  'set local variable'),
+  keybindingFor("sop", "op_asgn", 'set with an operator'),
+  keybindingFor("sor", "or_asgn", 'set with ||'),
 
   // getters
-  "gc":    "const", // get constant
-  "gi":    "ivar",  // get instance variable
-  "gl":    "lvar",  // get local variable
-  "gg":    "gvar",  // get global variable
+  keybindingFor("gc", "const", 'get constant'),
+  keybindingFor("gi", "ivar",  'get instance variable'),
+  keybindingFor("gl", "lvar",  'get local variable'),
+  keybindingFor("gg", "gvar",  'get global variable'),
 
   // arg things
-  "aba":   "blockarg",    // argument: block arg
-  "abl":   "block",       // argument: block arg
-  "abp":   "block_pass",  // argument: block pass
-  "ag":    "arg",         // argument: regular
-  "aog":   "optarg",      // argument: optional
-  "ak":    "kwarg",       // argument: keyword
-  "aok":   "kwoptarg",    // argument: optional keyword
-  "ar":    "restarg",     // argument: rest of the args
-  "as":    "args",        // arguments
+  keybindingFor("aba",  "blockarg",   'argument: block arg'),
+  keybindingFor("abl",  "block",      'argument: block arg'),
+  keybindingFor("abp",  "block_pass", 'argument: block pass'),
+  keybindingFor("ag",   "arg",        'argument: regular'),
+  keybindingFor("aog",  "optarg",     'argument: optional'),
+  keybindingFor("ak",   "kwarg",      'argument: keyword'),
+  keybindingFor("aok",  "kwoptarg",   'argument: optional keyword'),
+  keybindingFor("ar",   "restarg",    'argument: rest of the args'),
+  keybindingFor("as",   "args",       'arguments'),
 
   // control flow keywords
-  "ca":   "and",     // control-flow: and
-  "cbr":  "break",   // control-flow: break
-  "cbe":  "kwbegin", // control-flow: keyword begin
-  "cca":  "case",    // control-flow: case
-  "ccw":  "when",    // control-flow: case/when
-  "ce":   "ensure",  // control-flow: ensure
-  "cn":   "next",    // control-flow: next
-  "co":   "or",      // control-flow: or
-  "ci":   "if",      // control-flow: if
-  "cre":  "return",  // control-flow: return
-  "crs":  "rescue",  // control-flow: rescue
-  "crb":  "resbody", // control-flow: rescue body (I think)
-  "cs":   "super",   // control-flow: super
-  "cu":   "until",   // control-flow: until
-  "cw":   "while",   // control-flow: while
-  "cy":   "yield",   // control-flow: yield
+  keybindingFor("ca",   "and",     'control-flow: and'),
+  keybindingFor("cbr",  "break",   'control-flow: break'),
+  keybindingFor("cbe",  "kwbegin", 'control-flow: keyword begin'),
+  keybindingFor("cca",  "case",    'control-flow: case'),
+  keybindingFor("ccw",  "when",    'control-flow: case/when'),
+  keybindingFor("ce",   "ensure",  'control-flow: ensure'),
+  keybindingFor("cn",   "next",    'control-flow: next'),
+  keybindingFor("co",   "or",      'control-flow: or'),
+  keybindingFor("ci",   "if",      'control-flow: if'),
+  keybindingFor("cre",  "return",  'control-flow: return'),
+  keybindingFor("crs",  "rescue",  'control-flow: rescue'),
+  keybindingFor("crb",  "resbody", 'control-flow: rescue body (I think)'),
+  keybindingFor("cs",   "super",   'control-flow: super'),
+  keybindingFor("cu",   "until",   'control-flow: until'),
+  keybindingFor("cw",   "while",   'control-flow: while'),
+  keybindingFor("cy",   "yield",   'control-flow: yield'),
 
   // literals
-  "la":    "array",  // literal array
-  "lf":    "false",  // literal false
-  "lt":    "true",   // literal true
-  "lh":    "hash",   // literal hash
-  "li":    "int",    // literal integer
-  "ln":    "nil",    // literal nil
-  "ls":    "str",    // literal string
-  "ly":    "sym",    // literal symbol
-  "lr":    "regexp", // literal regexp
-  "lo":    "regopt", // literal regexp option
-  "ld":    "dstr",   // literal.... uhm, not sure (I think this is interpolation)
+  keybindingFor("la",   "array",  'literal array'),
+  keybindingFor("lf",   "false",  'literal false'),
+  keybindingFor("lt",   "true",   'literal true'),
+  keybindingFor("lh",   "hash",   'literal hash'),
+  keybindingFor("li",   "int",    'literal integer'),
+  keybindingFor("ln",   "nil",    'literal nil'),
+  keybindingFor("ls",   "str",    'literal string'),
+  keybindingFor("ly",   "sym",    'literal symbol'),
+  keybindingFor("lr",   "regexp", 'literal regexp'),
+  keybindingFor("lo",   "regopt", 'literal regexp option'),
+  keybindingFor("ld",   "dstr",   'literal.... uhm, not sure (I think this is interpolation)'),
 
   // oo dls
-  "om":    "module",  // Object Oriented: module
-  "oc":    "class",   // Object Oriented: class
-  "odf":   "def",     // Object Oriented: define a method
-  "ods":   "defs",    // Object Oriented: define a singleton method
-  "os":    "self",    // Object Oriented: self
+  keybindingFor("om",   "module", 'Object Oriented: module'),
+  keybindingFor("oc",   "class",  'Object Oriented: class'),
+  keybindingFor("odf",  "def",    'Object Oriented: define a method'),
+  keybindingFor("ods",  "defs",   'Object Oriented: define a singleton method'),
+  keybindingFor("os",   "self",   'Object Oriented: self'),
 
   // not sure yet
-  "ir":    "irange",  // ??
-  "mlhs":  "mlhs",    // ?? maybe "multiple left-hand setting" or something
-  "p":     "pair",    // ?? part of a hash
-  "b":     "begin",   // implicit grouping of expressions
-  "sp":    "splat",   // ?? guessing this is the complement to restarg
-  "ms":    "send",    // message send
-}
+  keybindingFor("ir",   "irange", 'irange ??'),
+  keybindingFor("mlhs", "mlhs",   '?? maybe "multiple left-hand setting" or something'),
+  keybindingFor("p",    "pair",   '?? part of a hash'),
+  keybindingFor("b",    "begin",  'implicit grouping of expressions'),
+  keybindingFor("sp",   "splat",  '?? guessing this is the complement to restarg'),
+  keybindingFor("ms",   "send",   'message send'),
+]
+
+module.exports = sm;

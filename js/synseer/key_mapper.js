@@ -1,17 +1,15 @@
 'use strict';
 
-let KeyMapper = function(map) {
-  this.map = map;
+let KeyMapper = function(keymap) {
+  this.keymap = keymap;
   this.keysPressed = [];
-  KeyMapper.validateMap(map);
+  KeyMapper.validateMap(keymap);
 }
 
 KeyMapper.KeyConflictError = function(conflictingKeys) {
   this.conflictingKeys = conflictingKeys;
   this.name            = 'KeyConflictError';
-  let conflictStr      = conflictingKeys
-                           .map(([key, child]) => `[${key}, ${child}]`)
-                           .join(", ")
+  let conflictStr      = conflictingKeys.map(([key, child]) => `[${key}, ${child}]`).join(", ")
   this.message         = `Conflicts: ${conflictStr}`;
 }
 KeyMapper.KeyConflictError.prototype = new Error();
@@ -28,18 +26,20 @@ KeyMapper.fromCodemirror = function(key) {
 }
 
 // http://www.sitepoint.com/exceptional-exception-handling-in-javascript/
-KeyMapper.validateMap = function(map) {
-  let conflictingKeys = [];
-  for(let keybinding in map) {
-    for(let maybeChild in map) {
+KeyMapper.validateMap = function(keymap) {
+  const conflictingKeys = [];
+  keymap.forEach((keybinding) => {
+    keymap.forEach((maybeChild) => {
+      const parentKb = keybinding.keysequence;
+      const childKb  = maybeChild.keysequence;
       // if length is less, then it can't be a child
       // if length is the same, then it either is keybinding, or takes a different path
-      if(maybeChild.length <= keybinding.length) continue;
-      let otherSubstr = maybeChild.substr(0, keybinding.length)
-      if(otherSubstr === keybinding)
+      if(childKb.length <= parentKb.length) return;
+      let otherSubstr = childKb.substr(0, parentKb.length)
+      if(otherSubstr === parentKb)
         conflictingKeys.push([keybinding, maybeChild]);
-    }
-  }
+    });
+  });
   if(conflictingKeys.length > 0)
     throw new KeyMapper.KeyConflictError(conflictingKeys);
 }
@@ -68,19 +68,24 @@ KeyMapper.prototype = {
   },
 
   startsWith: function(string, fragment) {
-    return fragment == string.substring(0,fragment.length);
+    return fragment == string.substring(0, fragment.length);
   },
 
   possibilities: function() {
-    let fragment = this.keysPressed.join("");
-    let matchedWords = {};
-    for (let keybinding in this.map) {
-      if (this.startsWith(keybinding, fragment)) {
-        matchedWords[keybinding] = this.map[keybinding];
-      }
+    let matchedWords = [];
+    for (let i in this.keymap) {
+      if (this.startsWith(this.keymap[i].keysequence, this.input()))
+        matchedWords.push(this.keymap[i]);
     }
     return matchedWords;
-  }
+  },
+
+  findData: function(data) {
+    const found = this.keymap.find(kb => kb.hasData(data));
+    if(found) return found;
+    throw `DID NOT HAVE ${data}`
+  },
+
 }
 
 module.exports = KeyMapper;

@@ -47,10 +47,27 @@ Assume most decisions are incidental, not intentional (I'm figuring it out as I 
 ## Todo
 
 * Add an about page
-* Some better explanation
-* Backspace sends you to the previous page... that shouldn't happen -.^
-* When you get a node wrong, only send you back three nodes instead of back to the beginning
+  ```
+  English names
+  Gradient of exercises
+  That null suggestion
+  Video of me going through it
+
+  Intent
+    Goal is not to learn these things
+      recognize the structure of Ruby code
+      expose you to Ruby code so it doesn't look alien
+    game
+      be fun
+      your goal is to purely to get the time
+
+    the keybindings are arbitrary
+      the names are arbitrary
+
+    How to do the exercises
+  ```
 * Better gradient of games
+  * Start with each of the literal types
   * A game for each type
   * A game for each group of types
 * Make sure each of the programs can be entered
