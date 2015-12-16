@@ -252,7 +252,7 @@
           codeMirror:      cm,
           statsView:       statsView,
           ast:             <%= @game.fetch :json_ast %>,
-          keyMap:          new Synseer.KeyMapper(Synseer.DefaultKeymap),
+          keyMap:          new Synseer.KeyMapper(Synseer.DefaultKeybindings),
           onPossibilities: function(input, possibilities) {
                              keymapStatus.update(input, possibilities);
                            },

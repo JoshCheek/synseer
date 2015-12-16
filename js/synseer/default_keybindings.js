@@ -10,7 +10,8 @@ function keybindingFor(keysequence, data, english) {
   });
 }
 
-const sm =  [
+
+module.exports = [
   // setters
   keybindingFor("sc",  "casgn",   'set constant'),
   keybindingFor("sm",  "masgn",   'set constant... uhm, idk'),
@@ -82,5 +83,3 @@ const sm =  [
   keybindingFor("ms",   "send",   'message send'),
   keybindingFor("sp",   "splat",  '?? guessing this is the complement to restarg'),
 ]
-
-module.exports = sm;

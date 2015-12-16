@@ -1,6 +1,6 @@
-const  defaultKeymap = require('../js/synseer/default_keymap');
-const  Mapper        = require('../js/synseer/key_mapper');
-const  Keybinding    = require('../js/synseer/keybinding');
+const  defaultKeybindings = require('../js/synseer/default_keybindings');
+const  Mapper             = require('../js/synseer/key_mapper');
+const  Keybinding         = require('../js/synseer/keybinding');
 import assert from 'assert'; // https://github.com/joyent/node/blob/9010dd26529cea60b7ee55ddae12688f81a09fcb/lib/assert.js
 import {readFile} from 'fs';
 import {inspect} from 'util';
@@ -36,7 +36,7 @@ describe('Default keymap', ()=>{
       "return", "self", "send", "splat", "str", "super", "sym", "true", "until",
       "when", "while", "yield"
     ];
-    const mapper = new Mapper(defaultKeymap);
+    const mapper = new Mapper(defaultKeybindings);
     syntaxNodes.forEach((nodeName) => {
       assert.equal(nodeName, mapper.findData(nodeName).data );
     });
@@ -146,7 +146,7 @@ describe('KeyMapper', ()=>{
   it('has a keybinding for each type of syntax that we use', (done)=>{
     readFile('tmp/node_types', 'utf8', (err, data) => {
       if(err) assert.fail(err);
-      const mapper = new Mapper(defaultKeymap);
+      const mapper = new Mapper(defaultKeybindings);
       const types  = data.split("\n");
       if(types[types.length-1] === "") types.pop();
       types.forEach(type => mapper.findData(type)); // throws if it does not find
