@@ -61,6 +61,7 @@ module.exports = [
   keybindingFor("lt",   "true",   'literal true'),
   keybindingFor("lh",   "hash",   'literal hash'),
   keybindingFor("li",   "int",    'literal integer'),
+  keybindingFor("ll",   "float",  'literal float'),
   keybindingFor("ln",   "nil",    'literal nil'),
   keybindingFor("ls",   "str",    'literal string'),
   keybindingFor("ly",   "sym",    'literal symbol'),
