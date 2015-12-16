@@ -79,8 +79,8 @@ const sm =  [
   keybindingFor("mlhs", "mlhs",   '?? maybe "multiple left-hand setting" or something'),
   keybindingFor("p",    "pair",   '?? part of a hash'),
   keybindingFor("b",    "begin",  'implicit grouping of expressions'),
-  keybindingFor("sp",   "splat",  '?? guessing this is the complement to restarg'),
   keybindingFor("ms",   "send",   'message send'),
+  keybindingFor("sp",   "splat",  '?? guessing this is the complement to restarg'),
 ]
 
 module.exports = sm;

@@ -4,14 +4,14 @@ function KeymapStatus(domElement) {
 }
 
 KeymapStatus.prototype = {
-  update: function(input, possibilities) {
+  update: function(input, keybindings) {
     let newEntries = "";
-    for(let key in possibilities) {
-      newEntries +=
-        `<tr class="potential_entry">
-          <td class="keybinding">${key}</td>
-          <td class="syntax_node">${possibilities[key]}</td>
-        </tr>`
+    for(let index in keybindings) {
+      let kb = keybindings[index];
+      newEntries += `<tr class="potential_entry">
+                       <td class="keybinding">${kb.keysequence}</td>
+                       <td class="syntax_node">${kb.english}</td>
+                     </tr>`
     }
     this.domElement.innerHTML = `<div class="user_entry">${input}</div>`+
                                 `<table class="potential_entries">${newEntries}</table>`

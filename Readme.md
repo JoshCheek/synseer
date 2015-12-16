@@ -46,6 +46,7 @@ Assume most decisions are incidental, not intentional (I'm figuring it out as I 
 
 ## Todo
 
+* Rename DefaultKeymap -> DefaultKeybindings
 * Add an about page
   ```
   English names

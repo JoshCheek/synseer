@@ -319,7 +319,7 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
       lol.assert_current_game_task '1+2'
   end
 
-  it 'filters my keys to the available options as I type, accepts my entry once unique, clears when I press esc, deletes when I press backspace' do
+  it 'filters my keys to the available options as I type, accepts my entry once unique, clears when I press esc, deletes when I press backspace', t:true do
     capybara.visit '/'
     capybara.click_link 'integer addition'
 
@@ -327,23 +327,26 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
     get_user_input = -> { capybara.find('.user_entry').text }
 
     # filters
+    lol.assert_current_game_task '1+2'
     expect(get_user_input.call).to eq ''
     expect(get_potentials.call.length).to be > 10
 
     browser.send_keys("s")
     expect(get_user_input.call).to eq 's'
-    expect(get_potentials.call).to eq ["casgn", "masgn", "ivasgn", "lvasgn", "op_asgn", "or_asgn", "splat"]
+    expect(get_potentials.call).to eq ["set constant", "set constant... uhm, idk", "set instance variable", "set local variable", "set with an operator", "set with ||", "?? guessing this is the complement to restarg"]
 
     browser.send_keys("o")
     expect(get_user_input.call).to eq 'so'
-    expect(get_potentials.call).to eq ["op_asgn", "or_asgn"]
+    expect(get_potentials.call).to eq ["set with an operator", "set with ||"]
 
     # clears
+    lol.assert_current_game_task '1+2'
     browser.send_keys(:Escape)
     expect(get_user_input.call).to eq ''
     expect(get_potentials.call.length).to be > 10
 
     # deletes
+    lol.assert_current_game_task '1+2'
     browser.send_keys("s")
     browser.send_keys("o")
     expect(get_user_input.call).to eq 'so'
@@ -353,6 +356,7 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
     expect(get_user_input.call).to eq ''
 
     # accepts
+    lol.assert_current_game_task '1+2'
     browser.send_keys("m")
     browser.send_keys("s")
     expect(get_user_input.call).to eq ''

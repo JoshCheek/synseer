@@ -81,8 +81,11 @@ KeyMapper.prototype = {
   },
 
   findData: function(data) {
-    const found = this.keymap.find(kb => kb.hasData(data));
-    if(found) return found;
+    for(let i in this.keymap) {
+      if(this.keymap[i].data === data) return this.keymap[i];
+    }
+    // const found = this.keymap.find(kb => kb.hasData(data));
+    // if(found) return found;
     throw `DID NOT HAVE ${data}`
   },
 

@@ -8,7 +8,7 @@ var Game = function(attrs) {
   this._ast             = attrs.ast;
   this._statsView       = attrs.statsView;
   this._codeMirror      = attrs.codeMirror;
-  this._keyMap          = new KeyMapper(attrs.keyMap);
+  this._keyMap          = attrs.keyMap;
   this._onFinished      = attrs.onFinished;
   this._isFinished      = false;
   this._stats           = {numCorrect: 0, numIncorrect: 0, duration: 0};
@@ -51,43 +51,38 @@ Game.prototype.isFinished = function() {
 Game.prototype.pressKey = function(key) {
   if(this.isFinished()) return;
 
+  var pre = key;
   key = KeyMapper.fromCodemirror(key);
-  var possibilities = this._keyMap.keyPressed(key);
-  var entry         = Object.keys(possibilities)[0];
-  var selectedType  = possibilities[entry];
+  var post = key;
+  if(pre !== post) {
+    console.log(JSON.stringify({pre: pre, post: post}));
+  }
 
-  // *sigh* not sure if this is a consequence of not knowing js
-  // or if this is really how to do things like this
-  if(Object.keys(possibilities).length != 1) {
+  var possibilities = this._keyMap.keyPressed(key);
+  var selected      = possibilities[0];
+
+  if(1 < possibilities.length) {
     this._onPossibilities(this._keyMap.input(), possibilities);
     return;
-  } else {
-    var possibilities = this._keyMap.accept();
-    this._onPossibilities(this._keyMap.input(), possibilities);
   }
-  var type = this._traverse.ast.type
 
-  if(selectedType == type) {
+  let accepted = this._keyMap.accept()
+  // stupid: we have to do this first, b/c it changes the input
+  // command/query violation, I guess -.^
+  this._onPossibilities(this._keyMap.input(), accepted);
+  var targetAst = this._traverse.ast.type;
+
+  if(selected.data == targetAst) {
     if(this.isFirstTraversal())
       this._statsView.setNumCorrect(++this._stats.numCorrect);
     this._traverse = this._traverse.successor();
-    this._setMessage(`Correct: ${entry}, ${type}`, 'positive');
-    if(this._traverse) {
-      this.advanceTraversal();
-    } else {
-      this.finish();
-    }
+    this._setMessage(`Correct: ${selected.keysequence}, ${selected.english}`, 'positive');
+    if(this._traverse) this.advanceTraversal();
+    else               this.finish();
   } else {
     this._statsView.setNumIncorrect(++this._stats.numIncorrect);
-    var expectedEntry = null;
-    for(var k in this._keyMap.map) {
-      if(this._keyMap.map[k] === type) {
-        expectedEntry = k;
-        break;
-      }
-    }
-    // type expectedEntry selectedType entry
-    this._setMessage(`Incorrect: ${expectedEntry}, ${type}`, 'negative');
+    var expected = this._keyMap.findData(targetAst);
+    this._setMessage(`Incorrect: ${expected.keysequence}, ${expected.english}`, 'negative');
   }
 }
 
