@@ -35,20 +35,14 @@ function clear(mapper) {
 }
 
 describe('Default keymap', ()=>{
-  it('maps each of the keys', ()=>{
-    const syntaxNodes = [
-      "and", "arg", "args", "array", "begin", "block", "block_pass",
-      "blockarg", "break", "case", "casgn", "class", "const", "def",
-      "defs", "dstr", "ensure", "false", "gvar", "hash", "if", "int",
-      "irange", "ivar", "ivasgn", "kwarg", "kwbegin", "kwoptarg", "lvar",
-      "lvasgn", "masgn", "mlhs", "module", "next", "nil", "op_asgn", "optarg",
-      "or", "or_asgn", "pair", "regexp", "regopt", "resbody", "rescue", "restarg",
-      "return", "self", "send", "splat", "str", "super", "sym", "true", "until",
-      "when", "while", "yield"
-    ];
-    const mapper = new Mapper(defaultKeybindings);
-    syntaxNodes.forEach((nodeName) => {
-      assert.equal(nodeName, mapper.findData(nodeName).data );
+  it('has a keybinding for each type of syntax that we use', (done)=>{
+    readFile('tmp/node_types', 'utf8', (err, data) => {
+      if(err) assert.fail(err);
+      const mapper = new Mapper(defaultKeybindings);
+      const types  = data.split("\n");
+      if(types[types.length-1] === "") types.pop();
+      types.forEach(type => mapper.findData(type)); // throws if it does not find
+      done();
     });
   });
 });
@@ -88,17 +82,6 @@ describe('KeyMapper', ()=>{
     }
   }
 
-  it('has a keybinding for each type of syntax that we use', (done)=>{
-    readFile('tmp/node_types', 'utf8', (err, data) => {
-      if(err) assert.fail(err);
-      const mapper = new Mapper(defaultKeybindings);
-      const types  = data.split("\n");
-      if(types[types.length-1] === "") types.pop();
-      types.forEach(type => mapper.findData(type)); // throws if it does not find
-      done();
-    });
-  });
-
   it('throws an error on keymaps that cannot be uniquely entered', () => {
     assert.throws(       () => mapperFor({abc: "x",   ab:  "y"}));
     assert.doesNotThrow( () => mapperFor({abc: "x",   abd: "y"}) );
@@ -114,6 +97,26 @@ describe('KeyMapper', ()=>{
       const keyMap = [new Keybinding({keysequence: "b",  data: "a",   english: 'b'})];
       const mapper = new Mapper(keyMap);
       assert.equal("b", mapper.findData("a").english);
+    });
+
+    it('can find nested data', () => {
+      let mapper = mapperFor({
+        a: {b: 'c', d: 'e'},
+        f: {g: 'h', i: {j: 'k', l: 'm'}},
+      });
+      assert.equal("b", mapper.findData("c").keysequence);
+      assert.equal("g", mapper.findData("h").keysequence);
+    });
+
+    it('can find nested data in pseudo groups', () => {
+      let mapper = new Mapper([
+        new Keybinding.Group({
+          keysequence: '',
+          english:     'pseudogroup',
+          keymap:      keybindingsFor({b: 'c', d: 'e'})
+        })
+      ]);
+      assert.equal("b", mapper.findData("c").keysequence);
     });
 
     it('throws an error when asked for data it does not have', () => {

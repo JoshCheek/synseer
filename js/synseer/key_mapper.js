@@ -10,7 +10,7 @@ let KeyMapper = function(keymap) {
 KeyMapper.KeyConflictError = function(conflictingKeys) {
   this.conflictingKeys = conflictingKeys;
   this.name            = 'KeyConflictError';
-  let conflictStr      = conflictingKeys.map(([key, child]) => `[${key}, ${child}]`).join(", ")
+  let conflictStr      = conflictingKeys.map(([key, child]) => `[${key.english}, ${child.english}]`).join(", ")
   this.message         = `Conflicts: ${conflictStr}`;
 }
 KeyMapper.KeyConflictError.prototype = new Error();
@@ -28,7 +28,20 @@ KeyMapper.normalize = function(key) {
 
 // http://www.sitepoint.com/exceptional-exception-handling-in-javascript/
 KeyMapper.validateMap = function(keymap) {
+  function flatten(km) {
+    const expanded = [];
+    km.forEach(kb => {
+      if(kb.isPseudoGroup)
+        flatten(kb.keymap).forEach(kb => expanded.push(kb));
+      else
+        expanded.push(kb)
+    });
+    return expanded;
+  }
+
   const conflictingKeys = [];
+
+  keymap = flatten(keymap);
   keymap.forEach((keybinding) => {
     keymap.forEach((maybeChild) => {
       const parentKb = keybinding.keysequence;
@@ -39,6 +52,11 @@ KeyMapper.validateMap = function(keymap) {
       let otherSubstr = childKb.substr(0, parentKb.length)
       if(otherSubstr === parentKb)
         conflictingKeys.push([keybinding, maybeChild]);
+
+      [parentKb, childKb].forEach(kb => {
+        if(kb.isGroup && !kb.isPseudoGroup)
+          KeyMapper.validateMap(kb.keymap);
+      });
     });
   });
   if(conflictingKeys.length > 0)
@@ -95,11 +113,17 @@ KeyMapper.prototype = {
   },
 
   findData: function(data) {
-    for(let i in this.keymap) {
-      if(this.keymap[i].data === data) return this.keymap[i];
-    }
-    // const found = this.keymap.find(kb => kb.hasData(data));
-    // if(found) return found;
+    let findIn = function(km) {
+      for(let i in km) {
+        let kb = km[i];
+        if(kb.data === data) return kb;
+        if(!kb.isGroup) continue;
+        let found = findIn(kb.keymap);
+        if(found) return found;
+      }
+    };
+    let found = findIn(this.keymap);
+    if(found) return found;
     throw `DID NOT HAVE ${data}`
   },
 

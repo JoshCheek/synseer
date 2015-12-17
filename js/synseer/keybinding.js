@@ -23,9 +23,15 @@ Keybinding.prototype = {
 
 
 Keybinding.Group = function(attrs) {
-  this.keysequence = attrs.keysequence;
-  this.keymap      = attrs.keymap;
-  this.isGroup     = true;
+  this.keysequence   = attrs.keysequence;
+  this.keymap        = attrs.keymap;
+  this.english       = attrs.english;
+  this.isGroup       = true;
+
+  if(this.keysequence === '')
+    this.isPseudoGroup = true
+  else
+    this.isPseudoGroup = false;
 }
 
 

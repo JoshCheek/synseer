@@ -2,7 +2,7 @@
 
 const Keybinding = require('./keybinding');
 
-function keybindingFor(keysequence, data, english) {
+function bindingFor(data, keysequence, english) {
   return new Keybinding({
     keysequence: keysequence,
     data:        data,
@@ -10,78 +10,169 @@ function keybindingFor(keysequence, data, english) {
   });
 }
 
+function groupFor(name, keysequence, keybindings) {
+  return new Keybinding.Group({
+    keysequence: keysequence,
+    keymap:      keybindings,
+    english:     name,
+  });
+}
+
 
 module.exports = [
-  // setters
-  keybindingFor("sc",  "casgn",   'set constant'),
-  keybindingFor("sm",  "masgn",   'set constant... uhm, idk'),
-  keybindingFor("si",  "ivasgn",  'set instance variable'),
-  keybindingFor("sl",  "lvasgn",  'set local variable'),
-  keybindingFor("sop", "op_asgn", 'set with an operator'),
-  keybindingFor("sor", "or_asgn", 'set with ||'),
+  groupFor('frequent', '', [
+    bindingFor('send',  'm', 'method call'),
+    bindingFor('str',   's', 'literal string'),
+    bindingFor('lvar',  'l', 'lookup local variable'),
+    bindingFor('const', 'C', 'lookup constant'),
+    bindingFor('sym',   'y', 'symbol literal (or S)'),
+    bindingFor('int',   'i', 'integer literal'),
+    bindingFor('def',   'd', 'def'),
+    bindingFor('hash',  'h', 'hash literal'),
+    bindingFor('block', 'b', 'literal block'),
+    bindingFor('ivar',  '@', 'lookup instance variable'),
+    bindingFor('array', 'A', 'array literal'),
+  ]),
 
-  // getters
-  keybindingFor("gc", "const", 'get constant'),
-  keybindingFor("gi", "ivar",  'get instance variable'),
-  keybindingFor("gl", "lvar",  'get local variable'),
-  keybindingFor("gg", "gvar",  'get global variable'),
 
-  // arg things
-  keybindingFor("aba",  "blockarg",   'argument: block arg'),
-  keybindingFor("abl",  "block",      'argument: block arg'),
-  keybindingFor("abp",  "block_pass", 'argument: block pass'),
-  keybindingFor("ag",   "arg",        'argument: regular'),
-  keybindingFor("aog",  "optarg",     'argument: optional'),
-  keybindingFor("ak",   "kwarg",      'argument: keyword'),
-  keybindingFor("aok",  "kwoptarg",   'argument: optional keyword'),
-  keybindingFor("ar",   "restarg",    'argument: rest of the args'),
-  keybindingFor("as",   "args",       'arguments'),
+  groupFor('lookup', '-', [
+    bindingFor('lvar',     'l', 'local variable'),
+    bindingFor('const',    'C', 'constant'),
+    bindingFor('ivar',     '@', 'instance variable'),
+    bindingFor('gvar',     '$', 'global variable'),
+    bindingFor('cbase',    'o', 'toplevel constant (Object)'),
+    bindingFor('nth_ref',  'n', 'regexp capture'),
+    bindingFor('back_ref', '&', 'regexp match'),
+    bindingFor('cvar',     'c', 'class var (never use these)'),
+  ]),
 
-  // control flow keywords
-  keybindingFor("ca",   "and",     'control-flow: and'),
-  keybindingFor("cbr",  "break",   'control-flow: break'),
-  keybindingFor("cbe",  "kwbegin", 'control-flow: keyword begin'),
-  keybindingFor("cca",  "case",    'control-flow: case'),
-  keybindingFor("ccw",  "when",    'control-flow: case/when'),
-  keybindingFor("ce",   "ensure",  'control-flow: ensure'),
-  keybindingFor("cn",   "next",    'control-flow: next'),
-  keybindingFor("co",   "or",      'control-flow: or'),
-  keybindingFor("ci",   "if",      'control-flow: if'),
-  keybindingFor("cre",  "return",  'control-flow: return'),
-  keybindingFor("crs",  "rescue",  'control-flow: rescue'),
-  keybindingFor("crb",  "resbody", 'control-flow: rescue body (I think)'),
-  keybindingFor("cs",   "super",   'control-flow: super'),
-  keybindingFor("cu",   "until",   'control-flow: until'),
-  keybindingFor("cw",   "while",   'control-flow: while'),
-  keybindingFor("cy",   "yield",   'control-flow: yield'),
+  groupFor('assign', '=', [
+    bindingFor('lvasgn',   'l', 'local variable'),
+    bindingFor('ivasgn',   '@', 'instance variable'),
+    bindingFor('casgn',    'C', 'constant'),
+    bindingFor('or_asgn',  '|', 'assign if false'),
+    bindingFor('and_asgn', '&', 'assign if true'),
+    bindingFor('mlhs',     ',', 'pattern matching'),
+    bindingFor('masgn',    'm', 'multiple'),
+    bindingFor('op_asgn',  'o', 'operator'),
+    bindingFor('gvasgn',   '$', 'global'),
+    bindingFor('cvasgn',   'c', 'class var (never use these)'),
+  ]),
+  groupFor('control-flow', 'c', [
+    bindingFor('if',     'i', 'if statment'),
+    bindingFor('and',    '&', 'and'),
+    bindingFor('or',     '|', 'or'),
+    bindingFor('yield',  'y', 'yield to block'),
+    bindingFor('return', 'r', 'return'),
+    bindingFor('case',   'c', 'case'),
+    groupFor('loop', 'l', [
+      bindingFor('until', 'u', 'until true'),
+      bindingFor('while', 'w', 'while true'),
+      bindingFor('break', 'b', 'break out'),
+      bindingFor('next',  'n', 'next iteration'),
+    ]),
+    groupFor('assign', '=', [
+      bindingFor('or_asgn',  '|', 'if false'),
+      bindingFor('and_asgn', '&', 'if true'),
+    ]),
+    groupFor('begin', 'b', [
+      bindingFor('kwbegin', 'b', 'begin'),
+      bindingFor('rescue',  'r', 'rescue exception'),
+      bindingFor('retry',   't', 'retry the body'),
+      bindingFor('ensure',  'e', 'ensure this happens'),
+    ]),
+    groupFor('super', 's', [
+      bindingFor('zsuper', 'i', 'implicit args'),
+      bindingFor('super',  'e', 'explicit args'),
+    ]),
+  ]),
 
-  // literals
-  keybindingFor("la",   "array",  'literal array'),
-  keybindingFor("lf",   "false",  'literal false'),
-  keybindingFor("lt",   "true",   'literal true'),
-  keybindingFor("lh",   "hash",   'literal hash'),
-  keybindingFor("li",   "int",    'literal integer'),
-  keybindingFor("ll",   "float",  'literal float'),
-  keybindingFor("ln",   "nil",    'literal nil'),
-  keybindingFor("ls",   "str",    'literal string'),
-  keybindingFor("ly",   "sym",    'literal symbol'),
-  keybindingFor("lr",   "regexp", 'literal regexp'),
-  keybindingFor("lo",   "regopt", 'literal regexp option'),
-  keybindingFor("ld",   "dstr",   'literal.... uhm, not sure (I think this is interpolation)'),
+  groupFor('object dsl', 'o', [
+    bindingFor('send',  'm', 'method call'),
+    bindingFor('self',  's', 'self (current object)'),
+    bindingFor('alias', 'a', 'alias method'),
+    groupFor('open', 'o', [
+      bindingFor('class',  'c', 'class'),
+      bindingFor('module', 'm', 'module'),
+      bindingFor('sclass', 's', 'singleton class'),
+    ]),
+    groupFor('define', 'd', [
+      bindingFor('def',   'd', 'on open class'),
+      bindingFor('defs',  's', 'on singleton class'),
+      bindingFor('undef', 'u', 'undefine in open class'),
+    ]),
+  ]),
 
-  // oo dls
-  keybindingFor("om",   "module", 'Object Oriented: module'),
-  keybindingFor("oc",   "class",  'Object Oriented: class'),
-  keybindingFor("odf",  "def",    'Object Oriented: define a method'),
-  keybindingFor("ods",  "defs",   'Object Oriented: define a singleton method'),
-  keybindingFor("os",   "self",   'Object Oriented: self'),
+  groupFor('argument', 'a', [
+    bindingFor('block_pass', 'b', 'block'),
+    bindingFor('splat',      'a', 'array to args'),
+    bindingFor('kwsplat',    'h', 'hash keywords'),
+  ]),
 
-  // not sure yet
-  keybindingFor("ir",   "irange", 'irange ??'),
-  keybindingFor("mlhs", "mlhs",   '?? maybe "multiple left-hand setting" or something'),
-  keybindingFor("p",    "pair",   '?? part of a hash'),
-  keybindingFor("b",    "begin",  'implicit grouping of expressions'),
-  keybindingFor("ms",   "send",   'message send'),
-  keybindingFor("sp",   "splat",  '?? guessing this is the complement to restarg'),
-  keybindingFor("P",    "program", 'whole program'),
+  groupFor('parameter', 'p', [
+    bindingFor('arg',      'r', 'required'),
+    bindingFor('optarg',   'o', 'optional'),
+    bindingFor('restarg',  'a', 'array from rest'),
+    bindingFor('blockarg', 'b', 'block'),
+    groupFor('keyword', 'k', [
+      bindingFor('kwarg',     'r', 'required'),
+      bindingFor('kwoptarg',  'o', 'optional'),
+      bindingFor('kwrestarg', 'h', 'hash from rest'),
+    ]),
+  ]),
+
+  groupFor('literal', 'j', [
+    bindingFor('xstr',              '`', 'system command'),
+    bindingFor('regexp',            '/', 'regular expression'),
+    bindingFor('match_with_lvasgn', '~', 'match regexp literal'),
+    bindingFor('irange',            '2', 'range including end'),
+    bindingFor('erange',            '3', 'range excluding end'),
+    bindingFor('array',             'A', 'array'),
+    bindingFor('block',             'b', 'block'),
+    bindingFor('complex',           'c', 'complex'),
+    bindingFor('defined?',          'd', 'defined?'),
+    bindingFor('false',             'f', 'false'),
+    bindingFor('hash',              'h', 'hash'),
+    bindingFor('int',               'i', 'integer'),
+    bindingFor('nil',               'n', 'nil'),
+    bindingFor('float',             '.', 'floating decimal point'),
+    bindingFor('rational',          'r', 'rational'),
+    bindingFor('str',               's', 'string'),
+    bindingFor('dstr',              'S', 'interpolated string'),
+    bindingFor('true',              't', 'true'),
+    bindingFor('sym',               'y', 'symbol'),
+    bindingFor('dstr',              'Y', 'interpolated string'),
+    bindingFor('regopt',            'o', 'regexp option'),
+  ]),
 ]
+
+// Might be nice to add these as a hidden convenience,
+// or maybe allow them to be programmed
+// (but whos got time to implement features like that?)
+//
+// used:  ^ < @ - = & | /
+//        a b c d f h i j l m o p rs y
+//        A B F G H I J K L M N S T
+// avail: e g k n q t u v w x z
+//        D E O P Q R U V W X Y Z
+//
+//   & and
+//   | or
+//   / regexp
+//   f if
+//   T true
+//   F false
+//   S self
+//   L class
+//   N nil
+//   r return
+//   M module
+//   B block_pass
+//   G arg
+//   H optarg
+//   I restarg
+//   J kwarg
+//   K kwoptarg
+//   < return
+//   ^ super
+//   . float
