@@ -78,71 +78,6 @@ describe('KeyMapper', ()=>{
     }
   }
 
-  it('can find data', () => {
-    const keyMap = [new Keybinding({keysequence: "b",  data: "a",   english: 'b'})];
-    const mapper = new Mapper(keyMap);
-    assert.equal("b", mapper.findData("a").english);
-  });
-
-  it('throws an error when asked for data it does not have', () => {
-    const keyMap = [new Keybinding({keysequence: "b",  data: "a", english: 'b'})];
-    const mapper = new Mapper(keyMap);
-    assert.throws(       () => mapper.findData("b"), Mapper.MissingDataError );
-    assert.doesNotThrow( () => mapper.findData("a"));
-  });
-
-  it('remembers my input and gives me back a list of potential matches', ()=> {
-    let mapper = mapperFor({and: "and", arg: "arg", ars: "args", array: "array", asgnor: "or_asgn", other: "other"});
-    assertKeyMatch(mapper, "a", {and: "and", arg: "arg", ars: "args", array: "array", asgnor: "or_asgn"});
-    assertKeyMatch(mapper, "r", {arg: "arg", ars: "args", array: "array"});
-    assertKeyMatch(mapper, "r", {array: "array"});
-  });
-
-  it('backspace removes a character from the end of the input', ()=> {
-    let mapper = mapperFor({and: "and", arg: "arg", ars: "args", array: "array", asgnor: "or_asgn", other: "other"});
-    assertKeyMatch(mapper, "a",         {and: "and", arg: "arg", ars: "args", array: "array", asgnor: "or_asgn"});
-    assertKeyMatch(mapper, "r",         {arg: "arg", ars: "args", array: "array"});
-    assertKeyMatch(mapper, "backspace", {and: "and", arg: "arg", ars: "args", array: "array", asgnor: "or_asgn"});
-  });
-
-  it('clears the input when escape is pressed', ()=> {
-    let map    = {aa: 'aa', aba: 'aba', abc: 'abc', b: 'b'};
-    let mapper = mapperFor(map);
-    assertKeyMatch(mapper, "a", {aa: 'aa', aba: 'aba', abc: 'abc'});
-    assertKeyMatch(mapper, "b", {aba: 'aba', abc: 'abc'});
-
-    assertKeyMatch(mapper, "escape", map);
-  });
-
-  it('ignores non-printable keypresses and tab and enter', () => {
-    let mapper   = mapperFor({agood: "abc", ctrl: "ctrl"});
-    let expected = {agood: 'abc'};
-    assertKeyMatch(mapper, "a",                      expected);
-
-    assertKeyMatch(mapper, "alt",                    expected);
-    assertKeyMatch(mapper, "cmd-alt-mod",            expected);
-    assertKeyMatch(mapper, "cmd-ctrl-alt-mod",       expected);
-    assertKeyMatch(mapper, "cmd-ctrl-mod",           expected);
-    assertKeyMatch(mapper, "cmd-mod",                expected);
-    assertKeyMatch(mapper, "ctrl",                   expected);
-    assertKeyMatch(mapper, "ctrl-alt",               expected);
-    assertKeyMatch(mapper, "enter",                  expected);
-    assertKeyMatch(mapper, "shift-alt",              expected);
-    assertKeyMatch(mapper, "shift-cmd-ctrl-alt-mod", expected);
-    assertKeyMatch(mapper, "shift-cmd-ctrl-mod",     expected);
-    assertKeyMatch(mapper, "shift-cmd-mod",          expected);
-    assertKeyMatch(mapper, "shift-ctrl-alt",         expected);
-    assertKeyMatch(mapper, "shift-ctrl-shift",       expected);
-    assertKeyMatch(mapper, "shift-shift",            expected);
-    assertKeyMatch(mapper, "space",                  expected);
-    assertKeyMatch(mapper, "tab",                    expected);
-
-    assertKeyMatch(mapper, "down",                   expected);
-    assertKeyMatch(mapper, "left",                   expected);
-    assertKeyMatch(mapper, "right",                  expected);
-    assertKeyMatch(mapper, "up",                     expected);
-  });
-
   it('has a keybinding for each type of syntax that we use', (done)=>{
     readFile('tmp/node_types', 'utf8', (err, data) => {
       if(err) assert.fail(err);
@@ -164,10 +99,95 @@ describe('KeyMapper', ()=>{
     assert.doesNotThrow(() => mapperFor({x: "result", y: "result"}));
   })
 
-  it('maps a given key-sequence to the requested data', () => {
-    let mapper = mapperFor({abc: "lol", def: "wtf"});
-    assertKeyMatch(mapper, "d", {def: "wtf"});
+  describe('#findData', () => {
+    it('can find data', () => {
+      const keyMap = [new Keybinding({keysequence: "b",  data: "a",   english: 'b'})];
+      const mapper = new Mapper(keyMap);
+      assert.equal("b", mapper.findData("a").english);
+    });
+
+    it('throws an error when asked for data it does not have', () => {
+      const keyMap = [new Keybinding({keysequence: "b",  data: "a", english: 'b'})];
+      const mapper = new Mapper(keyMap);
+      assert.throws(       () => mapper.findData("b"), Mapper.MissingDataError );
+      assert.doesNotThrow( () => mapper.findData("a"));
+    });
   });
+
+  describe('.normalize', () => {
+    it('converts uppercase letters to lowercase letters', () => {
+      assert.equal(Mapper.normalize("M"), "m");
+    });
+
+    it('converts "SHIFT-" prefixed inputs to uppercase letters', () => {
+      assert.equal(Mapper.normalize("SHIFT-M"), "M");
+    });
+
+    it('conversts "Esc" to "escape"', () => {
+      assert.equal(Mapper.normalize("Esc"), "escape");
+      assert.equal(Mapper.normalize("esc"), "escape");
+    });
+  });
+
+  describe('#keyPressed', () => {
+    it('maps a given key-sequence to the requested data', () => {
+      let mapper = mapperFor({abc: "lol", def: "wtf"});
+      assertKeyMatch(mapper, "d", {def: "wtf"});
+    });
+
+    it('remembers my input and gives me back a list of potential matches', ()=> {
+      let mapper = mapperFor({and: "and", arg: "arg", ars: "args", array: "array", asgnor: "or_asgn", other: "other"});
+      assertKeyMatch(mapper, "a", {and: "and", arg: "arg", ars: "args", array: "array", asgnor: "or_asgn"});
+      assertKeyMatch(mapper, "r", {arg: "arg", ars: "args", array: "array"});
+      assertKeyMatch(mapper, "r", {array: "array"});
+    });
+
+    it('backspace removes a character from the end of the input', ()=> {
+      let mapper = mapperFor({and: "and", arg: "arg", ars: "args", array: "array", asgnor: "or_asgn", other: "other"});
+      assertKeyMatch(mapper, "a",         {and: "and", arg: "arg", ars: "args", array: "array", asgnor: "or_asgn"});
+      assertKeyMatch(mapper, "r",         {arg: "arg", ars: "args", array: "array"});
+      assertKeyMatch(mapper, "backspace", {and: "and", arg: "arg", ars: "args", array: "array", asgnor: "or_asgn"});
+    });
+
+    it('clears the input when escape is pressed', ()=> {
+      let map    = {aa: 'aa', aba: 'aba', abc: 'abc', b: 'b'};
+      let mapper = mapperFor(map);
+      assertKeyMatch(mapper, "a", {aa: 'aa', aba: 'aba', abc: 'abc'});
+      assertKeyMatch(mapper, "b", {aba: 'aba', abc: 'abc'});
+
+      assertKeyMatch(mapper, "escape", map);
+    });
+
+    it('ignores non-printable keypresses and tab and enter', () => {
+      let mapper   = mapperFor({agood: "abc", ctrl: "ctrl"});
+      let expected = {agood: 'abc'};
+      assertKeyMatch(mapper, "a",                      expected);
+
+      assertKeyMatch(mapper, "alt",                    expected);
+      assertKeyMatch(mapper, "cmd-alt-mod",            expected);
+      assertKeyMatch(mapper, "cmd-ctrl-alt-mod",       expected);
+      assertKeyMatch(mapper, "cmd-ctrl-mod",           expected);
+      assertKeyMatch(mapper, "cmd-mod",                expected);
+      assertKeyMatch(mapper, "ctrl",                   expected);
+      assertKeyMatch(mapper, "ctrl-alt",               expected);
+      assertKeyMatch(mapper, "enter",                  expected);
+      assertKeyMatch(mapper, "shift-alt",              expected);
+      assertKeyMatch(mapper, "shift-cmd-ctrl-alt-mod", expected);
+      assertKeyMatch(mapper, "shift-cmd-ctrl-mod",     expected);
+      assertKeyMatch(mapper, "shift-cmd-mod",          expected);
+      assertKeyMatch(mapper, "shift-ctrl-alt",         expected);
+      assertKeyMatch(mapper, "shift-ctrl-shift",       expected);
+      assertKeyMatch(mapper, "shift-shift",            expected);
+      assertKeyMatch(mapper, "space",                  expected);
+      assertKeyMatch(mapper, "tab",                    expected);
+
+      assertKeyMatch(mapper, "down",                   expected);
+      assertKeyMatch(mapper, "left",                   expected);
+      assertKeyMatch(mapper, "right",                  expected);
+      assertKeyMatch(mapper, "up",                     expected);
+    });
+  });
+
 
   describe('#accept', () => {
     it('clears the input when input is accepted', () => {
@@ -194,21 +214,6 @@ describe('KeyMapper', ()=>{
       assert.equal(2, results.length);
       results = mapper.keyPressed('Esc');
       assert.equal(3, results.length);
-    });
-  });
-
-  describe('.normalize', () => {
-    it('converts uppercase letters to lowercase letters', () => {
-      assert.equal(Mapper.normalize("M"), "m");
-    });
-
-    it('converts "SHIFT-" prefixed inputs to uppercase letters', () => {
-      assert.equal(Mapper.normalize("SHIFT-M"), "M");
-    });
-
-    it('conversts "Esc" to "escape"', () => {
-      assert.equal(Mapper.normalize("Esc"), "escape");
-      assert.equal(Mapper.normalize("esc"), "escape");
     });
   });
 });
