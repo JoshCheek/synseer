@@ -68,5 +68,9 @@ RSpec.describe Synseer::Parse do
       nodes = nodes_in 'begin; 1; rescue => e; 1; end'
       expect(nodes).to eq [:kwbegin, :rescue, :int, :lvasgn, :int]
     end
+
+    it 'renames until_post -> until',t:true do
+      expect(nodes_in 'begin; 1; end until 2').to eq [:until, :int, :kwbegin, :int]
+    end
   end
 end

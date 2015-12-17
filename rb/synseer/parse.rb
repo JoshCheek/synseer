@@ -4,12 +4,15 @@ module Synseer
   module Parse
     EXCLUDED_TYPES = [:args, :begin, :pair, :when, :resbody].freeze
 
+    TYPE_ALIAS = Hash.new { |h, k| k }
+    TYPE_ALIAS[:until_post] = :until
+
     extend self
     def ast_for(ruby_code)
       child_map = to_hash_ast = wrap_program = nil
 
       to_hash_ast = lambda do |ast|
-        { type:       ast.type,
+        { type:       TYPE_ALIAS[ast.type],
           begin_line: ast.loc.expression.begin.line-1,
           begin_col:  ast.loc.expression.begin.column,
           end_line:   ast.loc.expression.end.line-1,
