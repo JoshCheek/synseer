@@ -71,6 +71,48 @@ Assume most decisions are incidental, not intentional (I'm figuring it out as I 
   * A game for each type
   * A game for each group of types
 * Make sure each of the programs can be entered
+* Update to new keybindings
+
+## MOST COMMON SYNTAXES
+
+Taken from Rails
+
+```sh
+$ find . -type f -name '*.rb' \
+>  | ruby -ne 'print unless %r(/templates?/)' \
+>  | ruby -rparser/ruby22 -ne '
+     def count_asts(ast)
+       return unless ast.kind_of? AST::Node
+       puts ast.type
+       ast.children.each { |c| count_asts c }
+     end
+     at_exit { $! && $stderr.puts("\e[31m#{$_}\e[0m") }
+     count_asts Parser::Ruby22.parse(File.read($_.chomp));' \
+>  | sort \
+>  | uniq -c \
+>  | sort -nr \
+>  | head -20
+164767 send
+64931 str
+54015 lvar
+50302 const
+46784 sym
+36487 args
+28016 begin
+21721 pair
+21444 int
+20480 def
+15724 lvasgn
+15675 hash
+15225 block
+12438 ivar
+12082 arg
+7577 array
+5243 if
+3662 dstr
+3631 class
+3479 ivasgn
+```
 
 ## MIT License
 

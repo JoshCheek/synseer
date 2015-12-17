@@ -1,0 +1,151 @@
+remove: args, begin, pair, when, resbody
+
+rename:
+  dstr       -> str
+  dsym       -> sym
+  until_post -> until
+
+
+
+frequent
+  send   | m | method call
+  str    | s | literal string
+  lvar   | l | lookup local variable
+  const  | C | lookup constant
+  sym    | y | symbol literal (or S)
+  int    | i | integer literal
+  def    | d | def
+  hash   | h | hash literal
+  block  | b | literal block
+  ivar   | @ | lookup instance variable
+  array  | A | array literal
+
+lookup: -
+  lvar     | l | local variable
+  const    | C | constant
+  ivar     | @ | instance variable
+  gvar     | $ | global variable
+  cbase    | o | toplevel constant (Object)
+  nth_ref  | n | regexp capture
+  back_ref | & | regexp match
+  cvar     | c | class var (never use these)
+
+assign: =
+  lvasgn   | l | local variable
+  ivasgn   | @ | instance variable
+  casgn    | C | constant
+  or_asgn  | | | assign if false
+  and_asgn | & | assign if true
+  mlhs     | , | pattern matching
+  masgn    | m | multiple
+  op_asgn  | o | operator
+  gvasgn   | $ | global
+  cvasgn   | c | class var (never use these)
+
+control-flow: c
+  if       | i | if statment
+  and      | & | and
+  or       | | | or
+  yield    | y | yield to block
+  return   | r | return
+  case     | c | case
+  loop: l
+    until | u | until true
+    while | w | while true
+    break | b | break out
+    next  | n | next iteration
+  assign: =
+    or_asgn  | | | if false
+    and_asgn | & | if true
+  begin: b
+    kwbegin | b | begin
+    rescue  | r | rescue exception
+    retry   | t | retry the body
+    ensure  | e | ensure this happens
+  super: s
+    zsuper | i | implicit args
+    super  | e | explicit args
+
+object dsl: o
+  send   | m | method call
+  self   | s | self (current object)
+  alias  | a | alias method
+  open: o
+    class  | c | class
+    module | m | module
+    sclass | s | singleton class
+  define: d
+    def   | d | on open class
+    defs  | s | on singleton class
+    undef | u | undefine in open class
+
+argument: a
+  block_pass | b | block
+  splat      | a | array to args
+  kwsplat    | h | hash keywords
+
+parameter: p
+  arg      | r | required
+  optarg   | o | optional
+  restarg  | a | array from rest
+  blockarg | b | block
+  keyword: k
+    kwarg     | r | required
+    kwoptarg  | o | optional
+    kwrestarg | h | hash from rest
+
+literal: j
+  xstr              | ` | system command
+  regexp            | / | regular expression
+  match_with_lvasgn | ~ | match regexp literal
+  irange            | 2 | range including end
+  erange            | 3 | range excluding end
+  array             | A | array
+  block             | b | block
+  complex           | c | complex
+  defined?          | d | defined?
+  false             | f | false
+  hash              | h | hash
+  int               | i | integer
+  nil               | n | nil
+  float             | . | floating decimal point
+  rational          | r | rational
+  str               | s | string
+  true              | t | true
+  sym               | y | symbol
+  regopt            | o | regexp option
+
+
+---------------------------------------------------
+
+Might be nice to add these as a hidden convenience,
+or maybe allow them to be programmed
+(but whos got time to implement features like that?)
+
+used:  ^ < @ - = & | /
+       a b c d f h i j l m o p rs y
+       A B F G H I J K L M N S T
+avail: e g k n q t u v w x z
+       D E O P Q R U V W X Y Z
+
+  & and
+  | or
+  / regexp
+  f if
+  T true
+  F false
+  S self
+  L class
+  N nil
+  r return
+  M module
+  B block_pass
+  G arg
+  H optarg
+  I restarg
+  J kwarg
+  K kwoptarg
+  < return
+  ^ super
+  . float
+

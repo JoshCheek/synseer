@@ -1,0 +1,83 @@
+
+
+From Rails
+-----------------------
+164767 send   m  method call
+64931 str     s  string literal
+54015 lvar    l  get local variable
+50302 const   c  get constant
+46784 sym     y  symbol literal (or S)
+36487 args    -- remove --
+28016 begin   -- remove --
+21721 pair    -- remove --
+21444 int     ? integer literal
+20480 def     d def
+15724 lvasgn  =l set local variable
+15675 hash    h hash literal
+15225 block   b block
+12438 ivar    i
+12082 arg     ar argument, required
+7577  array   A  array literal
+5243 if       ci if statment
+3662 dstr     -- rename to str --
+3631 class    oc
+3479 ivasgn   =i Instance variable assignment
+2947 self     os
+2803 true
+2657 nil
+2625 regopt
+2625 regexp
+2259 module
+1810 false
+1695 optarg
+1113 block_pass
+ 957 and
+ 939 or
+ 819 casgn
+ 782 defs
+ 779 or_asgn
+ 776 restarg
+ 761 zsuper
+ 683 when
+ 547 splat
+ 545 ensure
+ 524 float
+ 501 yield
+ 496 return
+ 474 mlhs
+ 448 cbase
+ 440 masgn
+ 440 blockarg
+ 420 resbody
+ 407 rescue
+ 372 kwbegin
+ 287 op_asgn
+ 271 irange
+ 271 alias
+ 269 gvar
+ 261 super
+ 255 case
+ 212 defined?
+ 176 xstr
+ 130 kwoptarg
+ 123 sclass
+ 112 nth_ref
+  81 erange
+  66 gvasgn
+  62 kwrestarg
+  61 next
+  59 dsym
+  52 cvar
+  49 cvasgn
+  35 while
+  27 break
+  23 until
+  18 kwsplat
+  15 back_ref
+  12 match_with_lvasgn
+   7 retry
+   7 kwarg
+   6 undef
+   6 and_asgn
+   4 rational
+   2 until_post
