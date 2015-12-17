@@ -104,8 +104,10 @@ Game.prototype.advanceTraversal = function() {
 Game.prototype.resetTraversal = function() {
   this._clearElement();
   this._stepsTraversed = 0;
-  var ast = this._ast;
-  this._traverse = new TraverseAst(ast);
+  this._traverse = new TraverseAst(this._ast);
+  this._traverse = this._traverse.successor(); // skip toplevel "program" node
+  let ast = this._traverse.ast;
+
   this._currentElement = this._codeMirror.markText(
     {line: ast.begin_line, ch: ast.begin_col},
     {line: ast.end_line,   ch: ast.end_col},

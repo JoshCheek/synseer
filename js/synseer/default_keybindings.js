@@ -83,4 +83,5 @@ module.exports = [
   keybindingFor("b",    "begin",  'implicit grouping of expressions'),
   keybindingFor("ms",   "send",   'message send'),
   keybindingFor("sp",   "splat",  '?? guessing this is the complement to restarg'),
+  keybindingFor("P",    "program", 'whole program'),
 ]
