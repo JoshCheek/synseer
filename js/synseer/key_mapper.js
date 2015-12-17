@@ -74,12 +74,21 @@ KeyMapper.prototype = {
   },
 
   possibilities: function() {
-    let matchedWords = [];
-    for (let i in this.keymap) {
-      if (this.startsWith(this.keymap[i].keysequence, this.input()))
-        matchedWords.push(this.keymap[i]);
-    }
-    return matchedWords;
+    let keymap = this.keymap;
+    let index  = 0;
+
+    this.keysPressed.forEach((key) => {
+      if(keymap.length === 1 && keymap[0].isGroup) {
+        keymap = keymap[0].keymap;
+        index  = 0;
+      }
+      keymap = keymap.filter((kb) => kb.keysequence[index] === key);
+      ++index;
+    });
+
+    if(keymap.length === 1 && keymap[0].isGroup)
+      keymap = keymap[0].keymap;
+    return keymap;
   },
 
   findData: function(data) {

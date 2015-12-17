@@ -11,10 +11,25 @@ function kbWith(overrides) {
   return new Keybinding(attrs);
 }
 
+function KeyBindingGroup(attrs) {
+  this.keysequence = attrs.keysequence;
+  this.keymap      = attrs.keymap;
+}
+KeyBindingGroup.prototype = {
+  isGroup: true
+}
+
 function keybindingsFor(pairs) {
   let keybindings = [];
   for(var seq in pairs) {
-    keybindings.push(new Keybinding({ english: 'english', data: pairs[seq], keysequence: seq }));
+    let value = pairs[seq], kb = null;
+
+    if(typeof value === 'object')
+      kb = new KeyBindingGroup({keysequence: seq, keymap: keybindingsFor(value)});
+    else
+      kb = new Keybinding({keysequence: seq, english: 'english', data: value});
+
+    keybindings.push(kb);
   }
   return keybindings;
 }
@@ -23,6 +38,9 @@ function mapperFor(pairs) {
   return new Mapper(keybindingsFor(pairs));
 }
 
+function clear(mapper) {
+  mapper.keyPressed('escape');
+}
 
 describe('Default keymap', ()=>{
   it('maps each of the keys', ()=>{
@@ -185,6 +203,20 @@ describe('KeyMapper', ()=>{
       assertKeyMatch(mapper, "left",                   expected);
       assertKeyMatch(mapper, "right",                  expected);
       assertKeyMatch(mapper, "up",                     expected);
+    });
+
+    it('allows keybindings to be nested', () => {
+      let mapper = mapperFor({
+        a: {b: 'c', d: 'e'},
+        f: {g: 'h', i: {j: 'k', l: 'm'}},
+      });
+
+      assertKeyMatch(mapper, "a", {b: 'c', d: 'e'});
+      assertKeyMatch(mapper, "b", {b: 'c'});
+      clear(mapper);
+      assertKeyMatch(mapper, "f", {g: 'h', i: {j: 'k', l: 'm'}});
+      assertKeyMatch(mapper, "i", {j: 'k', l: 'm'});
+      assertKeyMatch(mapper, "j", {j: 'k'});
     });
   });
 
