@@ -11,21 +11,13 @@ function kbWith(overrides) {
   return new Keybinding(attrs);
 }
 
-function KeyBindingGroup(attrs) {
-  this.keysequence = attrs.keysequence;
-  this.keymap      = attrs.keymap;
-}
-KeyBindingGroup.prototype = {
-  isGroup: true
-}
-
 function keybindingsFor(pairs) {
   let keybindings = [];
   for(var seq in pairs) {
     let value = pairs[seq], kb = null;
 
     if(typeof value === 'object')
-      kb = new KeyBindingGroup({keysequence: seq, keymap: keybindingsFor(value)});
+      kb = new Keybinding.Group({keysequence: seq, keymap: keybindingsFor(value)});
     else
       kb = new Keybinding({keysequence: seq, english: 'english', data: value});
 

@@ -21,4 +21,12 @@ Keybinding.prototype = {
   }
 }
 
+
+Keybinding.Group = function(attrs) {
+  this.keysequence = attrs.keysequence;
+  this.keymap      = attrs.keymap;
+  this.isGroup     = true;
+}
+
+
 module.exports = Keybinding;
