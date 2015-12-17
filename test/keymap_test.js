@@ -62,13 +62,13 @@ describe('A keybinding', () => {
 
 describe('KeyMapper', ()=>{
   function assertKeyMatch(mapper, key, expecteds) {
-    var expectedKbs = keybindingsFor(expecteds);
-    var actualKbs   = mapper.keyPressed(key);
+    let expectedKbs = keybindingsFor(expecteds);
+    let actualKbs   = mapper.keyPressed(key);
     let message     = `actual: ${inspect(actualKbs)} expected: ${inspect(expectedKbs)}`
 
     assert.equal(actualKbs.length, expectedKbs.length, message);
 
-    for(var index in expectedKbs) {
+    for(let index in expectedKbs) {
       let expected = expectedKbs[index];
       let actual   = actualKbs[index];
 
@@ -92,22 +92,22 @@ describe('KeyMapper', ()=>{
   });
 
   it('remembers my input and gives me back a list of potential matches', ()=> {
-    var mapper = mapperFor({and: "and", arg: "arg", ars: "args", array: "array", asgnor: "or_asgn", other: "other"});
+    let mapper = mapperFor({and: "and", arg: "arg", ars: "args", array: "array", asgnor: "or_asgn", other: "other"});
     assertKeyMatch(mapper, "a", {and: "and", arg: "arg", ars: "args", array: "array", asgnor: "or_asgn"});
     assertKeyMatch(mapper, "r", {arg: "arg", ars: "args", array: "array"});
     assertKeyMatch(mapper, "r", {array: "array"});
   });
 
   it('backspace removes a character from the end of the input', ()=> {
-    var mapper = mapperFor({and: "and", arg: "arg", ars: "args", array: "array", asgnor: "or_asgn", other: "other"});
+    let mapper = mapperFor({and: "and", arg: "arg", ars: "args", array: "array", asgnor: "or_asgn", other: "other"});
     assertKeyMatch(mapper, "a",         {and: "and", arg: "arg", ars: "args", array: "array", asgnor: "or_asgn"});
     assertKeyMatch(mapper, "r",         {arg: "arg", ars: "args", array: "array"});
     assertKeyMatch(mapper, "backspace", {and: "and", arg: "arg", ars: "args", array: "array", asgnor: "or_asgn"});
   });
 
   it('clears the input when escape is pressed', ()=> {
-    var map    = {aa: 'aa', aba: 'aba', abc: 'abc', b: 'b'};
-    var mapper = mapperFor(map);
+    let map    = {aa: 'aa', aba: 'aba', abc: 'abc', b: 'b'};
+    let mapper = mapperFor(map);
     assertKeyMatch(mapper, "a", {aa: 'aa', aba: 'aba', abc: 'abc'});
     assertKeyMatch(mapper, "b", {aba: 'aba', abc: 'abc'});
 
@@ -165,13 +165,13 @@ describe('KeyMapper', ()=>{
   })
 
   it('maps a given key-sequence to the requested data', () => {
-    var mapper = mapperFor({abc: "lol", def: "wtf"});
+    let mapper = mapperFor({abc: "lol", def: "wtf"});
     assertKeyMatch(mapper, "d", {def: "wtf"});
   });
 
   describe('#accept', () => {
     it('clears the input when input is accepted', () => {
-      var mapper = mapperFor({ab: 'ab'});
+      let mapper = mapperFor({ab: 'ab'});
       assertKeyMatch(mapper, "a", {ab: 'ab'});
       mapper.accept();
       assertKeyMatch(mapper, "a", {ab: 'ab'});
@@ -179,28 +179,36 @@ describe('KeyMapper', ()=>{
     });
 
     it('returns the full set of possibilities', () => {
-      var mapper = mapperFor({ka: 'a', kb: 'b', ja: 'c'});
+      let mapper = mapperFor({ka: 'a', kb: 'b', ja: 'c'});
       mapper.keyPressed('k');
-      var results = mapper.accept()
+      let results = mapper.accept()
       assert.equal('a', results[0].data);
       assert.equal('b', results[1].data);
       assert.equal('c', results[2].data);
-      assert.equal(3, Object.keys(results).length);
+      assert.equal(3, results.length);
+    });
+
+    it('normalizes the input', () => {
+      let mapper = mapperFor({ka: 'a', kb: 'b', ja: 'c'});
+      let results = mapper.keyPressed('k');
+      assert.equal(2, results.length);
+      results = mapper.keyPressed('Esc');
+      assert.equal(3, results.length);
     });
   });
 
-  describe('.fromCodemirror', () => {
+  describe('.normalize', () => {
     it('converts uppercase letters to lowercase letters', () => {
-      assert.equal(Mapper.fromCodemirror("M"), "m");
+      assert.equal(Mapper.normalize("M"), "m");
     });
 
     it('converts "SHIFT-" prefixed inputs to uppercase letters', () => {
-      assert.equal(Mapper.fromCodemirror("SHIFT-M"), "M");
+      assert.equal(Mapper.normalize("SHIFT-M"), "M");
     });
 
     it('conversts "Esc" to "escape"', () => {
-      assert.equal(Mapper.fromCodemirror("Esc"), "escape");
-      assert.equal(Mapper.fromCodemirror("esc"), "escape");
+      assert.equal(Mapper.normalize("Esc"), "escape");
+      assert.equal(Mapper.normalize("esc"), "escape");
     });
   });
 });

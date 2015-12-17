@@ -50,14 +50,6 @@ Game.prototype.isFinished = function() {
 
 Game.prototype.pressKey = function(key) {
   if(this.isFinished()) return;
-
-  var pre = key;
-  key = KeyMapper.fromCodemirror(key);
-  var post = key;
-  if(pre !== post) {
-    console.log(JSON.stringify({pre: pre, post: post}));
-  }
-
   var possibilities = this._keyMap.keyPressed(key);
   var selected      = possibilities[0];
 

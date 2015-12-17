@@ -16,7 +16,7 @@ KeyMapper.KeyConflictError.prototype = new Error();
 KeyMapper.KeyConflictError.prototype.constructor = KeyMapper.KeyConflictError;
 
 
-KeyMapper.fromCodemirror = function(key) {
+KeyMapper.normalize = function(key) {
   key = key.toLowerCase();
   if(key === 'esc') return 'escape';
 
@@ -55,6 +55,8 @@ KeyMapper.prototype = {
   },
 
   keyPressed: function(input) {
+    input = KeyMapper.normalize(input);
+
     if(input=="backspace") {
       this.keysPressed.pop();
     } else if(input == "escape") {
