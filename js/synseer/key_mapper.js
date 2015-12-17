@@ -6,6 +6,7 @@ let KeyMapper = function(keymap) {
   KeyMapper.validateMap(keymap);
 }
 
+
 KeyMapper.KeyConflictError = function(conflictingKeys) {
   this.conflictingKeys = conflictingKeys;
   this.name            = 'KeyConflictError';
@@ -76,18 +77,20 @@ KeyMapper.prototype = {
   possibilities: function() {
     let keymap = this.keymap;
     let index  = 0;
+    let expandKeymap = function() {
+      if(keymap.length !== 1) return;
+      if(!keymap[0].isGroup)  return;
+      keymap = keymap[0].keymap;
+      index  = 0;
+    }
 
     this.keysPressed.forEach((key) => {
-      if(keymap.length === 1 && keymap[0].isGroup) {
-        keymap = keymap[0].keymap;
-        index  = 0;
-      }
+      expandKeymap();
       keymap = keymap.filter((kb) => kb.keysequence[index] === key);
       ++index;
     });
 
-    if(keymap.length === 1 && keymap[0].isGroup)
-      keymap = keymap[0].keymap;
+    expandKeymap();
     return keymap;
   },
 
