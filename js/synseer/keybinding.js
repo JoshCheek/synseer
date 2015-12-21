@@ -11,14 +11,6 @@ function Keybinding(attrs) {
   else throw(`No data in ${attrs}`);
 }
 
-
-Keybinding.groupFor = function(attrs) {
-  let hasSeq = attrs.keysequence === '' ||
-               attrs.keysequence === undefined;
-  return new (hasSeq ? Keybinding.PseudoGroup : Keybinding.Group)(attrs);
-}
-
-
 Keybinding.prototype = {
   isSequence: function(sequence) {
     return this.keysequence == sequence;
@@ -56,46 +48,56 @@ Keybinding.prototype = {
   },
 }
 
+
+
+Keybinding.groupFor = function(attrs) {
+  let hasSeq = attrs.keysequence === '' ||
+               attrs.keysequence === undefined;
+  return new (hasSeq ? Keybinding.PseudoGroup : Keybinding.Group)(attrs);
+}
+
 function groupRoot(group) {
-  if(group.keymap.length === 1) return group.keymap[0];
+  if(group.length === 1) return group[0];
   return group;
 }
 
 Keybinding.PseudoGroup = function(attrs) {
-  this.keymap  = attrs.keymap;
   this.english = attrs.english;
+  attrs.keymap.forEach(kb => this.push(kb));
 }
-Keybinding.PseudoGroup.prototype = {
-  isGroup:          true,
-  isPseudoGroup:    true,
-  keysequence:      "",
-  root:             function() { return groupRoot(this) },
-  potentialMatches: function(keysPressed, startIndex) {
+
+// Inherit from array so that we are a legitimate collection
+Keybinding.PseudoGroup.prototype = proto => {
+  proto.isGroup          = true;
+  proto.isPseudoGroup    = true
+  proto.keysequence      = "";
+  proto.root             = function() { return groupRoot(this) };
+  proto.potentialMatches = function(keysPressed, startIndex) {
     let filtered = [];
-    this.keymap.forEach(kb => {
+    this.forEach(kb => {
       kb.potentialMatches(keysPressed, startIndex)
-        .forEach(kb => filtered.push(kb));
+        .forEach(childKb => filtered.push(childKb));
     });
     if(filtered.length === 0) return [];
-    let group = new Keybinding.PseudoGroup({
-      english: this.english,
-      keymap:  filtered,
-    });
-    return [group];
-  },
-}
+    return new Keybinding.PseudoGroup({english: this.english, keymap: filtered});
+  };
+
+  proto.constructor = Keybinding.PseudoGroup;
+  return proto;
+}([]);
+
 
 
 Keybinding.Group = function(attrs) {
   this.keysequence = attrs.keysequence;
   this.english     = attrs.english;
-  this.keymap      = attrs.keymap;
+  attrs.keymap.forEach(kb => this.push(kb));
 }
-Keybinding.Group.prototype = {
-  isGroup:          true,
-  isPseudoGroup:    false,
-  root:             function() { return groupRoot(this) },
-  potentialMatches: function(keysPressed, startIndex) {
+Keybinding.Group.prototype = proto => {
+  proto.isGroup          = true;
+  proto.isPseudoGroup    = false;
+  proto.root             = function() { return groupRoot(this) };
+  proto.potentialMatches = function(keysPressed, startIndex) {
     // consume out characters from the keysPressed
     let inBounds = i => i < this.keysequence.length &&
                         i + startIndex < keysPressed.length;
@@ -106,19 +108,21 @@ Keybinding.Group.prototype = {
 
     // return an array of all the children who match what remains
     let filtered = [];
-    this.keymap.forEach(kb => {
+    this.forEach(kb => {
       kb.potentialMatches(keysPressed, startIndex+this.keysequence.length)
         .forEach(kb => filtered.push(kb));
     });
     if(filtered.length === 0) return [];
-    let group = new Keybinding.Group({
+    return new Keybinding.Group({
       keysequence: this.keysequence,
       english:     this.english,
       keymap:      filtered,
     });
-    return [group];
-  },
-}
+  };
+
+  proto.constructor = Keybinding.Group;
+  return proto;
+}([]);
 
 
 module.exports = Keybinding;

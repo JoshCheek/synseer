@@ -28,10 +28,12 @@ KeyMapper.normalize = function(key) {
 }
 
 function flattenPseudogroups(km) {
+  console.log({km: km});
+
   const expanded = [];
   km.forEach(kb => {
     if(kb.isPseudoGroup)
-      flattenPseudogroups(kb.keymap).forEach(kb => expanded.push(kb));
+      flattenPseudogroups(kb).forEach(kb => expanded.push(kb));
     else
       expanded.push(kb)
   });
@@ -57,7 +59,7 @@ KeyMapper.validateMap = function(keymap) {
 
       [parentKb, childKb].forEach(kb => {
         if(kb.isGroup && !kb.isPseudoGroup)
-          KeyMapper.validateMap(kb.keymap);
+          KeyMapper.validateMap(kb);
       });
     });
   });

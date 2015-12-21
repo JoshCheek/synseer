@@ -240,24 +240,22 @@ describe('KeyMapper', ()=>{
       let mapper = mapperFor({ka: 'a', kb: 'b', ja: 'c'});
       mapper.keyPressed('k');
       let results = mapper.accept();
-      console.log("POST RESULTS", results, results.keymap);
 
-      let keymap = results[0].keymap;
-      assert.equal('a', keymap[0].data);
-      assert.equal('b', keymap[1].data);
-      assert.equal('c', keymap[2].data);
-      assert.equal(3, keymap.length);
+      assert.equal('a', results[0].data);
+      assert.equal('b', results[1].data);
+      assert.equal('c', results[2].data);
+      assert.equal(3, results.length);
     });
 
     it('normalizes the input', () => {
       let mapper = mapperFor({ka: 'a', kb: 'b', ja: 'c'});
       let results = mapper.keyPressed('k');
       assert.equal(2, results.length);
-      results = mapper.keyPressed('Esc');
+      results = mapper.keyPressed('Esc'); // "Esc" works, so it was normalized to "escape"
       assert.equal(3, results.length);
     });
 
-    it.only('finds keys pressed in pseudo groups', () => {
+    it('finds keys pressed in pseudo groups', () => {
       let mapper = mapperFor({
         '': {b: 'c', d: 'e'},
         f: {g: 'h', i: {j: 'k', l: 'm'}},
