@@ -15,7 +15,6 @@ function keybindingsFor(pairs) {
   let keybindings = [];
   for(var seq in pairs) {
     let value = pairs[seq], kb = null;
-
     if(typeof value === 'object')
       kb = new Keybinding.groupFor({
         keysequence: seq,
@@ -74,20 +73,9 @@ describe('A keybinding', () => {
 describe('KeyMapper', ()=>{
   function assertKeyMatch(mapper, key, expecteds) {
     let expectedKbs = keybindingsFor(expecteds);
-    let actualKbs   = mapper.keyPressed(key);
-    console.log("EXPECTED: ", expectedKbs);
-    console.log("ACTUAL: ", actualKbs);
-    let message     = `actual: ${inspect(actualKbs)} expected: ${inspect(expectedKbs)}`
-
-    assert.equal(actualKbs.length, expectedKbs.length, message);
-
-    expectedKbs.forEach((expected, index) => {
-      let actual = actualKbs[index];
-
-      assert.equal(expected.data,        actual.data,        `${message}, but ${key} was actual:${actual}, expected:${expected}`);
-      assert.equal(expected.english,     actual.english,     `${message}, but ${key} was actual:${actual}, expected:${expected}`);
-      assert.equal(expected.keysequence, actual.keysequence, `${message}, but ${key} was actual:${actual}, expected:${expected}`);
-    });
+    mapper.keyPressed(key);
+    let actualKbs = mapper.possibilities();
+    assert.equal(JSON.stringify(actualKbs), JSON.stringify(expectedKbs));
   }
 
   it('throws an error on keymaps that cannot be uniquely entered', () => {
@@ -135,6 +123,7 @@ describe('KeyMapper', ()=>{
     });
   });
 
+
   describe('.normalize', () => {
     it('converts uppercase letters to lowercase letters', () => {
       assert.equal(Mapper.normalize("M"), "m");
@@ -149,6 +138,7 @@ describe('KeyMapper', ()=>{
       assert.equal(Mapper.normalize("esc"), "escape");
     });
   });
+
 
   describe('#keyPressed', () => {
     it('maps a given key-sequence to the requested data', () => {
@@ -234,18 +224,6 @@ describe('KeyMapper', ()=>{
       assertKeyMatch(mapper, "a", {ab: 'ab'});
       assertKeyMatch(mapper, "a", {});
     });
-
-    it('returns the full set of possibilities', () => {
-      let mapper = mapperFor({ka: 'a', kb: 'b', ja: 'c'});
-      mapper.keyPressed('k');
-      let results = mapper.accept();
-
-      assert.equal('a', results[0].data);
-      assert.equal('b', results[1].data);
-      assert.equal('c', results[2].data);
-      assert.equal(3, results.length);
-    });
-
     it('normalizes the input', () => {
       let mapper = mapperFor({ka: 'a', kb: 'b', ja: 'c'});
       let results = mapper.keyPressed('k');
@@ -253,13 +231,31 @@ describe('KeyMapper', ()=>{
       results = mapper.keyPressed('Esc'); // "Esc" works, so it was normalized to "escape"
       assert.equal(3, results.length);
     });
+  });
 
-    it('finds keys pressed in groups that have no keybindings', () => {
+  describe('#possibilities', () => {
+    it.only('finds keys pressed in groups that have no keybindings', () => {
       let mapper = mapperFor({
+        a: 'b',
         '': {b: 'c', d: 'e'},
         f: {g: 'h', i: {j: 'k', l: 'm'}},
       });
-      assert.equal("b", mapper.keyPressed("b")[0].keysequence);
+
+      assertKeyMatch(mapper, '', {
+        a: 'b',
+        '': {b: 'c', d: 'e'},
+        f: {g: 'h', i: {j: 'k', l: 'm'}},
+      });
+      assertKeyMatch(mapper, 'a', {a: 'b'});
+      clear(mapper);
+
+      assertKeyMatch(mapper, 'f', { g: 'h', i: {j: 'k', l: 'm'}});
+      assertKeyMatch(mapper, 'i', {j: 'k', l: 'm'});
+      assertKeyMatch(mapper, 'j', {j: 'k'});
+      clear(mapper);
+
+      assertKeyMatch(mapper, 'j', {j: 'k'});
+      clear(mapper);
     });
   });
 });

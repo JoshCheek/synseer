@@ -2,7 +2,7 @@
 let Keybinding = require('./keybinding');
 
 let KeyMapper = function(keymap) {
-  this.keymap = new Keybinding.PseudoGroup({keymap: keymap});
+  this.keymap      = keymap;
   this.keysPressed = [];
   KeyMapper.validateMap(keymap);
 }
@@ -33,31 +33,30 @@ KeyMapper.validateMap = function(keymap) {
   const conflictingKeys = [];
 
   // this is dumb, we should just render them into a single map and assert the keys are unique
-  keymap.forEach((keybinding) => {
-    keymap.forEach((maybeChild) => {
-      const parentKb = keybinding.keysequence;
-      const childKb  = maybeChild.keysequence;
-      // if length is less, then it can't be a child
-      // if length is the same, then it either is keybinding, or takes a different path
-      if(childKb.length <= parentKb.length) return;
-      let otherSubstr = childKb.substr(0, parentKb.length)
-      if(otherSubstr === parentKb)
-        conflictingKeys.push([keybinding, maybeChild]);
+  // keymap.forEach((keybinding) => {
+  //   keymap.forEach((maybeChild) => {
+  //     const parentKb = keybinding.keysequence;
+  //     const childKb  = maybeChild.keysequence;
+  //     // if length is less, then it can't be a child
+  //     // if length is the same, then it either is keybinding, or takes a different path
+  //     if(childKb.length <= parentKb.length) return;
+  //     let otherSubstr = childKb.substr(0, parentKb.length)
+  //     if(otherSubstr === parentKb)
+  //       conflictingKeys.push([keybinding, maybeChild]);
 
-      // [parentKb, childKb].forEach(kb => {
-      //   if(kb.isGroup && !kb.isPseudoGroup)
-      //     KeyMapper.validateMap(kb);
-      // });
-    });
-  });
-  if(conflictingKeys.length > 0)
-    throw new KeyMapper.KeyConflictError(conflictingKeys);
+  //     [parentKb, childKb].forEach(kb => {
+  //       if(kb.isGroup && !kb.isPseudoGroup)
+  //         KeyMapper.validateMap(kb);
+  //     });
+  //   });
+  // });
+  // if(conflictingKeys.length > 0)
+  //   throw new KeyMapper.KeyConflictError(conflictingKeys);
 }
 
 KeyMapper.prototype = {
   accept: function() {
     this.keysPressed = [];
-    return this.possibilities();
   },
 
   input: function() {
@@ -76,7 +75,6 @@ KeyMapper.prototype = {
     } else {
       this.keysPressed.push(input);
     }
-    return this.possibilities();
   },
 
   startsWith: function(string, fragment) {
@@ -84,7 +82,9 @@ KeyMapper.prototype = {
   },
 
   possibilities: function() {
-    return this.keymap.potentialMatches(this.keysPressed, 0);
+    console.log("KEYMAP:", JSON.stringify(this.keymap));
+    return new Keybinding.Group({keymap: this.keymap})
+                         .potentialMatches(this.keysPressed);
   },
 
   findData: function(data) {
