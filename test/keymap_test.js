@@ -242,5 +242,13 @@ describe('KeyMapper', ()=>{
       results = mapper.keyPressed('Esc');
       assert.equal(3, results.length);
     });
+
+    it('finds keys pressed in pseudo groups', () => {
+      let mapper = mapperFor({
+        '': {b: 'c', d: 'e'},
+        f: {g: 'h', i: {j: 'k', l: 'm'}},
+      });
+      assert.equal("b", mapper.keyPressed("b")[0].keysequence);
+    });
   });
 });

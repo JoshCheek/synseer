@@ -3,19 +3,50 @@ function KeymapStatus(domElement) {
   domElement.classList.add("keymap_status");
 }
 
+function log(obj) {
+  console.log(JSON.stringify(obj));
+}
+
 KeymapStatus.prototype = {
   update: function(input, keybindings) {
+    this.domElement.innerHTML = this.htmlFor(input, keybindings);
+  },
+
+  htmlFor: function(input, keybindings) {
+    return this.userEntry(input) + this.potentialEntries(keybindings);
+  },
+
+  userEntry: function(input) {
+    return `<div class="user_entry">${input}</div>`;
+  },
+
+  potentialEntries: function(keybindings) {
+    return `<table class="potential_entries">${this.rowsFor(keybindings)}</table>`;
+  },
+
+  rowsFor: function(keybindings) {
     let newEntries = "";
     for(let index in keybindings) {
-      let kb = keybindings[index];
-      newEntries += `<tr class="potential_entry">
-                       <td class="keybinding">${kb.keysequence}</td>
-                       <td class="syntax_node">${kb.english}</td>
-                     </tr>`
+      newEntries += this.keybinding(keybindings[index]);
     }
-    this.domElement.innerHTML = `<div class="user_entry">${input}</div>`+
-                                `<table class="potential_entries">${newEntries}</table>`
-  }
+    return newEntries;
+  },
+
+  keybinding: function(kb) {
+    if(kb.isPseudoGroup) return `
+      <tr>
+        <td colspan="2" class="entry_group">${kb.english}</td>
+      </tr>
+      <tr class="potential_entry">
+        <td colspan="2">${this.rowsFor(kb.keymap)}</td>
+      </tr>`;
+    else return `
+      <tr class="potential_entry">
+        <td class="keybinding">${kb.keysequence}</td>
+        <td class="syntax_node">${kb.english}</td>
+      </tr>`;
+  },
+
 }
 
 module.exports = KeymapStatus;
