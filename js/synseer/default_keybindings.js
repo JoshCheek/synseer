@@ -11,7 +11,7 @@ function bindingFor(data, keysequence, english) {
 }
 
 function groupFor(name, keysequence, keybindings) {
-  return new Keybinding.Group({
+  return Keybinding.groupFor({
     keysequence: keysequence,
     keymap:      keybindings,
     english:     name,

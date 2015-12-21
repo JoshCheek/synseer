@@ -21,7 +21,7 @@ Game.prototype.init = function() {
   this._statsView.setNumCorrect(0);
   this._statsView.setNumIncorrect(0);
   this._statsView.setDuration(0);
-  this._onPossibilities(this._keyMap.input(), this._keyMap.possibilities());
+  this._onPossibilities(this._keyMap.input(), this._keyMap.possibilities(true));
 }
 
 Game.prototype.start = function(getTime, setInterval) {
@@ -54,7 +54,7 @@ Game.prototype.pressKey = function(key) {
   var selected      = possibilities[0];
 
   if(1 < possibilities.length) {
-    this._onPossibilities(this._keyMap.input(), possibilities);
+    this._onPossibilities(this._keyMap.input(), this._keyMap.possibilities(true));
     return;
   }
 

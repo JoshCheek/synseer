@@ -17,9 +17,16 @@ function keybindingsFor(pairs) {
     let value = pairs[seq], kb = null;
 
     if(typeof value === 'object')
-      kb = new Keybinding.Group({keysequence: seq, keymap: keybindingsFor(value)});
+      kb = new Keybinding.groupFor({
+        keysequence: seq,
+        keymap:      keybindingsFor(value)
+      });
     else
-      kb = new Keybinding({keysequence: seq, english: 'english', data: value});
+      kb = new Keybinding({
+        keysequence: seq,
+        english:     'english',
+        data:        value,
+      });
 
     keybindings.push(kb);
   }
@@ -68,6 +75,8 @@ describe('KeyMapper', ()=>{
   function assertKeyMatch(mapper, key, expecteds) {
     let expectedKbs = keybindingsFor(expecteds);
     let actualKbs   = mapper.keyPressed(key);
+    console.log("EXPECTED: ", expectedKbs);
+    console.log("ACTUAL: ", actualKbs);
     let message     = `actual: ${inspect(actualKbs)} expected: ${inspect(expectedKbs)}`
 
     assert.equal(actualKbs.length, expectedKbs.length, message);
@@ -206,12 +215,14 @@ describe('KeyMapper', ()=>{
         f: {g: 'h', i: {j: 'k', l: 'm'}},
       });
 
+      // no groups
       assertKeyMatch(mapper, "a", {b: 'c', d: 'e'});
       assertKeyMatch(mapper, "b", {b: 'c'});
       clear(mapper);
       assertKeyMatch(mapper, "f", {g: 'h', i: {j: 'k', l: 'm'}});
       assertKeyMatch(mapper, "i", {j: 'k', l: 'm'});
       assertKeyMatch(mapper, "j", {j: 'k'});
+      clear(mapper);
     });
   });
 
@@ -228,11 +239,14 @@ describe('KeyMapper', ()=>{
     it('returns the full set of possibilities', () => {
       let mapper = mapperFor({ka: 'a', kb: 'b', ja: 'c'});
       mapper.keyPressed('k');
-      let results = mapper.accept()
-      assert.equal('a', results[0].data);
-      assert.equal('b', results[1].data);
-      assert.equal('c', results[2].data);
-      assert.equal(3, results.length);
+      let results = mapper.accept();
+      console.log("POST RESULTS", results, results.keymap);
+
+      let keymap = results[0].keymap;
+      assert.equal('a', keymap[0].data);
+      assert.equal('b', keymap[1].data);
+      assert.equal('c', keymap[2].data);
+      assert.equal(3, keymap.length);
     });
 
     it('normalizes the input', () => {
@@ -243,7 +257,7 @@ describe('KeyMapper', ()=>{
       assert.equal(3, results.length);
     });
 
-    it('finds keys pressed in pseudo groups', () => {
+    it.only('finds keys pressed in pseudo groups', () => {
       let mapper = mapperFor({
         '': {b: 'c', d: 'e'},
         f: {g: 'h', i: {j: 'k', l: 'm'}},

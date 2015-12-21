@@ -1,4 +1,5 @@
 'use strict';
+let Keybinding = require('./keybinding');
 
 let KeyMapper = function(keymap) {
   this.keymap = keymap;
@@ -26,22 +27,23 @@ KeyMapper.normalize = function(key) {
   return key;
 }
 
+function flattenPseudogroups(km) {
+  const expanded = [];
+  km.forEach(kb => {
+    if(kb.isPseudoGroup)
+      flattenPseudogroups(kb.keymap).forEach(kb => expanded.push(kb));
+    else
+      expanded.push(kb)
+  });
+  return expanded;
+}
+
+
 // http://www.sitepoint.com/exceptional-exception-handling-in-javascript/
 KeyMapper.validateMap = function(keymap) {
-  function flatten(km) {
-    const expanded = [];
-    km.forEach(kb => {
-      if(kb.isPseudoGroup)
-        flatten(kb.keymap).forEach(kb => expanded.push(kb));
-      else
-        expanded.push(kb)
-    });
-    return expanded;
-  }
-
   const conflictingKeys = [];
 
-  keymap = flatten(keymap);
+  keymap = flattenPseudogroups(keymap);
   keymap.forEach((keybinding) => {
     keymap.forEach((maybeChild) => {
       const parentKb = keybinding.keysequence;
@@ -93,23 +95,19 @@ KeyMapper.prototype = {
   },
 
   possibilities: function() {
-    let keymap = this.keymap;
-    let index  = 0;
-    let expandKeymap = function() {
-      if(keymap.length !== 1) return;
-      if(!keymap[0].isGroup)  return;
-      keymap = keymap[0].keymap;
-      index  = 0;
-    }
-
-    this.keysPressed.forEach((key) => {
-      expandKeymap();
-      keymap = keymap.filter((kb) => kb.keysequence[index] === key);
-      ++index;
+    let tempRoot = Keybinding.groupFor({
+      keymap:  this.keymap,
+      english: "",
     });
+    let matches = tempRoot.potentialMatches(this.keysPressed, 0);
+    console.log("MATCHES", matches);
+    if(matches.length !== 1) return matches;
 
-    expandKeymap();
-    return keymap;
+    let root = matches[0].root();
+
+    console.log(`RETURNING THE ROOT IN AN ARRAY: ${JSON.stringify([root])}`);
+    console.log(`The root is a pg: ${root.isPseudoGroup}`);
+    return [matches[0].root()];
   },
 
   findData: function(data) {
@@ -126,7 +124,6 @@ KeyMapper.prototype = {
     if(found) return found;
     throw `DID NOT HAVE ${data}`
   },
-
 }
 
 module.exports = KeyMapper;
