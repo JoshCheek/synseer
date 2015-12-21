@@ -81,14 +81,13 @@ describe('KeyMapper', ()=>{
 
     assert.equal(actualKbs.length, expectedKbs.length, message);
 
-    for(let index in expectedKbs) {
-      let expected = expectedKbs[index];
-      let actual   = actualKbs[index];
+    expectedKbs.forEach((expected, index) => {
+      let actual = actualKbs[index];
 
       assert.equal(expected.data,        actual.data,        `${message}, but ${key} was actual:${actual}, expected:${expected}`);
       assert.equal(expected.english,     actual.english,     `${message}, but ${key} was actual:${actual}, expected:${expected}`);
       assert.equal(expected.keysequence, actual.keysequence, `${message}, but ${key} was actual:${actual}, expected:${expected}`);
-    }
+    });
   }
 
   it('throws an error on keymaps that cannot be uniquely entered', () => {
@@ -117,7 +116,7 @@ describe('KeyMapper', ()=>{
       assert.equal("g", mapper.findData("h").keysequence);
     });
 
-    it('can find nested data in pseudo groups', () => {
+    it('can find nested data in groups with no keybindings', () => {
       let mapper = new Mapper([
         new Keybinding.Group({
           keysequence: '',
@@ -255,7 +254,7 @@ describe('KeyMapper', ()=>{
       assert.equal(3, results.length);
     });
 
-    it('finds keys pressed in pseudo groups', () => {
+    it('finds keys pressed in groups that have no keybindings', () => {
       let mapper = mapperFor({
         '': {b: 'c', d: 'e'},
         f: {g: 'h', i: {j: 'k', l: 'm'}},

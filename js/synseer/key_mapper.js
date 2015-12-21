@@ -2,7 +2,7 @@
 let Keybinding = require('./keybinding');
 
 let KeyMapper = function(keymap) {
-  this.keymap = keymap;
+  this.keymap = new Keybinding.PseudoGroup({keymap: keymap});
   this.keysPressed = [];
   KeyMapper.validateMap(keymap);
 }
@@ -27,25 +27,12 @@ KeyMapper.normalize = function(key) {
   return key;
 }
 
-function flattenPseudogroups(km) {
-  console.log({km: km});
-
-  const expanded = [];
-  km.forEach(kb => {
-    if(kb.isPseudoGroup)
-      flattenPseudogroups(kb).forEach(kb => expanded.push(kb));
-    else
-      expanded.push(kb)
-  });
-  return expanded;
-}
-
 
 // http://www.sitepoint.com/exceptional-exception-handling-in-javascript/
 KeyMapper.validateMap = function(keymap) {
   const conflictingKeys = [];
 
-  keymap = flattenPseudogroups(keymap);
+  // this is dumb, we should just render them into a single map and assert the keys are unique
   keymap.forEach((keybinding) => {
     keymap.forEach((maybeChild) => {
       const parentKb = keybinding.keysequence;
@@ -57,10 +44,10 @@ KeyMapper.validateMap = function(keymap) {
       if(otherSubstr === parentKb)
         conflictingKeys.push([keybinding, maybeChild]);
 
-      [parentKb, childKb].forEach(kb => {
-        if(kb.isGroup && !kb.isPseudoGroup)
-          KeyMapper.validateMap(kb);
-      });
+      // [parentKb, childKb].forEach(kb => {
+      //   if(kb.isGroup && !kb.isPseudoGroup)
+      //     KeyMapper.validateMap(kb);
+      // });
     });
   });
   if(conflictingKeys.length > 0)
@@ -97,19 +84,7 @@ KeyMapper.prototype = {
   },
 
   possibilities: function() {
-    let tempRoot = Keybinding.groupFor({
-      keymap:  this.keymap,
-      english: "",
-    });
-    let matches = tempRoot.potentialMatches(this.keysPressed, 0);
-    console.log("MATCHES", matches);
-    if(matches.length !== 1) return matches;
-
-    let root = matches[0].root();
-
-    console.log(`RETURNING THE ROOT IN AN ARRAY: ${JSON.stringify([root])}`);
-    console.log(`The root is a pg: ${root.isPseudoGroup}`);
-    return [matches[0].root()];
+    return this.keymap.potentialMatches(this.keysPressed, 0);
   },
 
   findData: function(data) {
@@ -118,7 +93,7 @@ KeyMapper.prototype = {
         let kb = km[i];
         if(kb.data === data) return kb;
         if(!kb.isGroup) continue;
-        let found = findIn(kb.keymap);
+        let found = findIn(kb);
         if(found) return found;
       }
     };
