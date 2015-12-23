@@ -46,6 +46,14 @@ Assume most decisions are incidental, not intentional (I'm figuring it out as I 
 
 ## Todo
 
+* Thoughts /w Justin `^_^`
+  * "Incorrect" dissuades guessing, which I want to encourge, b/c it's the most effective form of feedback that the app acn provide.
+    What if we rename "Inforrect" to "tries".
+  * Auto-"try" you at some number of seconds.
+    1. This creates a "sense of urgency" (Air Force lingo ;) which gets them thinking and moving quicker.
+    2. This removes the viability of the "sit and think for 10 min" strategy
+    3. This removes long periods of confusion. ie we assume any option you can't answer in 5s is past the "zone of proximal development"
+       then this takes you out of that zone, aka scaffolding.
 * Add an about page
   ```
   English names
@@ -72,6 +80,62 @@ Assume most decisions are incidental, not intentional (I'm figuring it out as I 
   * A game for each group of types
 * Make sure each of the programs can be entered
 * Update to new keybindings
+
+## Thoughts
+
+Notes on how to use games to teach.
+
+```
+https://www.youtube.com/watch?v=n_xG1Yg_QoM
+  Leveling:
+    restrict info the user has to know to make progress
+  Bonuses for using advanced techniques
+    Maybe on Synseer, allow them to create custom keybindings and keybinding groups (ie 3s for sss -- which implies a macro system 3(combo))
+  Maybe something where they enter their own syntax and their score depends on various things like
+    How many different kinds of syntax they use
+    How few characters they can use
+
+https://www.youtube.com/watch?v=ea6UuRTjkKs
+  "Don't ignore difficulty curve. Just because a game is difficult doesn't mean that its difficulty can just fluctuate all over the place,
+  have huge spikes, or be unreasonably difficult up front."
+
+  "You don't want to simply set something before them that cuases them to walk away because they hit challenge which was too tough too early
+  that's just punishing. It is very easy to make a punishing game. It is quite challenging, though, to get your player through a difficult one."
+
+https://www.youtube.com/watch?v=QxfkWZPAUg4
+  "When looked at objectively, this is actually pretty awesome, but I'm not sure it always feels awesome"
+  "Getting that little icon that I can drag directly on my character right away feels like progress, it's much more tangible and immediate, much more direct"
+  "The item drops *feel* more substantial"
+  "[Perhaps] allowing you to select what items you want to work towards, and putting a bar in the top right corner that filled whenever you got minerals. So whenever you picked up something your progress was clear"
+  Maybe some mechanic to give it the feel of progress?
+
+https://www.youtube.com/watch?v=tWtvrPTbQ_c&index=18&list=PLB9B0CA00461BB187
+  Things that make games fun w/o being abusive:
+  1. Mystery
+  2. Mastery
+  3. Mental Challenge
+  4. Narrative
+  5. Novelty
+  6. Flow
+
+  Synseer should prefer #6 and then #2
+
+https://www.youtube.com/watch?v=BCPcn-Q5nKE&list=PLB9B0CA00461BB187&index=34
+  Tutorials 101
+  * Less text (kills pacing, destroys immersion, often skipped)
+  * Don't frontload all the knowledge
+  * Introduce the UI they need as it is necessary
+    * Maybe keybindings you haven't needed yet are grayed out so you know they don't matter
+  * Watch your players try to use it, b/c there's shit that's obvious to you that no one else will get
+  * Be mindful of your demographic (eg I want non-programmers)
+  * Tutorials should be skippable
+  * The info should be available at all times (eg how-to videos)
+
+https://www.youtube.com/watch?v=rlQrTHrwyxQ&index=35&list=PLB9B0CA00461BB187
+  Tangential Learning
+  "This is what tangential learning is all about, it's the idea that some portion of your audience will self-educate if you
+  can introduce them to topics in a context they already find exciting and engaging"
+```
 
 ## MOST COMMON SYNTAXES
 
