@@ -135,7 +135,17 @@ https://www.youtube.com/watch?v=rlQrTHrwyxQ&index=35&list=PLB9B0CA00461BB187
   Tangential Learning
   "This is what tangential learning is all about, it's the idea that some portion of your audience will self-educate if you
   can introduce them to topics in a context they already find exciting and engaging"
+
+https://www.youtube.com/watch?v=TlBR1z-ue-I&list=PLB9B0CA00461BB187&index=133
+  Difference in scale (more enemies, more syntax challenges) vs difference in kind (parts of the game that feel different, eg time in town vs time in dungeon -- maybe keymap editor?)
+
+https://www.youtube.com/watch?v=6Q7ECX5FaX0&index=156&list=PLB9B0CA00461BB187
+  The feeling of agency -- what makes choice meaningful?
+  "A choice is any moment during play that the player could perform 2 or more distinct actions, but has to pick some number of actions less than the total number available to execute"
+  "A choice is meaningful when the decision making process isn't arbitrary, when the player understands the choice they're making and has some system to weigh their options.
+  This doesn't mean that they have to fully understand what the consequences of each decision will be, only that they believe they have what they need to weigh the options presented to them."
 ```
+
 
 ## MOST COMMON SYNTAXES
 
