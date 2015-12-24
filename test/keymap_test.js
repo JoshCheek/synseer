@@ -1,14 +1,23 @@
 const  defaultKeybindings = require('../js/synseer/default_keybindings');
 const  Mapper             = require('../js/synseer/key_mapper');
-const  Keybinding         = require('../js/synseer/keybinding');
 import assert from 'assert'; // https://github.com/joyent/node/blob/9010dd26529cea60b7ee55ddae12688f81a09fcb/lib/assert.js
 import {readFile} from 'fs';
 import {inspect} from 'util';
 
 function kbWith(overrides) {
-  const attrs = {keysequence: 'a', data: 'b', english: 'c'};
+  const attrs = {
+    keysequence: 'default keysequence',
+    children:    [],
+    data:        'default data',
+    english:     'default english'
+  };
   Object.assign(attrs, overrides);
-  return new Keybinding(attrs);
+  let kb         = [];
+  kb.english     = english;
+  kb.keysequence = keysequence;
+  kb.children    = [];
+  kb.data        = data;
+  return attrs;
 }
 
 function keybindingsFor(pairs) {
@@ -16,17 +25,15 @@ function keybindingsFor(pairs) {
   for(var seq in pairs) {
     let value = pairs[seq], kb = null;
     if(typeof value === 'object')
-      kb = new Keybinding.groupFor({
+      kb = kbWith({
         keysequence: seq,
-        keymap:      keybindingsFor(value)
+        children:    keybindingsFor(value)
       });
     else
-      kb = new Keybinding({
+      kb = kbWith({
         keysequence: seq,
-        english:     'english',
         data:        value,
       });
-
     keybindings.push(kb);
   }
   return keybindings;
@@ -55,14 +62,14 @@ describe('Default keymap', ()=>{
 
 describe('A keybinding', () => {
   it('has an english representation, a keysequence, and some data the keysequence maps to', () => {
-    const kb = new Keybinding({keysequence: "a",  data: "b",   english: 'c'});
+    const kb = kbWith({keysequence: "a",  data: "b",   english: 'c'});
     assert.equal("a", kb.keysequence);
     assert.equal("b", kb.data);
     assert.equal("c", kb.english);
   });
 
   it('explodes if not given any of these', () => {
-    assert.doesNotThrow(() => new Keybinding({keysequence: "a",  data: "b", english: 'c'}));
+    assert.doesNotThrow(() => kbWith({keysequence: "a",  data: "b", english: 'c'}));
     // tried asserting against what they throw, but it just passed when they threw strings...
     assert.throws(      () => new Keybinding({                   data: "b", english: 'c'}));
     assert.throws(      () => new Keybinding({keysequence: "a",             english: 'c'}));

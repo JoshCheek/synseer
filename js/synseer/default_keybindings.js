@@ -3,19 +3,20 @@
 const Keybinding = require('./keybinding');
 
 function bindingFor(data, keysequence, english) {
-  return new Keybinding({
-    keysequence: keysequence,
-    data:        data,
-    english:     english,
-  });
+  let kb         = [];
+  kb.english     = english;
+  kb.keysequence = keysequence;
+  kb.children    = [];
+  kb.data        = data;
+  return kb;
 }
 
 function groupFor(name, keysequence, keybindings) {
-  return Keybinding.groupFor({
-    keysequence: keysequence,
-    keymap:      keybindings,
-    english:     name,
-  });
+  let kb         = [];
+  kb.english     = name;
+  kb.keysequence = keysequence;
+  kb.children    = keybindings;
+  return kb;
 }
 
 
