@@ -1,43 +1,14 @@
+"use strict";
+
+const  Keybinding         = require('../js/synseer/keybinding');
 const  defaultKeybindings = require('../js/synseer/default_keybindings');
 const  Mapper             = require('../js/synseer/key_mapper');
 import assert from 'assert'; // https://github.com/joyent/node/blob/9010dd26529cea60b7ee55ddae12688f81a09fcb/lib/assert.js
 import {readFile} from 'fs';
 import {inspect} from 'util';
 
-function kbWith(overrides) {
-  const attrs = {
-    keysequence: 'default keysequence',
-    children:    [],
-    data:        'default data',
-    english:     'default english'
-  };
-  Object.assign(attrs, overrides);
-  let kb         = [];
-  kb.english     = english;
-  kb.keysequence = keysequence;
-  kb.children    = [];
-  kb.data        = data;
-  return attrs;
-}
-
-function keybindingsFor(pairs) {
-  let keybindings = [];
-  for(var seq in pairs) {
-    let value = pairs[seq], kb = null;
-    if(typeof value === 'object')
-      kb = kbWith({
-        keysequence: seq,
-        children:    keybindingsFor(value)
-      });
-    else
-      kb = kbWith({
-        keysequence: seq,
-        data:        value,
-      });
-    keybindings.push(kb);
-  }
-  return keybindings;
-}
+let bindingFor = Keybinding.for;
+let groupFor = Keybinding.Group.for;
 
 function mapperFor(pairs) {
   return new Mapper(keybindingsFor(pairs));
@@ -61,19 +32,11 @@ describe('Default keymap', ()=>{
 });
 
 describe('A keybinding', () => {
-  it('has an english representation, a keysequence, and some data the keysequence maps to', () => {
-    const kb = kbWith({keysequence: "a",  data: "b",   english: 'c'});
-    assert.equal("a", kb.keysequence);
+  it('has an english representation, a key, and some data the key maps to', () => {
+    const kb = bindingFor('b', 'a', 'c')
+    assert.equal("a", kb.key);
     assert.equal("b", kb.data);
     assert.equal("c", kb.english);
-  });
-
-  it('explodes if not given any of these', () => {
-    assert.doesNotThrow(() => kbWith({keysequence: "a",  data: "b", english: 'c'}));
-    // tried asserting against what they throw, but it just passed when they threw strings...
-    assert.throws(      () => new Keybinding({                   data: "b", english: 'c'}));
-    assert.throws(      () => new Keybinding({keysequence: "a",             english: 'c'}));
-    assert.throws(      () => new Keybinding({keysequence: "a",  data: "b"              }));
   });
 });
 
@@ -85,48 +48,33 @@ describe('KeyMapper', ()=>{
     assert.equal(JSON.stringify(actualKbs), JSON.stringify(expectedKbs));
   }
 
-  it('throws an error on keymaps that cannot be uniquely entered', () => {
-    assert.throws(       () => mapperFor({abc: "x",   ab:  "y"}));
-    assert.doesNotThrow( () => mapperFor({abc: "x",   abd: "y"}) );
-    assert.doesNotThrow( () => mapperFor({x:   "abc", y:   "ab"}) );
-  });
-
-  it('allows multiple keybindings to map to the same data', () => {
-    assert.doesNotThrow(() => mapperFor({x: "result", y: "result"}));
-  })
-
   describe('#findData', () => {
+    let keymap = groupFor('english', '', [
+                   groupFor('en', 'a', [
+                     bindingFor('c', 'b', 'en'),
+                     bindingFor('e', 'd', 'en')]),
+                   groupFor('en', 'f', [
+                     bindingFor('h', 'g', 'en'),
+                     groupFor('en', 'i', [
+                       bindingFor('k', 'j', 'en'),
+                       bindingFor('m', 'l', 'en')]),
+                     groupFor('en', '', [
+                       bindingFor('o', 'n', 'en'),
+                       bindingFor('q', 'p', 'en')])])]);
+    let mapper = new Mapper(keymap);
+
     it('can find data', () => {
-      const keyMap = [new Keybinding({keysequence: "b",  data: "a",   english: 'b'})];
-      const mapper = new Mapper(keyMap);
-      assert.equal("b", mapper.findData("a").english);
+      assert.equal(mapper.findData("c").key, "b");
+      assert.equal(mapper.findData("e").key, "d");
+      assert.equal(mapper.findData("h").key, "g");
+      assert.equal(mapper.findData("k").key, "j");
+      assert.equal(mapper.findData("m").key, "l");
+      assert.equal(mapper.findData("o").key, "n");
+      assert.equal(mapper.findData("q").key, "p");
     });
 
-    it('can find nested data', () => {
-      let mapper = mapperFor({
-        a: {b: 'c', d: 'e'},
-        f: {g: 'h', i: {j: 'k', l: 'm'}},
-      });
-      assert.equal("b", mapper.findData("c").keysequence);
-      assert.equal("g", mapper.findData("h").keysequence);
-    });
-
-    it('can find nested data in groups with no keybindings', () => {
-      let mapper = new Mapper([
-        new Keybinding.Group({
-          keysequence: '',
-          english:     'pseudogroup',
-          keymap:      keybindingsFor({b: 'c', d: 'e'})
-        })
-      ]);
-      assert.equal("b", mapper.findData("c").keysequence);
-    });
-
-    it('throws an error when asked for data it does not have', () => {
-      const keyMap = [new Keybinding({keysequence: "b",  data: "a", english: 'b'})];
-      const mapper = new Mapper(keyMap);
-      assert.throws(       () => mapper.findData("b"), Mapper.MissingDataError );
-      assert.doesNotThrow( () => mapper.findData("a"));
+    it('returns nil when asked for data it does not have', () => {
+      assert.equal(null, mapper.findData('zz'));
     });
   });
 
@@ -148,7 +96,7 @@ describe('KeyMapper', ()=>{
 
 
   describe('#keyPressed', () => {
-    it('maps a given key-sequence to the requested data', () => {
+    it.only('maps a given key-sequence to the requested data', () => {
       let mapper = mapperFor({abc: "lol", def: "wtf"});
       assertKeyMatch(mapper, "d", {def: "wtf"});
     });
@@ -241,7 +189,7 @@ describe('KeyMapper', ()=>{
   });
 
   describe('#possibilities', () => {
-    it.only('finds keys pressed in groups that have no keybindings', () => {
+    it('finds keys pressed in groups that have no keybindings', () => {
       let mapper = mapperFor({
         a: 'b',
         '': {b: 'c', d: 'e'},

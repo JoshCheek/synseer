@@ -1,26 +1,10 @@
 'use strict';
 
 const Keybinding = require('./keybinding');
+let bindingFor = Keybinding.for;
+let groupFor   = Keybinding.Group.for;
 
-function bindingFor(data, keysequence, english) {
-  let kb         = [];
-  kb.english     = english;
-  kb.keysequence = keysequence;
-  kb.children    = [];
-  kb.data        = data;
-  return kb;
-}
-
-function groupFor(name, keysequence, keybindings) {
-  let kb         = [];
-  kb.english     = name;
-  kb.keysequence = keysequence;
-  kb.children    = keybindings;
-  return kb;
-}
-
-
-module.exports = [
+module.exports = groupFor('All Keybindings', '', [
   groupFor('Convenience', '', [
     bindingFor('send',  'm', 'method call'),
     bindingFor('str',   's', 'literal string'),
@@ -147,7 +131,7 @@ module.exports = [
       bindingFor('regopt',            'o', 'regexp option'),
     ]),
   ]),
-]
+])
 
 // Might be nice to add these as a hidden convenience,
 // or maybe allow them to be programmed
