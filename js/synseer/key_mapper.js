@@ -21,7 +21,7 @@ Mapper.prototype = {
   },
 
   keyPressed: function(key) {
-    key = self.class.normalize(key);
+    key = Mapper.normalize(key);
     if(key == 'backspace')
       this._keysPressed.pop();
     else if(key == 'escape')
@@ -34,7 +34,7 @@ Mapper.prototype = {
   },
 
   potentials: function() {
-    this._keybindings.potentialsFor(this._keysPressed);
+    return this._keybindings.potentialsFor(this._keysPressed);
   },
 
   accept: function() {

@@ -33,7 +33,7 @@ KeymapStatus.prototype = {
   },
 
   keybinding: function(kb) {
-    if(kb.isGroup) return `
+    if(kb.isGroup()) return `
       <tr>
         <td colspan="2" class="entry_group">${kb.english}</td>
       </tr>

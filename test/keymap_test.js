@@ -96,9 +96,13 @@ describe('KeyMapper', ()=>{
 
 
   describe('#keyPressed', () => {
-    it.only('maps a given key-sequence to the requested data', () => {
-      let mapper = mapperFor({abc: "lol", def: "wtf"});
-      assertKeyMatch(mapper, "d", {def: "wtf"});
+    it('maps a given key-sequence to the requested data', () => {
+      let keymap = groupFor('english', '', [
+                     bindingFor('lol', 'abc', 'abc -> lol'),
+                     bindingFor('wtf', 'def', 'def -> wtf')]);
+      let mapper = new Mapper(keymap);
+      mapper.keyPressed("d");
+      assert.deepEqual(["wtf"], mapper.potentials().children.map(kb => kb.data));
     });
 
     it('remembers my input and gives me back a list of potential matches', ()=> {

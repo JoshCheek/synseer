@@ -12,7 +12,7 @@ Keybinding.prototype = {
     return (data === this.data) ? this : null;
   },
   potentialsFor: function(keysPressed) {
-    if(key.length < keysPressed.length) return null;
+    if(this.key.length < keysPressed.length) return null;
     for(let i=0; i<keysPressed.length; ++i)
       if(keysPressed[i] !== this.key[i]) return null;
     return this;
@@ -46,7 +46,7 @@ Keybinding.Group.prototype = {
     for(let i=0; i<this.key.length; ++i)
       pressed.push(keysPressed[i]);
 
-    let noMatch = new Keybinding.Group({name: name, key: key, children: []});
+    let noMatch = new Keybinding.Group({name: this.name, key: this.key, children: []});
     for(let i=0; i<pressed.length; ++i)
       if(pressed[i] !== this.key[i]) return noMatch
 
@@ -54,19 +54,17 @@ Keybinding.Group.prototype = {
     for(let i=this.key.length; i<keysPressed.length; ++i)
       newKeysPressed.push(keysPressed[i]);
 
-    let newChildren = children.map(function(child) {
-      child.potentialsFor(newKeysPressed);
-    });
+    let newChildren = this.children.map(child => child.potentialsFor(newKeysPressed));
     newChildren = newChildren.filter((child) => {
       if(!child) return false;
       if(child.isGroup() && child.isEmpty()) return false;
       return true;
     });
 
-    if(newChildren.length === 1 && newChildren[0].isGroup)
+    if(newChildren.length === 1 && newChildren[0].isGroup())
       return newChildren[0];
     else
-      return new Keybinding.Group({name: name, key: '', children: newChildren});
+      return new Keybinding.Group({name: this.name, key: '', children: newChildren});
   },
 }
 
