@@ -144,6 +144,28 @@ https://www.youtube.com/watch?v=6Q7ECX5FaX0&index=156&list=PLB9B0CA00461BB187
   "A choice is any moment during play that the player could perform 2 or more distinct actions, but has to pick some number of actions less than the total number available to execute"
   "A choice is meaningful when the decision making process isn't arbitrary, when the player understands the choice they're making and has some system to weigh their options.
   This doesn't mean that they have to fully understand what the consequences of each decision will be, only that they believe they have what they need to weigh the options presented to them."
+
+https://www.youtube.com/watch?v=pm8KdLPOm2c&list=PLB9B0CA00461BB187&index=253
+  Speedrunning
+  tight responsive controls
+
+https://www.youtube.com/watch?v=yxpW2ltDNow&index=264&list=PLB9B0CA00461BB187
+  Player taxonomy
+  achievers                acting
+  explorers          killers | achievers
+  socializers    players ----+------ world
+  killers        socializers | explorers
+                       interacting
+
+https://www.youtube.com/watch?v=JWyPLNi8rD8&index=187&list=PLB9B0CA00461BB187
+  Education games
+  Education teaches you to fear being wrong
+  "Homework serves more as an assessment than a learning opportunity"
+  "Think of how many challenges in games you failed only to get back up and try another tactic. ... can you find a way to solve this? vs do you know the solution?"
+  "You need to see failure as an opportunity to learn rather than something to be afraid of"
+
+https://www.youtube.com/watch?v=pzmdx7ZL8OM&list=PLB9B0CA00461BB187&index=188
+  Games as ways of tracking feedback
 ```
 
 

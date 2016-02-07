@@ -109,6 +109,14 @@ module Synseer
       erb :root
     end
 
+    get '/api/games/:game_name' do
+      @game = games.fetch params[:game_name]
+      @game[:json_ast] ||= Parse.ast_for @game.fetch(:body)
+      content_type :json
+      p @game
+      JSON.dump @game
+    end
+
     get '/games/:game_name' do
       @game = games.fetch params[:game_name]
       @game[:json_ast] ||= JSON.dump Parse.ast_for @game.fetch(:body)

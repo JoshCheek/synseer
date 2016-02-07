@@ -11,7 +11,7 @@ let bindingFor = Keybinding.for;
 let groupFor = Keybinding.Group.for;
 
 function mapperFor(pairs) {
-  return new Mapper(keybindingsFor(pairs));
+  return new Mapper(bindingFor(pairs));
 }
 
 function clear(mapper) {
@@ -42,9 +42,9 @@ describe('A keybinding', () => {
 
 describe('KeyMapper', ()=>{
   function assertKeyMatch(mapper, key, expecteds) {
-    let expectedKbs = keybindingsFor(expecteds);
+    let expectedKbs = bindingFor(expecteds);
     mapper.keyPressed(key);
-    let actualKbs = mapper.possibilities();
+    let actualKbs = mapper.potentials();
     assert.equal(JSON.stringify(actualKbs), JSON.stringify(expectedKbs));
   }
 
@@ -106,114 +106,248 @@ describe('KeyMapper', ()=>{
     });
 
     it('remembers my input and gives me back a list of potential matches', ()=> {
-      let mapper = mapperFor({and: "and", arg: "arg", ars: "args", array: "array", asgnor: "or_asgn", other: "other"});
-      assertKeyMatch(mapper, "a", {and: "and", arg: "arg", ars: "args", array: "array", asgnor: "or_asgn"});
-      assertKeyMatch(mapper, "r", {arg: "arg", ars: "args", array: "array"});
-      assertKeyMatch(mapper, "r", {array: "array"});
+      let keymap = groupFor('english', '', [
+        bindingFor('and',     'and',    'and'),
+        bindingFor('arg',     'arg',    'arg'),
+        bindingFor('args',    'ars',    'args'),
+        bindingFor('array',   'array',  'array'),
+        bindingFor('or_asgn', 'asgnor', 'or_asgn'),
+        bindingFor('other',   'other',  'other'),
+      ]);
+      let mapper = new Mapper(keymap);
+      mapper.keyPressed("a");
+      assert.deepEqual(["and", "arg", "args", "array", "or_asgn"], mapper.potentials().children.map(kb => kb.data));
+
+      mapper.keyPressed("r");
+      assert.deepEqual(["arg", "args", "array"], mapper.potentials().children.map(kb => kb.data));
+
+      mapper.keyPressed("r");
+      assert.deepEqual(["array"], mapper.potentials().children.map(kb => kb.data));
     });
 
     it('backspace removes a character from the end of the input', ()=> {
-      let mapper = mapperFor({and: "and", arg: "arg", ars: "args", array: "array", asgnor: "or_asgn", other: "other"});
-      assertKeyMatch(mapper, "a",         {and: "and", arg: "arg", ars: "args", array: "array", asgnor: "or_asgn"});
-      assertKeyMatch(mapper, "r",         {arg: "arg", ars: "args", array: "array"});
-      assertKeyMatch(mapper, "backspace", {and: "and", arg: "arg", ars: "args", array: "array", asgnor: "or_asgn"});
+      let keymap = groupFor('english', '', [
+        bindingFor('and',     'and',    'and'),
+        bindingFor('arg',     'arg',    'arg'),
+        bindingFor('args',    'ars',    'args'),
+        bindingFor('array',   'array',  'array'),
+        bindingFor('or_asgn', 'asgnor', 'or_asgn'),
+        bindingFor('other',   'other',  'other'),
+      ]);
+      let mapper = new Mapper(keymap);
+      mapper.keyPressed("a");
+      assert.deepEqual(["and", "arg", "args", "array", "or_asgn"], mapper.potentials().children.map(kb => kb.data));
+
+      mapper.keyPressed("r");
+      assert.deepEqual(["arg", "args", "array"], mapper.potentials().children.map(kb => kb.data));
+
+      mapper.keyPressed("backspace");
+      assert.deepEqual(["and", "arg", "args", "array", "or_asgn"], mapper.potentials().children.map(kb => kb.data));
     });
 
     it('clears the input when escape is pressed', ()=> {
-      let map    = {aa: 'aa', aba: 'aba', abc: 'abc', b: 'b'};
-      let mapper = mapperFor(map);
-      assertKeyMatch(mapper, "a", {aa: 'aa', aba: 'aba', abc: 'abc'});
-      assertKeyMatch(mapper, "b", {aba: 'aba', abc: 'abc'});
+      let keymap = groupFor('english', '', [
+        bindingFor('aa',  'aa',  'aa'),
+        bindingFor('aba', 'aba', 'aba'),
+        bindingFor('abc', 'abc', 'abc'),
+        bindingFor('b',   'b',   'b'),
+      ]);
+      let mapper = new Mapper(keymap);
 
-      assertKeyMatch(mapper, "escape", map);
+      mapper.keyPressed("a");
+      assert.deepEqual(["aa", "aba", "abc"], mapper.potentials().children.map(kb => kb.data));
+
+      mapper.keyPressed("b");
+      assert.deepEqual(["aba", "abc"], mapper.potentials().children.map(kb => kb.data));
+
+      mapper.keyPressed("escape");
+      assert.deepEqual(['aa', 'aba', 'abc', 'b'], mapper.potentials().children.map(kb => kb.data));
     });
 
     it('ignores non-printable keypresses and tab and enter', () => {
-      let mapper   = mapperFor({agood: "abc", ctrl: "ctrl"});
-      let expected = {agood: 'abc'};
-      assertKeyMatch(mapper, "a",                      expected);
+      let keymap = groupFor('english', '', [
+        bindingFor('agood', 'agood', 'agood'),
+        bindingFor('ctrl',  'ctrl',  'ctrl'),
+      ]);
+      let mapper = new Mapper(keymap);
+      let expected = ['agood']
 
-      assertKeyMatch(mapper, "alt",                    expected);
-      assertKeyMatch(mapper, "cmd-alt-mod",            expected);
-      assertKeyMatch(mapper, "cmd-ctrl-alt-mod",       expected);
-      assertKeyMatch(mapper, "cmd-ctrl-mod",           expected);
-      assertKeyMatch(mapper, "cmd-mod",                expected);
-      assertKeyMatch(mapper, "ctrl",                   expected);
-      assertKeyMatch(mapper, "ctrl-alt",               expected);
-      assertKeyMatch(mapper, "enter",                  expected);
-      assertKeyMatch(mapper, "shift-alt",              expected);
-      assertKeyMatch(mapper, "shift-cmd-ctrl-alt-mod", expected);
-      assertKeyMatch(mapper, "shift-cmd-ctrl-mod",     expected);
-      assertKeyMatch(mapper, "shift-cmd-mod",          expected);
-      assertKeyMatch(mapper, "shift-ctrl-alt",         expected);
-      assertKeyMatch(mapper, "shift-ctrl-shift",       expected);
-      assertKeyMatch(mapper, "shift-shift",            expected);
-      assertKeyMatch(mapper, "space",                  expected);
-      assertKeyMatch(mapper, "tab",                    expected);
+      mapper.keyPressed("a");
+      assert.deepEqual(expected, mapper.potentials().children.map(kb => kb.data));
 
-      assertKeyMatch(mapper, "down",                   expected);
-      assertKeyMatch(mapper, "left",                   expected);
-      assertKeyMatch(mapper, "right",                  expected);
-      assertKeyMatch(mapper, "up",                     expected);
+      mapper.keyPressed("alt");
+      assert.deepEqual(expected, mapper.potentials().children.map(kb => kb.data));
+
+      mapper.keyPressed("cmd-alt-mod");
+      assert.deepEqual(expected, mapper.potentials().children.map(kb => kb.data));
+
+      mapper.keyPressed("cmd-ctrl-alt-mod");
+      assert.deepEqual(expected, mapper.potentials().children.map(kb => kb.data));
+
+      mapper.keyPressed("cmd-ctrl-mod");
+      assert.deepEqual(expected, mapper.potentials().children.map(kb => kb.data));
+
+      mapper.keyPressed("cmd-mod");
+      assert.deepEqual(expected, mapper.potentials().children.map(kb => kb.data));
+
+      mapper.keyPressed("ctrl");
+      assert.deepEqual(expected, mapper.potentials().children.map(kb => kb.data));
+
+      mapper.keyPressed("ctrl-alt");
+      assert.deepEqual(expected, mapper.potentials().children.map(kb => kb.data));
+
+      mapper.keyPressed("enter");
+      assert.deepEqual(expected, mapper.potentials().children.map(kb => kb.data));
+
+      mapper.keyPressed("shift-alt");
+      assert.deepEqual(expected, mapper.potentials().children.map(kb => kb.data));
+
+      mapper.keyPressed("shift-cmd-ctrl-alt-mod");
+      assert.deepEqual(expected, mapper.potentials().children.map(kb => kb.data));
+
+      mapper.keyPressed("shift-cmd-ctrl-mod");
+      assert.deepEqual(expected, mapper.potentials().children.map(kb => kb.data));
+
+      mapper.keyPressed("shift-cmd-mod");
+      assert.deepEqual(expected, mapper.potentials().children.map(kb => kb.data));
+
+      mapper.keyPressed("shift-ctrl-alt");
+      assert.deepEqual(expected, mapper.potentials().children.map(kb => kb.data));
+
+      mapper.keyPressed("shift-ctrl-shift");
+      assert.deepEqual(expected, mapper.potentials().children.map(kb => kb.data));
+
+      mapper.keyPressed("shift-shift");
+      assert.deepEqual(expected, mapper.potentials().children.map(kb => kb.data));
+
+      mapper.keyPressed("space");
+      assert.deepEqual(expected, mapper.potentials().children.map(kb => kb.data));
+
+      mapper.keyPressed("tab");
+      assert.deepEqual(expected, mapper.potentials().children.map(kb => kb.data));
+
+
+      mapper.keyPressed("down");
+      assert.deepEqual(expected, mapper.potentials().children.map(kb => kb.data));
+
+      mapper.keyPressed("left");
+      assert.deepEqual(expected, mapper.potentials().children.map(kb => kb.data));
+
+      mapper.keyPressed("right");
+      assert.deepEqual(expected, mapper.potentials().children.map(kb => kb.data));
+
+      mapper.keyPressed("up");
+      assert.deepEqual(expected, mapper.potentials().children.map(kb => kb.data));
     });
 
     it('allows keybindings to be nested', () => {
-      let mapper = mapperFor({
-        a: {b: 'c', d: 'e'},
-        f: {g: 'h', i: {j: 'k', l: 'm'}},
-      });
+      let keymap = groupFor('english', '', [
+        groupFor('a', 'a', [
+          bindingFor('c', 'b', 'b->c'),
+          bindingFor('e', 'd', 'd->e'),
+        ]),
+        groupFor('f', 'f', [
+          bindingFor('h', 'g', 'h->g'),
+          groupFor('i', 'i', [
+            bindingFor('k', 'j', 'j->k'),
+            bindingFor('m', 'l', 'l->m'),
+          ]),
+        ]),
+      ]);
+      let mapper = new Mapper(keymap);
 
       // no groups
-      assertKeyMatch(mapper, "a", {b: 'c', d: 'e'});
-      assertKeyMatch(mapper, "b", {b: 'c'});
-      clear(mapper);
-      assertKeyMatch(mapper, "f", {g: 'h', i: {j: 'k', l: 'm'}});
-      assertKeyMatch(mapper, "i", {j: 'k', l: 'm'});
-      assertKeyMatch(mapper, "j", {j: 'k'});
-      clear(mapper);
+      mapper.keyPressed("a");
+      mapper.potentials();
+      assert.deepEqual(['c', 'e'], mapper.potentials().children.map(kb => kb.data));
+
+      mapper.keyPressed("b");
+      assert.deepEqual(['c'], mapper.potentials().children.map(kb => kb.data));
+      mapper.keyPressed('escape');
+
+      // with groups
+      mapper.keyPressed("f");
+      assert.equal('h', mapper.potentials().children[0].data);
+      assert.deepEqual(['k', 'm'], mapper.potentials().children[1].children.map(kb => kb.data));
+
+      mapper.keyPressed("i");
+      assert.deepEqual(['k', 'm'], mapper.potentials().children.map(kb => kb.data));
+
+      mapper.keyPressed("j");
+      assert.deepEqual(['k'], mapper.potentials().children.map(kb => kb.data));
     });
   });
 
 
   describe('#accept', () => {
     it('clears the input when input is accepted', () => {
-      let mapper = mapperFor({ab: 'ab'});
-      assertKeyMatch(mapper, "a", {ab: 'ab'});
+      let mapper = new Mapper(groupFor('english', '', [
+        groupFor('a', 'a', [bindingFor('b', 'b', 'b->b')])
+      ]));
+
+      mapper.keyPressed('a');
+      assert.deepEqual(['b'], mapper.potentials().children.map(kb => kb.data));
+
       mapper.accept();
-      assertKeyMatch(mapper, "a", {ab: 'ab'});
-      assertKeyMatch(mapper, "a", {});
+      assert.equal('a', mapper.potentials().name);
     });
+
     it('normalizes the input', () => {
-      let mapper = mapperFor({ka: 'a', kb: 'b', ja: 'c'});
-      let results = mapper.keyPressed('k');
-      assert.equal(2, results.length);
-      results = mapper.keyPressed('Esc'); // "Esc" works, so it was normalized to "escape"
-      assert.equal(3, results.length);
+      let mapper = new Mapper(groupFor('english', '', [
+        bindingFor('a', 'ka', 'a->ka'),
+        bindingFor('b', 'kb', 'b->kb'),
+        bindingFor('c', 'jc', 'c->kc'),
+      ]));
+      mapper.keyPressed('k');
+      assert.equal(2, mapper.potentials().children.length);
+      mapper.keyPressed('Esc'); // "Esc" works, so it was normalized to "escape"
+      assert.equal(3, mapper.potentials().children.length);
     });
   });
 
   describe('#possibilities', () => {
     it('finds keys pressed in groups that have no keybindings', () => {
-      let mapper = mapperFor({
-        a: 'b',
-        '': {b: 'c', d: 'e'},
-        f: {g: 'h', i: {j: 'k', l: 'm'}},
-      });
+      var potentials = null;
+      let mapper = new Mapper(groupFor('english', '', [
+        bindingFor('b', 'a', 'a->b'),
+        groupFor('', '', [
+          bindingFor('c', 'b', 'b->c'),
+          bindingFor('e', 'd', 'd->e'),
+        ]),
+        groupFor('f', 'f', [
+          bindingFor('h', 'g', 'g->h'),
+          groupFor('i', 'i', [
+            bindingFor('k', 'j', 'j->k'),
+            bindingFor('m', 'l', 'l->m'),
+          ])
+        ]),
+      ]));
 
-      assertKeyMatch(mapper, '', {
-        a: 'b',
-        '': {b: 'c', d: 'e'},
-        f: {g: 'h', i: {j: 'k', l: 'm'}},
-      });
-      assertKeyMatch(mapper, 'a', {a: 'b'});
+
+      mapper.keyPressed('a');
+      assert.deepEqual(['b'], mapper.potentials().children.map(kb => kb.data));
       clear(mapper);
 
-      assertKeyMatch(mapper, 'f', { g: 'h', i: {j: 'k', l: 'm'}});
-      assertKeyMatch(mapper, 'i', {j: 'k', l: 'm'});
-      assertKeyMatch(mapper, 'j', {j: 'k'});
+      mapper.keyPressed('f');
+      potentials = mapper.potentials().children;
+      assert.equal('g->h', potentials[0].english);
+      assert.equal('i',    potentials[1].name);
+
+      mapper.keyPressed('i');
+      potentials = mapper.potentials().children;
+      assert.equal('j->k', potentials[0].english);
+      assert.equal('l->m', potentials[1].english);
+
+      mapper.keyPressed('j');
+      potentials = mapper.potentials().children;
+      assert.equal('j->k', potentials[0].english);
+      assert.equal(1,      potentials.length);
       clear(mapper);
 
-      assertKeyMatch(mapper, 'j', {j: 'k'});
+      mapper.keyPressed('b');
+      potentials = mapper.potentials().children;
+      assert.equal('b->c', potentials[0].english);
+      assert.equal(1,      potentials.length);
       clear(mapper);
     });
   });

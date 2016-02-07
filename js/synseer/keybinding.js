@@ -40,15 +40,13 @@ Keybinding.Group.prototype = {
     return found;
   },
   isGroup: function() { return true; },
-  isEmpty: function() { return children.length == 0; },
+  isEmpty: function() { return this.children.length == 0; },
   potentialsFor: function(keysPressed) {
-    let pressed = [];
-    for(let i=0; i<this.key.length; ++i)
-      pressed.push(keysPressed[i]);
+    let pressed = [].concat(keysPressed);
 
     let noMatch = new Keybinding.Group({name: this.name, key: this.key, children: []});
-    for(let i=0; i<pressed.length; ++i)
-      if(pressed[i] !== this.key[i]) return noMatch
+    for(let i=0; i<pressed.length && i < this.key.length; ++i)
+      if(pressed[i] !== this.key[i]) return noMatch;
 
     let newKeysPressed = [];
     for(let i=this.key.length; i<keysPressed.length; ++i)
