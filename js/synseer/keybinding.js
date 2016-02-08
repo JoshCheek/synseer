@@ -48,6 +48,9 @@ Keybinding.Group.prototype = {
     for(let i=0; i<pressed.length && i < this.key.length; ++i)
       if(pressed[i] !== this.key[i]) return noMatch;
 
+    if(pressed.length < this.key.length)
+      return this;
+
     let newKeysPressed = [];
     for(let i=this.key.length; i<keysPressed.length; ++i)
       newKeysPressed.push(keysPressed[i]);

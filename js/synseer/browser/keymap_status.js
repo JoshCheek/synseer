@@ -13,38 +13,46 @@ KeymapStatus.prototype = {
   },
 
   htmlFor: function(input, keybindings) {
-    return this.userEntry(input) + this.potentialEntries(keybindings);
-  },
-
-  userEntry: function(input) {
-    return `<div class="user_entry">${input}</div>`;
+    return this.potentialEntries(keybindings.children);
   },
 
   potentialEntries: function(keybindings) {
-    return `<table class="potential_entries">${this.rowsFor(keybindings)}</table>`;
+    return `<table class="potential_entries">${this.rowsFor(1, keybindings)}</table>`;
   },
 
-  rowsFor: function(keybindings) {
+  rowsFor: function(depth, keybindings) {
     let newEntries = "";
     for(let index in keybindings) {
-      newEntries += this.keybinding(keybindings[index]);
+      newEntries += this.keybinding(depth, keybindings[index]);
     }
     return newEntries;
   },
 
-  keybinding: function(kb) {
-    if(kb.isGroup()) return `
-      <tr>
-        <td colspan="2" class="entry_group">${kb.english}</td>
-      </tr>
+  keybinding: function(depth, kb) {
+    if(depth < 0) return "";
+    log(kb);
+
+    if(!kb.isGroup()) return `
       <tr class="potential_entry">
-        <td colspan="2">${this.rowsFor(kb.keymap)}</td>
-      </tr>`;
-    else return `
-      <tr class="potential_entry">
-        <td class="keybinding">${kb.keysequence}</td>
+        <td class="keybinding">${kb.key}</td>
         <td class="syntax_node">${kb.english}</td>
-      </tr>`;
+      </tr>
+    `;
+
+    if(kb.key === '') {
+      return `
+      <tr>
+        <td class="entry_group group_header" colspan="2">${kb.name}</td>
+      </tr>${this.rowsFor(depth-1, kb.children)}`;
+    }
+
+    return `
+      <tr>
+        <td class="keybinding">${kb.key}</td>
+        <td class="entry_group">${kb.name}</td>
+      </tr>
+      ${this.rowsFor(depth-1, kb.children)}
+    `;
   },
 
 }

@@ -21,7 +21,7 @@ Game.prototype.init = function() {
   this._statsView.setNumCorrect(0);
   this._statsView.setNumIncorrect(0);
   this._statsView.setDuration(0);
-  this._onPossibilities(this._keyMap.input(), this._keyMap.possibilities(true));
+  this._onPossibilities(this._keyMap.potentials());
 }
 
 Game.prototype.start = function(getTime, setInterval) {
@@ -50,18 +50,19 @@ Game.prototype.isFinished = function() {
 
 Game.prototype.pressKey = function(key) {
   if(this.isFinished()) return;
-  var possibilities = this._keyMap.keyPressed(key);
+  this._keyMap.keyPressed(key);
+  var possibilities = this._keyMap.potentials();
   var selected      = possibilities[0];
 
   if(1 < possibilities.length) {
-    this._onPossibilities(this._keyMap.input(), this._keyMap.possibilities(true));
+    this._onPossibilities(this._keyMap.potentials());
     return;
   }
 
   let accepted = this._keyMap.accept()
   // stupid: we have to do this first, b/c it changes the input
   // command/query violation, I guess -.^
-  this._onPossibilities(this._keyMap.input(), accepted);
+  this._onPossibilities(accepted);
   var targetAst = this._traverse.ast.type;
 
   if(selected.data == targetAst) {

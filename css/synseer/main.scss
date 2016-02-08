@@ -60,27 +60,20 @@ body {
   width:      100%;
   height:     100%;
 
-  .user_entry {
-    width:          10em;
-    background:     $color-secondary-2-0;
-    padding-left:   0.5em;
-    padding-right:  0.5em;
-    padding-top:    0.25em;
-    padding-bottom: 0.25em;
-    margin-bottom:  0.5em;
-    color:          $color-primary-4;
-    height:         1em;
-  }
-
   .potential_entries {
+    width:          10em;
     padding-right: 0.5em;
     .keybinding  { color: mix($color-secondary-2-0, $color-primary-0, 70); }
     .syntax_node { color: $color-primary-4; }
     .entry_group {
-      color:          $color-secondary-1-0;
-      font-weight:    bold;
+      color: $color-secondary-1-0;
+    }
+    .group_header {
       padding-top:    0.5em;
       padding-bottom: 0.25em;
+    }
+    .entry_group.group_header {
+      font-weight: bold;
     }
   }
 }

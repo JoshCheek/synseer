@@ -256,8 +256,8 @@
           statsView:       statsView,
           ast:             <%= @game.fetch :json_ast %>,
           keyMap:          new Synseer.KeyMapper(Synseer.DefaultKeybindings),
-          onPossibilities: function(input, possibilities) {
-                             keymapStatus.update(input, possibilities);
+          onPossibilities: function(possibilities) {
+                             keymapStatus.update('probably delete this thing', possibilities);
                            },
           setMessage:      function(message, type) {
                              infoBox.innerText = message;
