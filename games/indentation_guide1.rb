@@ -14,8 +14,8 @@ end
 
 # aligned at end of the expression
 abcd.efgh ijkl: 123,
-         mnop: 456,
-         qrst: 789
+          mnop: 456,
+          qrst: 789
 
 # parentheses
 puts(

@@ -67,13 +67,13 @@ Game.prototype.pressKey = function(key) {
     if(this.isFirstTraversal())
       this._statsView.setNumCorrect(++this._stats.numCorrect);
     this._traverse = this._traverse.successor();
-    this._setMessage(`Correct: ${selected.keysequence}, ${selected.english}`, 'positive');
+    this._setMessage(`Correct: ${selected.english}`, 'positive');
     if(this._traverse) this.advanceTraversal();
     else               this.finish();
   } else {
     this._statsView.setNumIncorrect(++this._stats.numIncorrect);
     var expected = this._keyMap.findData(targetAst);
-    this._setMessage(`Incorrect: ${expected.keysequence}, ${expected.english}`, 'negative');
+    this._setMessage(`Incorrect: ${expected.english}`, 'negative');
   }
 }
 

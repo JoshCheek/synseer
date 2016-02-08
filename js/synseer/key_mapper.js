@@ -50,7 +50,7 @@ Mapper.prototype = {
     else if(key == 'escape')
       while(0 < this._keysPressed.length)
         this._keysPressed.pop();
-    else if((/^[-.~`|\\!@#$%^&*()=a-zA-Z0-9]$/).exec(key))
+    else if((/^[-./?,~`|\\!@#$%^&*()=a-zA-Z0-9]$/).exec(key))
       this._keysPressed.push(key);
 
     return null;

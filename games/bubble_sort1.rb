@@ -9,7 +9,7 @@ while b < a.length
     e = a[c]
     f = a[d]
     if f < e
-      a[c]  = f
+      a[c] = f
       a[d] = e
     end
     c += 1
