@@ -189,7 +189,7 @@ default_keybindings = Keybinding::Group.for('All Keybindings', '', [
       ]),
     ]),
 
-    Keybinding::Group.for('object dsl', 'o', [
+    Keybinding::Group.for('objects', 'o', [
       Keybinding.for('send',  'm', 'method call'),
       Keybinding.for('self',  's', 'self (current object)'),
       Keybinding.for('alias', 'a', 'alias method'),

@@ -73,7 +73,7 @@ module.exports = groupFor('All Keybindings', '', [
       ]),
     ]),
 
-    groupFor('object dsl', 'o', [
+    groupFor('objects', 'o', [
       bindingFor('send',  'm', 'method call'),
       bindingFor('self',  's', 'self (current object)'),
       bindingFor('alias', 'a', 'alias method'),
