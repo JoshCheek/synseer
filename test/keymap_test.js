@@ -92,6 +92,71 @@ describe('KeyMapper', ()=>{
       assert.equal(Mapper.normalize("Esc"), "escape");
       assert.equal(Mapper.normalize("esc"), "escape");
     });
+
+    it('converts shift-number to the fancy character', () => {
+      assert.equal(Mapper.normalize("`"),       "`");
+      assert.equal(Mapper.normalize("shift-`"), "~");
+
+      assert.equal(Mapper.normalize("1"),       "1");
+      assert.equal(Mapper.normalize("shift-1"), "!");
+
+      assert.equal(Mapper.normalize("2"),       "2");
+      assert.equal(Mapper.normalize("shift-2"), "@");
+
+      assert.equal(Mapper.normalize("3"),       "3");
+      assert.equal(Mapper.normalize("shift-3"), "#");
+
+      assert.equal(Mapper.normalize("4"),       "4");
+      assert.equal(Mapper.normalize("shift-4"), "$");
+
+      assert.equal(Mapper.normalize("5"),       "5");
+      assert.equal(Mapper.normalize("shift-5"), "%");
+
+      assert.equal(Mapper.normalize("6"),       "6");
+      assert.equal(Mapper.normalize("shift-6"), "^");
+
+      assert.equal(Mapper.normalize("7"),       "7");
+      assert.equal(Mapper.normalize("shift-7"), "&");
+
+      assert.equal(Mapper.normalize("8"),       "8");
+      assert.equal(Mapper.normalize("shift-8"), "*");
+
+      assert.equal(Mapper.normalize("9"),       "9");
+      assert.equal(Mapper.normalize("shift-9"), "(");
+
+      assert.equal(Mapper.normalize("0"),       "0");
+      assert.equal(Mapper.normalize("shift-0"), ")");
+
+      assert.equal(Mapper.normalize("-"),       "-");
+      assert.equal(Mapper.normalize("shift--"), "_");
+
+      assert.equal(Mapper.normalize("="),       "=");
+      assert.equal(Mapper.normalize("shift-="), "+");
+
+      assert.equal(Mapper.normalize("["),       "[");
+      assert.equal(Mapper.normalize("shift-["), "{");
+
+      assert.equal(Mapper.normalize("]"),       "]");
+      assert.equal(Mapper.normalize("shift-]"), "}");
+
+      assert.equal(Mapper.normalize("\\"),       "\\");
+      assert.equal(Mapper.normalize("shift-\\"), "|");
+
+      assert.equal(Mapper.normalize(";"),       ";");
+      assert.equal(Mapper.normalize("shift-;"), ":");
+
+      assert.equal(Mapper.normalize("'"),       "'");
+      assert.equal(Mapper.normalize("shift-'"), "\"");
+
+      assert.equal(Mapper.normalize(","),       ",");
+      assert.equal(Mapper.normalize("shift-,"), "<");
+
+      assert.equal(Mapper.normalize("."),       ".");
+      assert.equal(Mapper.normalize("shift-."), ">");
+
+      assert.equal(Mapper.normalize("/"),       "/");
+      assert.equal(Mapper.normalize("shift-/"), "?");
+    });
   });
 
 
