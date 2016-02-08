@@ -45,7 +45,7 @@ module.exports = groupFor('All Keybindings', '', [
       bindingFor('cvasgn',   'c', 'class var (never use these)'),
     ]),
     groupFor('control-flow', 'c', [
-      bindingFor('if',     'i', 'if statment'),
+      bindingFor('if',     'i', 'if statement'),
       bindingFor('and',    '&', 'and'),
       bindingFor('or',     '|', 'or'),
       bindingFor('yield',  'y', 'yield to block'),

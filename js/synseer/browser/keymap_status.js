@@ -13,24 +13,28 @@ KeymapStatus.prototype = {
   },
 
   htmlFor: function(input, keybindings) {
-    return this.potentialEntries(keybindings.children);
+    return this.potentialEntries(keybindings);
   },
 
   potentialEntries: function(keybindings) {
-    return `<table class="potential_entries">${this.rowsFor(1, keybindings)}</table>`;
+    // this if statement is fkn terrible >.<
+    if(keybindings.name === 'All Keybindings') {
+      return `<table class="potential_entries">${this.rowsFor(1, keybindings.children)}</table>`;
+    } else {
+      return `<table class="potential_entries">${this.keybinding(1, keybindings)}</table>`;
+    }
   },
 
   rowsFor: function(depth, keybindings) {
     let newEntries = "";
-    for(let index in keybindings) {
+    for(let index in (keybindings||[])) {
       newEntries += this.keybinding(depth, keybindings[index]);
     }
     return newEntries;
   },
 
   keybinding: function(depth, kb) {
-    if(depth < 0) return "";
-    log(kb);
+    if(depth < 0 || !kb) return "";
 
     if(!kb.isGroup()) return `
       <tr class="potential_entry">

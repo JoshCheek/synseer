@@ -51,7 +51,7 @@ Game.prototype.isFinished = function() {
 Game.prototype.pressKey = function(key) {
   if(this.isFinished()) return;
   this._keyMap.keyPressed(key);
-  var possibilities = this._keyMap.potentials();
+  var possibilities = this._keyMap.potentials().children;
   var selected      = possibilities[0];
 
   if(1 < possibilities.length) {
@@ -59,10 +59,8 @@ Game.prototype.pressKey = function(key) {
     return;
   }
 
-  let accepted = this._keyMap.accept()
-  // stupid: we have to do this first, b/c it changes the input
-  // command/query violation, I guess -.^
-  this._onPossibilities(accepted);
+  this._keyMap.accept()
+  this._onPossibilities(this._keyMap.potentials());
   var targetAst = this._traverse.ast.type;
 
   if(selected.data == targetAst) {

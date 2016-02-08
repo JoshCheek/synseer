@@ -21,13 +21,13 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
       types.each do |type|
         case type
         when :method
+          native.send_keys('o')
           native.send_keys('m')
-          native.send_keys('s')
         when :integer
-          native.send_keys('l')
+          native.send_keys('j')
           native.send_keys('i')
         when :string
-          native.send_keys('l')
+          native.send_keys('j')
           native.send_keys('s')
         else raise "WHAT TYPE IS THIS: #{type.inspect}"
         end
@@ -167,7 +167,7 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
 
   before(:each) { lol.init_phantom }
 
-  example 'new user plays their first game', t:true do
+  example 'new user plays their first game' do
     # When I go to the root page, it shows me a listing of syntax games and scores
     capybara.visit '/'
     lol.assert_completed_games times: [], corrects: [], incorrects: []
@@ -187,33 +187,32 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
     # I see that it is waiting for me to classify the "1 + 2" expression
     lol.assert_current_game_task '1+2'
 
-    # I press "m" for "send" (method), and my "correct" count increases from 0 to 1, it confirms my answer
+    # I guess that it is a method, and my "correct" count increases from 0 to 1, it confirms my answer
     lol.assert_score_change before_correct: 0, guesses: [:method], after_correct: 1
-    lol.assert_message /\bcorrect.*sen/i
+    lol.assert_message /\bcorrect.*call/i
 
     # I see that it is waiting for me to classify the "1" expression
     lol.assert_current_game_task '1'
 
-    # I incorrectly press "m" for "send" (method),
-    # my "correct" count stays at 1 while my "incorrect" count increases from 0 to 1
+    # I incorrectl guess that it is a method, my "correct" count stays at 1 while my "incorrect" count increases from 0 to 1
     lol.assert_score_change guesses: [:method],
                             before_correct: 1, before_incorrect: 0,
                             after_correct:  1, after_incorrect:  1
     # It tells me what the correct answer is,
     lol.assert_message /\bincorrect.*int/i
 
-    # I press "i" for "integer", and my "correct" count increases from 1 to 2
+    # I guess that it is an integer, and my "correct" count increases from 1 to 2
     lol.assert_score_change before_correct: 1, guesses: [:integer], after_correct: 2
 
     # I see that it is waiting for me to classify the "2" expression
     lol.assert_current_game_task '2'
 
-    # I press "m" for "send" (method), and my "correct" count stays at 2 while my "incorrect" count increases from 1 to 2
+    # I guess that it is a method, and my "correct" count stays at 2 while my "incorrect" count increases from 1 to 2
     lol.assert_score_change guesses: [:method],
                             before_correct: 2, before_incorrect: 1,
                             after_correct:  2, after_incorrect:  2
 
-    # I press "i" for "integer", and my "correct" count increases from 2 to 3,
+    # I guess that it is an integer, and my "correct" count increases from 2 to 3,
     # and I have completed the challenge
     lol.assert_score_change guesses: [:integer],
                             before_correct: 2,
@@ -319,47 +318,49 @@ RSpec.describe Synseer::App, integration: true, type: :feature do
       lol.assert_current_game_task '1+2'
   end
 
-  it 'filters my keys to the available options as I type, accepts my entry once unique, clears when I press esc, deletes when I press backspace', t:true do
+  it 'filters my keys to the available options as I type, accepts my entry once unique, clears when I press esc, deletes when I press backspace' do
     capybara.visit '/'
     capybara.click_link 'integer addition'
 
-    get_potentials = -> { capybara.all('.potential_entries .syntax_node').map(&:text) }
-    get_user_input = -> { capybara.find('.user_entry').text }
+    get_potentials = -> {
+      capybara.all('.potential_entries .syntax_node').map(&:text) +
+        capybara.all('.potential_entries .entry_group').map(&:text)
+    }
 
     # filters
     lol.assert_current_game_task '1+2'
-    expect(get_user_input.call).to eq ''
-    expect(get_potentials.call.length).to be > 10
+    expect(get_potentials.call).to include "control-flow"
 
-    browser.send_keys("s")
-    expect(get_user_input.call).to eq 's'
-    expect(get_potentials.call).to eq ["set constant", "set constant... uhm, idk", "set instance variable", "set local variable", "set with an operator", "set with ||", "?? guessing this is the complement to restarg"]
+    browser.send_keys("c")
+    expect(get_potentials.call).to include "if statement"
+    expect(get_potentials.call).to_not include 'until true'
 
-    browser.send_keys("o")
-    expect(get_user_input.call).to eq 'so'
-    expect(get_potentials.call).to eq ["set with an operator", "set with ||"]
+    browser.send_keys("l")
+    expect(get_potentials.call).to include 'until true'
+    expect(get_potentials.call).to_not include "if statement"
 
     # clears
     lol.assert_current_game_task '1+2'
+    expect(get_potentials.call).to_not include "control-flow"
     browser.send_keys(:Escape)
-    expect(get_user_input.call).to eq ''
-    expect(get_potentials.call.length).to be > 10
+    expect(get_potentials.call).to include "control-flow"
 
     # deletes
     lol.assert_current_game_task '1+2'
-    browser.send_keys("s")
-    browser.send_keys("o")
-    expect(get_user_input.call).to eq 'so'
+    expect(get_potentials.call).to include "control-flow"
+    browser.send_keys("c")
+    expect(get_potentials.call).to include "loop"
+    browser.send_keys("l")
+    expect(get_potentials.call).to include "while true"
     browser.send_keys(:Backspace)
-    expect(get_user_input.call).to eq 's'
     browser.send_keys(:Backspace)
-    expect(get_user_input.call).to eq ''
+    expect(get_potentials.call).to include "control-flow"
 
     # accepts
     lol.assert_current_game_task '1+2'
+    browser.send_keys("o")
+    expect(get_potentials.call).to_not include "control-flow"
     browser.send_keys("m")
-    browser.send_keys("s")
-    expect(get_user_input.call).to eq ''
-    expect(get_potentials.call.length).to be > 10
+    expect(get_potentials.call).to include "control-flow"
   end
 end
