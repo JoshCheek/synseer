@@ -209,10 +209,8 @@
       var mousetrap = new Mousetrap(document);
       mousetrap.handleKey = function(character, modifiers, event) {
         if(event.type !== 'keyup') return;
-        if(modifiers.includes("shift"))
+        if(-1!==modifiers.indexOf("shift"))
           character = "shift-"+character;
-
-        console.log(character, modifiers);
 
         if(window.game && !window.game.isFinished())
           window.game.pressKey(character);

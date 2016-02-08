@@ -16,7 +16,7 @@ module.exports = groupFor('All Keybindings', '', [
     bindingFor('hash',  'h', 'hash literal'),
     bindingFor('block', 'b', 'literal block'),
     bindingFor('ivar',  '@', 'lookup instance variable'),
-    bindingFor('array', 'A', 'array literal'),
+    bindingFor('array', 'a', 'array literal'),
   ]),
 
 
@@ -89,7 +89,7 @@ module.exports = groupFor('All Keybindings', '', [
       ]),
     ]),
 
-    groupFor('argument', 'a', [
+    groupFor('argument', 'g', [
       bindingFor('block_pass', 'b', 'block'),
       bindingFor('splat',      'a', 'array to args'),
       bindingFor('kwsplat',    'h', 'hash keywords'),
@@ -113,7 +113,7 @@ module.exports = groupFor('All Keybindings', '', [
       bindingFor('match_with_lvasgn', '~', 'match regexp literal'),
       bindingFor('irange',            '2', 'range including end'),
       bindingFor('erange',            '3', 'range excluding end'),
-      bindingFor('array',             'A', 'array'),
+      bindingFor('array',             'a', 'array'),
       bindingFor('block',             'b', 'block'),
       bindingFor('complex',           'c', 'complex'),
       bindingFor('defined?',          'd', 'defined?'),
@@ -124,10 +124,10 @@ module.exports = groupFor('All Keybindings', '', [
       bindingFor('float',             '.', 'floating decimal point'),
       bindingFor('rational',          'r', 'rational'),
       bindingFor('str',               's', 'string'),
-      bindingFor('dstr',              'S', 'interpolated string'),
+      bindingFor('dstr',              'S', 'multipart string'),
       bindingFor('true',              't', 'true'),
       bindingFor('sym',               'y', 'symbol'),
-      bindingFor('dstr',              'Y', 'interpolated string'),
+      bindingFor('dsym',              'Y', 'multipart symbol'),
       bindingFor('regopt',            'o', 'regexp option'),
     ]),
   ]),

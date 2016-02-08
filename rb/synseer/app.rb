@@ -61,6 +61,7 @@ module Synseer
         and
         or
         boolean_operators
+        operator_setters
         comparisons
         if_statements_1
         if_statements_2
@@ -74,12 +75,13 @@ module Synseer
         broken_operators
         logic_vs_bitwise_operators
         a_test
-        arrays_vs_brackets
+        arrays_vs_brackets_1
+        arrays_vs_brackets_2
         bracket_access
-        angry_arrays1
-        angry_arrays2
-        angry_arrays3
-        angry_arrays4
+        angry_arrays_1
+        angry_arrays_2
+        angry_arrays_3
+        angry_arrays_4
         lol
 
         object_model_as_linked_list_of_hashes
