@@ -1,0 +1,21 @@
+chars = ["a", "b", "c"]
+chars[0]
+chars[0][0]
+chars[0][0][1]
+chars[0] + chars[1]
+chars[chars[0].length]
+chars[[chars[0]]]
+chars[chars[0]]
+chars[chars]
+chars [chars]
+
+chars[0]
+chars [0]
+chars([0])
+chars[]
+chars []
+
+chars[0+1]
+chars[0+chars[1]]
+chars[chars [chars[chars []]]]
+[[], [[]], []]

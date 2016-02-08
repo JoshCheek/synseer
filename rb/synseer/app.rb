@@ -37,12 +37,52 @@ module Synseer
 
       order = %w[
         integer_addition
+        two_statements
+        numbers
+        strings_vs_symbols
         puts
+        method_calls_self_1
+        set_and_get_local
+        method_calls_self_2
+        get_local_vs_call_method
+        method_calls_self_3
+        set_local_vs_setter_method
+        set_local_vs_set_ivar
+        constant_vs_method_call
+        set_ivar_vs_set_setter
+        nested_method_calls
+        various_getters
+        method_calls_fancy_1
+        method_calls_fancy_2
+        negative_var_vs_literal
+        whitespace_on_operators
         require_statements
+        true_false_nil
+        and
+        or
+        boolean_operators
+        comparisons
+        if_statements_1
+        if_statements_2
+        if_statements_3
+        unless_statements
+        ternaries
+        while
+        until
+        one_vs_two_equals
+        operators
+        broken_operators
+        logic_vs_bitwise_operators
         a_test
-	      common_examples
-        object_model_as_linked_list_of_hashes
+        arrays_vs_brackets
+        bracket_access
+        angry_arrays1
+        angry_arrays2
+        angry_arrays3
+        angry_arrays4
         lol
+
+        object_model_as_linked_list_of_hashes
         redcarpet
         linked_list
         ] +
@@ -59,19 +99,19 @@ module Synseer
         seedzzz
         ] +
 
-        # not are more tedious than hard
-        %w[
-        decorators
-        active_record_normal
-        active_record_harder
-        couchdb_and_google_calendar
-        env_hash_injection
-        ] +
-
+        []
+        # more tedious than hard
+        # decorators
+        # active_record_normal
+        # active_record_harder
+        # couchdb_and_google_calendar
+        # env_hash_injection
+        # ] +
+        #
         # These need to be gone through, they're way too much
-        %w[
-        my_enumerable
-      ]
+        # %w[
+        # my_enumerable
+        # ]
 
       games = (root_dir / 'games')
         .children
