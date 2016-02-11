@@ -207,18 +207,54 @@
       // -----  Keymap  -----
       var Mousetrap = require('mousetrap');
       var mousetrap = new Mousetrap(document);
-      mousetrap.handleKey = function(character, modifiers, event) {
-        if(event.type !== 'keyup') return;
-        if(-1!==modifiers.indexOf("shift"))
-          character = "shift-"+character;
 
-        if(window.game && !window.game.isFinished())
-          window.game.pressKey(character);
-        else if(character == 'r')
-          playGame();
-        else if(character == 'enter')
-          returnToIndex();
+      mousetrap.stopCallback = function(e, element, combo) {
+        return false; // don't stop it from propagating keys when we're in the editing area
       }
+
+
+      for(var i=97; i < 97+26; ++i) {
+        (function(i) {
+          var key = String.fromCharCode(i);
+          mousetrap.bind(key, function() {
+            window.game.pressKey(key);
+          })
+        })(i);
+      };
+
+      for(var i=97; i < 97+26; ++i) {
+        (function(i) {
+          var key = String.fromCharCode(i);
+          mousetrap.bind("shift+"+key, function() {
+            window.game.pressKey("shift-"+key);
+          })
+        })(i);
+      };
+
+      ['backspace', 'tab', 'enter', 'esc', 'space',
+       '`', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=',
+       '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+',
+       '[', ']', '\\', ';', "'", ',', '.', '/',
+       '{', '}', '|',  ':', '"', '<', '>', '?',
+      ].forEach(function(key) {
+        mousetrap.bind(key, function() {
+          window.game.pressKey(key);
+        });
+      });
+
+      mousetrap.bind("r", function() {
+        if(window.game && !window.game.isFinished())
+          window.game.pressKey("r");
+        else
+          playGame();
+      });
+
+      mousetrap.bind("return", function() {
+        if(window.game && !window.game.isFinished())
+          window.game.pressKey("return");
+        else
+          returnToIndex();
+      });
 
       // -----  CodeMirror  -----
       var cm = CodeMirror.fromTextArea(

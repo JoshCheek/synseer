@@ -10,7 +10,7 @@ module.exports = groupFor('All Keybindings', '', [
     bindingFor('str',   's', 'literal string'),
     bindingFor('lvar',  'l', 'lookup local variable'),
     bindingFor('const', 'C', 'lookup constant'),
-    bindingFor('sym',   'y', 'symbol literal (or S)'),
+    bindingFor('sym',   'y', 'symbol literal'),
     bindingFor('int',   'i', 'integer literal'),
     bindingFor('def',   'd', 'def'),
     bindingFor('hash',  'h', 'hash literal'),

@@ -34,7 +34,6 @@ Mapper.normalize = function(key) {
     else if(match[1]==="/") key = "?";
     else                    key = match[1].toUpperCase();
   }
-
   return key;
 }
 
