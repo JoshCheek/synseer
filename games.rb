@@ -1,40 +1,132 @@
-# -- integer addition --
-1 + 2
+# -- an integer --
+100
+
+# -- a method call --
+3.even?
 
 # -- two statements --
 123
 456
 
-# -- numbers --
+# -- a method call with an argument --
+100.gcd(15)
+
+# -- parentheses are optional --
+100.gcd(15)
+100.gcd 15
+
+# -- operators are method calls --
+1.+(2)
+1.+ 2
+1 + 2
+
+# -- integers can be any size --
 123
 1
-11111111111111111111111111111111111111111111111111111111111
-123.456
+165186589135719360917360246347302345676543234565195106510578
+
+# -- negative and positive signs are part of an integer literal --
 -45
 +45
-123e4
-2r
-2i
-0xFF
+
+# -- assign and look up a local variable --
+num = 1
+num
+
+# -- negative and positive signs are method calls on non-literals --
+num = 1
+-num
++num
+
+# -- numbers starting with 0x are entered in hexadecimal --
+0xFF # => 255
+
+# -- numbers starting with 0b are entered in binary --
+0b101 # => 5
+
+# -- numbers starting with 0 are entered in octal --
+010 # => 8
+
+# -- numbers with decimal places are floats --
+123.456 # => 123.456
+
+# -- floats can be entered in scientific notation --
+123e4 # => 1230000.0
+
+# -- integers with an r suffix are rationals --
+2r  # => (2/1)
+
+# -- integers with an i suffix are imaginary --
+2i  # => (0+2i)
+
+# -- several numbers together 1 --
+123
+123.456
+
+# -- several numbers together 2 --
+0x10
 0b10
 010
+10
 
-# -- strings vs symbols --
+# -- quoted text is a string --
+"abc"
+
+# -- strings can have single quotes or double quotes --
 "abc"
 'abc'
-:abc
-"a'b"
-'a"b'
-:"a'b"
-:'a"b'
-"a#{1}b#{2}c"
-:"a#{1}b#{2}c"
-'a#{1}b#{2}c'
-:'a#{1}b#{2}c'
-"'" '"'
-:':'
 
-# -- puts --
+# -- the contents of the string don't change that its a string --
+"123"
+
+# -- text with a leading colon is a symbol --
+:abc
+
+# -- you can choose which type of quote if your --
+"O'malley"
+'"In teaching others, we teach ourselves" -- proverb'
+
+# -- strings with a leading colon are symbold --
+:"O'malley"
+:'"In teaching others, we teach ourselves" -- proverb'
+
+# -- interpolation allows strings to embed dynamic values --
+"a#{1}b#{2}c"
+
+# -- symbols can be interpolated --
+:"a#{1}b#{2}c"
+
+# -- single quotes dont support interpolation --
+"a#{1}b#{2}c"
+'a#{1}b#{2}c'
+
+# -- same for symbols --
+:"a#{1}b#{2}c"
+:'a#{1}b#{2}c'
+
+# -- two strings adjacent to each other get joined into one --
+"'" '"'
+
+# -- empty strings and symbols --
+""
+:""
+''
+:''
+
+# -- a bare word is a method call or local variable --
+a
+
+b = 1
+b
+
+# -- there is always a current object named self --
+self
+
+# -- methods without a dot are called on self --
+a
+self.a
+
+# -- puts is a method call --
 puts "hello"
 
 # -- method calls on self 1 --
@@ -43,7 +135,11 @@ a()
 self.a
 self.a()
 
-# -- set and get local --
+# -- method calls on self with arguments --
+add_nums 1, 2, 3
+concat_strings("a", "b", "c")
+
+# -- assign and lookup local --
 a = 1
 a
 
@@ -64,34 +160,62 @@ a(1, 2)
 self.a(1)
 self.a 1, 2
 
-# -- set local vs setter method --
-a = 1
+# -- methods ending in an equal sign can have whitespace --
+self.a=(1)
+self.a= 1
 self.a = 1
 
-# -- set local vs set ivar --
+# -- words with a leading asperand are instance variables --
+@a
+a
+
+# -- you can assign instance variables --
 a = 1
 @a = 1
 
-# -- constant vs method call --
+# -- assign local vs ivar vs setter method --
+a = 1
+@a = 1
+self.a = 1
+
+# -- words beginning in capital letters are constants --
 A
+
+# -- constants can be accessed through two colons --
+A::B::C
+a::B::C
+
+# -- if a constant receives an argument it is actually a method call --
 A(1)
 A 1
+A A
+
+# -- methods and constants --
 A A
 A::B
 A B::C D::E
 
-# -- set ivar vs set setter --
-@a = 1
-self.a = 1
+# -- you can assign constants --
+A = 1
+Object::B = 2
 
 # -- nested method calls --
 a(b(c(1)))
 a b c 1
 
-# -- various getters --
+# -- words beginning with a dollar sign are global variables --
+$a = 1
+$a
+
+# -- constant vs local --
 A
 a
+
+# -- local vs method --
+a
 a()
+
+# -- instance vs global --
 @a
 $a
 
@@ -101,17 +225,33 @@ a.+ 1
 a + 1
 a / 1
 a < 1
-!a
 
-# -- method calls fancy 2 --
+# -- exclamation marks are method calls --
+!a
+!1
+
+# -- if a local receives an argument it is actually a method call --
 a = 1
 a
 a 1
 a a
+
+# -- if a local has parens it is actually a method call --
+a = 1
+a()
+
+# -- moar method calls vs locals
 a - a
 a(-a)
 a - a()
 a() - a
+
+# -- always match whitespace around operators to avoid confusion --
+a = 1
+
+b(-a) # clear
+b - a # clear
+b -a  # confusing
 
 # -- negative var vs literal --
 -1
@@ -120,95 +260,110 @@ a() - a
 -A
 -@a
 
-# -- whitespace on operators --
-a - b
-a- b
-a -b
-a-b
-a - -b
-a - -1
--a
-
-# -- require statements --
+# -- require is a method call --
 require 'minitest/pride'
 
 # -- true false nil --
 true
 false
 nil
+
+# -- exclamation marks are method calls --
 !true
 !false
 !nil
+
+# -- double negate to convert an object to true or false --
 !!true
 !!false
 !!nil
+!!"i'll become true"
 
-# -- and --
-true && false
-false && true
-true && true && true
-!true && false
-nil && 1
+# -- boolean and --
+true && false && true
 
-# -- or --
-true || false
-false || true
-true || true || true
-!true || false
-nil || 1
+# -- boolean or --
+true || false || true
 
-# -- boolean operators --
+# -- equality checks are method calls --
+1 == 1
+a == 1
+
+# -- you can put equality checks inside of booleans --
+a == 1 && b == 2
+a == 1 || b == 2
+
+# -- use parens if you want to mix and match boolean operators --
 1 && nil && (false || "hello") && true
 
+# -- booleans can span multiple lines --
 abcd &&
   efgh &&
   (hijk || lmno) &&
   true
 
-# -- operator setters --
+# -- operator setter on local --
 a = 1
 a += 1
+
+# -- operator setter on instance variable --
+@c = 1
 @c += 1
+
+# -- operator setter on global variable --
+$d = 1
 $d += 1
+
+# -- operator setter on setter method --
+100.b = 1
 100.b += 1
 
-# my opinion: Ruby should consider this one a bug
-e += 1
+# -- operator setter on constant --
+# don't do this :P
+A = 1
+A += 1
 
-# -- comparisons --
+# -- operator setter on undeclared variables --
+# my opinion: Ruby should consider this one a bug
+a += 1
+
+# -- comparisons are method calls --
 1 < 2
 1 > 2
 1 == 2
 1 <= 2
 1 >= 2
 
+# -- regardless of what object they are being called on --
 "a" < "b"
 "a" > "b"
 "a" == "b"
 "a" <= "b"
 "a" >= "b"
 
-# -- if statements 1 --
+# -- empty if statements --
 if true
-end
-
-if true
-  1
 end
 
 if false
 end
 
+# -- if statement with a body --
+if true
+  1
+end
+
+if false
+  1
+end
+
+# -- if statement with a multiline body --
 if true
   1
   2
 end
 
-if false
-  1
-end
-
-# -- if statements 2 --
+# -- if statement with a complex condition --
 if true && false
   1
 end
@@ -217,78 +372,128 @@ if true || false
   1
 end
 
+# -- if statement with a more complex condition --
 if abcd || efgh
   1
 end
 
+# -- if statement with an even more complex condition --
+num = 5
 if (num == 101) || num.even?
   1
 end
 
-# -- if statements 3 --
+# -- inline if statement --
 if true
   1
 end
 
 1 if true
 
+# -- inline if statement with complex condition --
 if a && b
   1
 end
 
 1 if a && b
 
-if a && b then 1 else 2 end
-
-if char == :b
-  1
-elsif char == :c
-  2
-elsif char == :d
-  3
-else
-  4
+# -- if statement with 2 possibilities --
+if a == 1
+  'one'
+elsif a == 2
+  'two'
 end
 
-# -- unless statements --
+# -- if statement with default branch --
+if a == 1
+  'one'
+else
+  'not one'
+end
+
+# -- if statement with then keyword --
+if a == 1 then
+  'one'
+else
+  'not one'
+end
+
+# -- inline if statement using if then else --
+if a && b then
+  1
+else
+  2
+end
+
+if a && b then 1 else 2 end
+
+# -- if statement with several branches and default --
+if char == '1'
+  'one'
+elsif char == '2'
+  'two'
+elsif char == '3'
+  'three'
+else
+  'other'
+end
+
+# -- unless is an if with a negated condition --
 if !a
   @b
 end
 
 unless a
-  "b"
+  @b
 end
 
+# -- inline if and equivalent inline unless --
 1 if !a
 2 unless a
 
-# -- ternaries --
+# -- ternaries are short if statements --
 true ? 1 : 2
 
-a   ? 1 :
-  b ? 2 :
-  c ? 3 :
-      4
+# -- chained ternaries
+abcd   ? 1 :
+  efgh ? 2 :
+  ijkl ? 3 :
+         4
 
-# -- while --
+# -- while is a greedy if statement --
 a = 1
 while a < 10
   a += 1
 end
 
+# -- inline while statement --
 b = 1
 b += 1 while b < 10
 
-# -- until --
+# -- until is a greedy unless statement --
 a = 1
 until a >= 10
   a += 1
 end
 
+# -- inline unless statement
 b = 1
 b += 1 until b >= 10
 
-# -- one vs two equals --
+# -- loop is a method call with a block argument --
+loop do
+  puts "still going"
+end
+
+# -- times and upto are method calls with block arguments --
+3.times { puts "times" }
+1.upto(3) { puts "upto" }
+
+# -- one equal is assignment two is equality check --
+a = 1
+a == 1
+
+# -- this is pretty --
 a
 a 1
 a = 1
@@ -313,93 +518,178 @@ a
 1.^(1)
 1 ^ 1
 
+# -- i dont even know --
 !1
 1.!
-1.<(1)
-1.>(1)
 
 # -- broken operators --
-# this means that 1 is less than 2, and 3 is a truthy value
-1 < 2 && 3
+# THIS IS BROKEN!
+1 < 2 && 3 # It really means that 1 is less than 2, and 3 is a truthy value
 
 # for example
 user.age < laws.drinking_age && its_five_oclock_somewhere?
 
 
-# -- logic vs bitwise operators --
+# -- two ampersands is a boolean operator one is a method call --
 1 && 2
 1 & 2
+
+# -- two pipes is a boolean operator one is a method call --
 1 || 2
 1 | 2
 
-# -- a test --
+# -- this code wont print --
 a = 1
 b = a + 5
 if b < a
   puts a
 end
 
-# -- arrays vs brackets 1 --
+# -- brackets after a word are a method call --
+a = ['a', 'b', 'c', 'd']
+a[0]    # => "a"
+a[1, 2] # => ["b", "c"]
+
+# -- be careful with whitespace --
+# call brackets on a
+a = 1
+a[]
+
+# pass an array to the method b
+b []
+b [0]
+b([0])
+
+
+# -- repeatedly calling brackets --
 chars = ["a", "b", "c"]
 chars[0]
 chars[0][0]
 chars[0][0][1]
+
+# -- brackets in method calls --
+chars = ["a", "b", "c"]
 chars[0] + chars[1]
+
+# -- brackets in brackets --
+chars = ["a", "b", "c"]
 chars[chars[0].length]
 chars[[chars[0]]]
 chars[chars[0]]
+
+# -- brackets that are syntactically valid but make no sense --
+chars = ["a", "b", "c"]
 chars[chars]
 chars[0]
 chars[0+1]
 chars[0+chars[1]]
 
-# -- arrays vs brackets 2 --
-a[]
-a []
-a[0]
-a [0]
-a([0])
-
-# -- bracket access --
+# -- calling brackets on literal arrays --
 array = [100, 200, 300]
-array[0]
-[100, 200, 300][0]
 
+array[0]           # => 100
+[100, 200, 300][0] # => 100
+
+array[1]           # => 200
+[100, 200, 300][1] # => 200
+
+array[2]           # => 300
+[100, 200, 300][2] # => 300
+
+# -- calling brackets on literal strings --
 string = "abc"
-string[0]
-"abc"[0]
 
+string[0]  # => "a"
+"abc"[0]   # => "a"
+
+string[1]  # => "b"
+"abc"[1]   # => "b"
+
+string[2]  # => "c"
+"abc"[2]   # => "c"
+
+# -- hashes have a key and value between curly braces --
+{"key" => "value"}
+
+# -- keys and vlaues be any object --
+{[] => "", 100 => 123.45, {} => :lol}
+
+# -- when hash keys are symbols you can put the colon on the right and omit the rocket --
+{:old_key => "value1", new_key: "value2", "new key2": "value3"}
+
+# -- when hashes are the last argument to a method they dont need curly braces --
+p a: "b", c: "d"
+
+# -- calling brackets on literal hashes --
 hash = {a: 100, b: 200, c: 300}
-hash[:a]
-{a: 100, b: 200, c: 300}[:a]
+
+hash[:a]                     # => 100
+{a: 100, b: 200, c: 300}[:a] # => 100
+
+hash[:b]                     # => 200
+{a: 100, b: 200, c: 300}[:b] # => 200
+
+hash[:c]                     # => 300
+{a: 100, b: 200, c: 300}[:c] # => 300
 
 # -- angry arrays 1 --
 []
 [[]]
 [][]
 [[][]]
-[[][]][[][]]
-[[][[]]]
-[[[][]][[][]][[][]]]
 
 # -- angry arrays 2 --
+[[][]][[][]]
+
+# -- angry arrays 3 --
+[[][[]]]
+
+# -- angry arrays 4 --
+[[[][]][[][]][[][]]]
+
+# -- angry arrays 5 --
 [
 ][
 ][
 ]
 
-# -- angry arrays 3 --
+# -- angry arrays 6 --
 [
 ][
 []][
 ]
 
-# -- angry arrays 4 --
+# -- angry arrays 7 --
 [[][
 ]][[
 ]][[
 []][
 ][]]
+
+# -- you can define your own methods with def --
+def my_method
+  100
+end
+my_method
+
+# -- locals still beat method calls --
+def my_method
+  100
+end
+my_method = :no_dice
+my_method
+
+# -- methods can receive parameters --
+def add(num1, num2)
+  num1 + num2
+end
+add(100, 200)
+
+# -- methods can omit parentheses around their parameters --
+def add num1, num2
+  num1 + num2
+end
+add 100, 200
 
 # -- lol --
 def lol(lol)
@@ -407,6 +697,152 @@ def lol(lol)
 end
 lol = 123
 lol lol
+
+# -- methods can choose a default parameter when one is not passed --
+def a(b)
+end
+
+def c(d=1)
+end
+
+# -- methods can collect the rest of their parameters into an array --
+def sum(*numbers)
+  sum = 0
+  numbers.each { |number| sum += number }
+  sum
+end
+
+sum               # => 0
+sum 100           # => 100
+sum 100, 200, 300 # => 600
+
+# -- methods can receive keyword parameters which assign by name --
+def divide(dividend:, divisor:)
+  dividend / divisor
+end
+divide dividend: 100, divisor: 5 # => 20
+divide divisor: 5, dividend: 100 # => 20
+
+# -- keyword parameters can have defaults too --
+def a(b:, c:1)
+  [b, c]
+end
+a(b: 9)      # => [9, 1]
+a(b: 9, c: 2)# => [9, 2]
+
+# -- you can collect the rest of the keyword parameters into a hash --
+def a(b:, **c)
+end
+a(b: 1, this: "will", go: "to", the: "hash", named: "c")
+
+# -- methods can receive blocks --
+def m(&b)
+  b.call(100)
+end
+m { |n| n + 1 } # => 101
+
+# -- blocks can be curly braces or do end --
+[1, 2, 3].map { |n| n + 1 }
+
+[1, 2, 3].map do |n|
+  n + 1
+end
+
+# -- when passing arguments the block is outside the parens --
+['a', 'b', 'c', 'd'].each_slice(2) { |a, b| p a, b }
+
+# -- curly braces after method calls are empty blocks not empty hashes --
+puts({})
+puts {}
+puts() {}
+
+# -- curly braces are sent to the method immediately left do end to farthest left --
+a b {}      # block goes to b
+a b do end  # block goes to a
+
+# -- all parameter types together --
+def m(a, b=:default, *c, d, e:, f:1, **g, &h)
+  [a, b, c, d, e, f, g, h.call]
+end
+
+m 1, 2, 3, 4, 5, e: 6, f: 7, other1: 8, other2: 9 do
+  100
+end
+# => [1, 2, [3, 4], 5, 6, 7, {:other1=>8, :other2=>9}, 100]
+
+
+# -- you can pass array elements as arguments with an asterisk --
+def add(n1, n2, n3)
+  n1 + n2 + n3
+end
+
+nums = [100, 20, 3]
+add(*nums) # => 123
+
+# -- you can pass a hash as keywords with two asterisks --
+def add(n1:, n2:, n3:)
+  n1 + n2 + n3
+end
+
+nums = {n1: 100, n2: 20, n3: 3}
+add(**nums) # => 123
+
+# -- you can pass a lambda or proc with an ampersand --
+def call_this(&block)
+  block.call
+end
+
+b = lambda { 101 }
+call_this(&b) # => 101
+
+# -- a method can receive a block even if it doesnt say so and it can invoke the block with yield --
+def gimme_your_blocks
+  yield if block_given?
+end
+gimme_your_blocks { 100 } # => 100
+gimme_your_blocks         # => nil
+
+# -- methods can rescue errors without using the begin keyword --
+def keep_it_in
+  raise "rawr"
+rescue
+  # ahem
+end
+
+# -- methods can return early with the return keyword
+def returnin_early(early)
+  return "left early" if early
+  "left late"
+end
+returnin_early true   # => "left early"
+returnin_early false  # => "left late"
+
+# -- if you return multiple values they get turned into an array --
+def nums
+  return 1, 2
+end
+nums # => [1, 2]
+
+
+# -- methods are usually defined in classes --
+class User
+  def initialize(name)
+    @name = name
+  end
+
+  def name
+    @name
+  end
+end
+user = User.new("Josh")
+puts user.name
+
+# -- two dots make an inclusive range three make an exclusive range --
+(1..5).to_a   # => [1, 2, 3, 4, 5]
+(1...5).to_a  # => [1, 2, 3, 4]
+
+# -- many things can be used in a range --
+('a'..'e').to_a   # => ["a", "b", "c", "d", "e"]
 
 # -- object model as linked list of hashes --
 basic_object = {methods: {equal?: 394}, superclass: nil}

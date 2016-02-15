@@ -88,8 +88,7 @@ CLEAN.include 'tmp'
 directory 'tmp'
 file 'tmp/node_types' do
   require 'synseer/parse'
-  codes = FileList['games/*'].map { |f| File.read f }
-  node_types = Synseer::Parse.nodes_in(*codes)
+  node_types = Synseer::Parse.nodes_in(File.read('games.rb'))
   mkdir_p 'tmp'
   File.write 'tmp/node_types', node_types.map { |type| "#{type}\n" }.join
 end
