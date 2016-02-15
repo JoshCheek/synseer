@@ -3,7 +3,7 @@ require 'sinatra'
 require 'json'
 require 'tilt/erb'
 require 'synseer/parse'
-require 'synseer/games'
+require 'synseer/game_loader'
 
 module Synseer
   class App < Sinatra::Base
@@ -31,7 +31,7 @@ module Synseer
     end
 
     def self.default
-      @default ||= self.new GAMES
+      @default ||= self.new GameLoader.load(root_dir / 'games.rb')
     end
 
     set :views,      root_dir / 'views'
