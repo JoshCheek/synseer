@@ -97,12 +97,12 @@ num = 1
 :"a#{1}b#{2}c"
 
 # -- single quotes dont support interpolation --
-"a#{1}b#{2}c"
-'a#{1}b#{2}c'
+"a#{1}b"
+'a#{1}b'
 
 # -- same for symbols --
-:"a#{1}b#{2}c"
-:'a#{1}b#{2}c'
+:"a#{1}b"
+:'a#{1}b'
 
 # -- two strings adjacent to each other get joined into one --
 "'" '"'
@@ -129,11 +129,6 @@ self.a
 # -- puts is a method call --
 puts "hello"
 
-# -- method calls on self 1 --
-a
-a()
-self.a
-self.a()
 
 # -- method calls on self with arguments --
 add_nums 1, 2, 3
@@ -143,20 +138,31 @@ concat_strings("a", "b", "c")
 a = 1
 a
 
-# -- method calls on self 2 --
-a 1
-a(1)
-self.a(1)
-
 # -- get local vs call method --
 a
 a = 1
 a
 
+# -- method calls on self 1 --
+a
+a()
+self.a
+self.a()
+
+# -- method calls on self 2 --
+a 1
+a(1)
+self.a(1)
+
 # -- method calls on self 3 --
 a 1
+a(1)
+
+# -- method calls on self 4 --
 a 1, 2
 a(1, 2)
+
+# -- method calls on self 5 --
 self.a(1)
 self.a 1, 2
 
@@ -177,6 +183,27 @@ a = 1
 a = 1
 @a = 1
 self.a = 1
+
+# -- chaining method calls --
+# each method is invoked on the return value of the expression before it
+'abc'.upcase.reverse.downcase.chars.first # => "c"
+
+# -- chaining method calls 2 --
+# It doesn't matter if you split the expression across lines
+'abc'       # => "abc"
+  .upcase   # => "ABC"
+  .reverse  # => "CBA"
+  .downcase # => "cba"
+  .chars    # => ["c", "b", "a"]
+  .first    # => "c"
+
+# -- chaining method calls 3 --
+# We can get all funky with the dot (best practices, ya know?)
+'abc'.              # => "abc"
+  upcase  .reverse  # => "CBA"
+  .downcase.        # => "cba"
+  chars             # => ["c", "b", "a"]
+.  first            # => "c"
 
 # -- words beginning in capital letters are constants --
 A
@@ -199,6 +226,13 @@ A B::C D::E
 A = 1
 Object::B = 2
 
+# -- its fairly common to see constnats that are in SCREAMING_SNAKE_CASE --
+SCREAMING_SNAKE_CASE
+
+# -- argv and env are just constants they are not special --
+ARGV
+ENV
+
 # -- nested method calls --
 a(b(c(1)))
 a b c 1
@@ -212,6 +246,7 @@ A
 a
 
 # -- local vs method --
+a = 1
 a
 a()
 
@@ -284,6 +319,10 @@ true && false && true
 
 # -- boolean or --
 true || false || true
+
+# -- boolean keyword not is a method call to exclamation --
+not true
+not "whatevz"
 
 # -- equality checks are method calls --
 1 == 1
@@ -886,34 +925,44 @@ list.head.next_node.data[:a] # => 2
 list.head.next_node.next_node.data[:c] # => 394
 
 
-# -- indentation guide1 --
-# definitions and breakdown of the rules are here:
+# -- indentation guide multiline arrays --
 # https://gist.github.com/JoshCheek/b3c6a8d430b2e1ac8bb2
-
 # opening bracket and closing bracket are at the same level
 [ "abcd",
   "efgh",
   "ijkl",
 ]
 
+# -- indentation guide multiline hashes --
+# https://gist.github.com/JoshCheek/b3c6a8d430b2e1ac8bb2
+{ abcd: "value1",
+  efgh: "value2",
+  ijkl: "value3",
+}
+
+# -- indentation guide multiline blocks --
+# https://gist.github.com/JoshCheek/b3c6a8d430b2e1ac8bb2
 # the `end` is aligned with `array`, as if it were a sibling.
 array.each do |element|
   puts element
 end
 
-# aligned at end of the expression
+# -- indentation guide multiline args aligned at end --
+# https://gist.github.com/JoshCheek/b3c6a8d430b2e1ac8bb2
 abcd.efgh ijkl: 123,
           mnop: 456,
           qrst: 789
 
-# parentheses
+# -- indentation guide multiline args starting on next line --
+# https://gist.github.com/JoshCheek/b3c6a8d430b2e1ac8bb2
 puts(
   "omg",
   "wtf",
   "bbq"
 )
 
-# indented on the next line
+# -- indentation guide multiline args hashes starting on next line --
+# https://gist.github.com/JoshCheek/b3c6a8d430b2e1ac8bb2
 abcd.efgh(
   ijkl: 123,
   mnop: 456,
@@ -921,14 +970,15 @@ abcd.efgh(
 )
 
 
-# hash literals
+# -- indentation guide multiline hashes for local --
+# https://gist.github.com/JoshCheek/b3c6a8d430b2e1ac8bb2
 fruit_counts = {
   bananas: 1,
   apples:  5,
   oranges: 3,
 }
 
-# -- bubble sort1 --
+# -- bubble sort procedural --
 a = ["e", "a", "c", "b", "d"]
 b = 0
 
@@ -952,11 +1002,8 @@ end
 
 a
 
-# -- indentation guide2 --
-# definitions and breakdown of the rules are here:
+# -- indentation guide multiple levels of nesting --
 # https://gist.github.com/JoshCheek/b3c6a8d430b2e1ac8bb2
-
-# multiple levels of nesting
 rows.each do |row|
   row.each do |cell|
     puts "The cell is: #{cell.inspect}"
@@ -964,12 +1011,14 @@ rows.each do |row|
   end
 end
 
-# def and end are at the same level
+# -- indentation guide methods --
+# https://gist.github.com/JoshCheek/b3c6a8d430b2e1ac8bb2
 def a
   1
 end
 
-# classes, modules, and methods
+# -- indentation guide classes modules and methods --
+# https://gist.github.com/JoshCheek/b3c6a8d430b2e1ac8bb2
 module SortAlgorithms
   class BubbleSort
     def sort
@@ -1016,23 +1065,22 @@ SortAlgorithms::BubbleSort.new(["e", "a", "c", "b", "d"]).sort
 # => ["a", "b", "c", "d", "e"]
 
 
-# -- indentation guide3 --
-# definitions and breakdown of the rules are here:
+# -- indentation guide if with else --
 # https://gist.github.com/JoshCheek/b3c6a8d430b2e1ac8bb2
-
-# if / else / elsif /end
 if car.speed > speed_limit
   officer.issue_ticket(car)
 else
   officer.eat_donut
 end
 
-# unless
+# -- indentation guide unless --
+# https://gist.github.com/JoshCheek/b3c6a8d430b2e1ac8bb2
 unless car.speed > speed_limit
   officer.eat_donut
 end
 
-# case / when / else / end
+# -- indentation guide case statement on next line --
+# https://gist.github.com/JoshCheek/b3c6a8d430b2e1ac8bb2
 case letter
 when "a"
   # ...
@@ -1044,7 +1092,8 @@ else
   # ...
 end
 
-# or this one
+# -- indentation guide case statement on same line --
+# https://gist.github.com/JoshCheek/b3c6a8d430b2e1ac8bb2
 case letter
 when "a" then # ...
 when "b" then # ...
@@ -1052,8 +1101,8 @@ when "c" then # ...
 else # ...
 end
 
-
-# begin / rescue / ensure / else / end
+# -- indentation guide begin rescue ensure end --
+# https://gist.github.com/JoshCheek/b3c6a8d430b2e1ac8bb2
 begin
   user.authenticate
 rescue AuthenticationError => e
@@ -1062,7 +1111,8 @@ ensure
   response.cookies[:requested_url] = request.url
 end
 
-# while / end
+# -- indentation guide while end --
+# https://gist.github.com/JoshCheek/b3c6a8d430b2e1ac8bb2
 sum = 0
 iterations = 0
 while iterations < 3
@@ -1070,7 +1120,8 @@ while iterations < 3
   sum += iterations
 end
 
-# until / end
+# -- indentation guide until end --
+# https://gist.github.com/JoshCheek/b3c6a8d430b2e1ac8bb2
 sum = 0
 iterations = 0
 until iterations >= 3
@@ -1109,33 +1160,17 @@ puts "Converted #{input_filename} (#{markdown.lines.count} lines)" +
 #     like database connections, internet connections, global state, file systems,
 #     side effects, randomness, singleton objects, original context, etc.
 
-
-### Version 1 ###
-# Here, the dependencies are:
-#   ARGV    - argument passed to the program
-#   $stdout - global variable to the output stream
-
+# Before
 def my_upcase
   upcased_arg = ARGV[0].gsub(/[a-z]/) { |char| (char.ord - 0x20).chr }
   $stdout.puts(upcased_arg)
 end
-
 my_upcase
 
-
-
-### Version 2 ###
-# Here, all the dependencies and context have been pushed higher in the callstack
-#
-# So this program does the same thing,
-# but the my_upcase method can be invoked with any string from any source
-# and we can do anything we want with the result,
-# not just print it to one specific output stream
-
+# After
 def my_upcase(string)
   string.gsub(/[a-z]/) { |char| (char.ord - 0x20).chr }
 end
-
 upcased_arg = my_upcase(ARGV[0])
 $stdout.puts(upcased_arg)
 
@@ -1165,3 +1200,321 @@ end
     end
   end
 end
+
+# -- singleton methods on local variable --
+a = "str"
+def a.letters
+  length.times.map { |i| self[i] }
+end
+a.letters  # => ["s", "t", "r"]
+
+# -- singleton methods on instance variable --
+@a = "str"
+def @a.letters
+  length.times.map { |i| self[i] }
+end
+@a.letters  # => ["s", "t", "r"]
+
+# -- singleton methods on constant variable --
+def String.empty
+  ""
+end
+String.empty # => ""
+
+# -- singleton methods on self --
+self # => main
+def self.inspect
+  "not-main"
+end
+self # => not-main
+
+# -- singleton methods on class --
+class User
+  def self.create
+    new
+  end
+end
+User.create # => #<User:0x007fc2f2033e70>
+
+# -- include is a method --
+class User
+  include Comparable
+
+  attr_reader :age
+
+  def initialize(age)
+    @age = age
+  end
+
+  def <=>(user)
+    age <=> user.age
+  end
+end
+
+[User.new(10), User.new(37), User.new(15)].sort
+# => [#<User:0x007f878482f380 @age=10>,
+#     #<User:0x007f878482f308 @age=15>,
+#     #<User:0x007f878482f358 @age=37>]
+
+
+# -- extend and singleton methods --
+words = Object.new
+
+def words.each
+  yield "salmon"
+  yield "strawberry"
+  yield "sicily"
+end
+
+words.extend Enumerable
+words.map &:upcase
+# => ["SALMON", "STRAWBERRY", "SICILY"]
+
+# -- boolean keyword not is just a call to exclamation --
+o = Object.new
+def o.!
+  "wat"
+end
+
+not o # => "wat"
+
+# -- break --
+num = 12
+loop do
+  $stdout.print "Enter a guess: "
+  guess = gets.to_i
+  break if guess == num
+end
+
+# -- expanding ranges into arrays --
+(1..10).to_a # => [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+[*1..10]     # => [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+# -- convenient enumerables --
+[*'a'..'z']       # => ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u"...
+  .map(&:to_sym)  # => [:a, :b, :c, :d, :e, :f, :g, :h, :i, :j, :k, :l, :m, :n, :o, :p, :q, :r, :s, :t, :u, :v, :w, :x, :y, :z]
+  .zip(
+    [*1..26]      # => [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26]
+  )               # => [[:a, 1], [:b, 2], [:c, 3], [:d, 4], [:e, 5], [:f, 6], [:g, 7], [:h, 8], [:i, 9], [:j, 10], [:k, 11], [:...
+  .to_h           # => {:a=>1, :b=>2, :c=>3, :d=>4, :e=>5, :f=>6, :g=>7, :h=>8, :i=>9, :j=>10, :k=>11, :l=>12, :m=>13, :n=>14, ...
+  .[](:r)         # => 18
+
+# -- methods can end with exclamation marks --
+def rawr!
+  "#{self} says: rawr!"
+end
+
+rawr! # => "main says: rawr!"
+
+# -- private is a method call --
+class User
+  attr_reader :name
+
+  def initialize(name)
+    self.name = name
+  end
+
+  private
+
+  attr_writer :name
+end
+
+User.new("Josh").name # => "Josh"
+
+# -- public is a method call 1 --
+class User
+  private
+
+  attr_writer :name
+
+  def initialize(name)
+    self.name = name
+  end
+
+  public
+
+  attr_reader :name
+end
+
+User.new("Josh").name # => "Josh"
+
+# -- public is a method call 2 --
+class User
+  private
+
+  attr_accessor :name
+
+  def initialize(name)
+    self.name = name
+  end
+
+  public :name
+
+end
+
+User.new("Josh").name # => "Josh"
+
+# -- protected is a method call --
+class User
+  attr_reader :name
+
+  def initialize(name)
+    self.name = name
+  end
+
+  protected
+
+  attr_writer :name
+end
+
+User.new("Josh").name # => "Josh"
+
+# -- clases can inherit from other classes --
+class MyTest < Minitest::Test
+  def test_something
+    assert true
+  end
+end
+
+# -- clases can be defined directly on a constant --
+# be wary, this fucks with lexical scoping
+class A::B::C
+  def some_method
+    123
+  end
+end
+
+# -- super calls the overridden method --
+class A
+  def b
+    1
+  end
+end
+
+class B < A
+  def b
+    2 + super
+  end
+end
+
+B.new.b # => 3
+
+# -- once again but with malice --
+# taken from the object model challenges https://gist.github.com/JoshCheek/ad9f70a6d855be9ed50d
+class W
+  def zomg() '1' + wtf  end
+  def wtf()  '2'        end
+  def bbq()  '3'        end
+end
+
+class X < W
+  def zomg() super      end
+  def wtf()  '4' + bbq  end
+  def bbq()  super      end
+end
+
+class Y < X
+  def zomg() '6' + super  end
+  def wtf()  '7' + super  end
+  def bbq()  '8' + super  end
+end
+
+W.new.zomg # => "12"
+X.new.zomg # => "143"
+Y.new.zomg # => "617483"
+
+# -- silence destroy him --
+module InSpace
+  attr_reader :current_status
+  def initialize(current_status, *whatevz)
+    @current_status = current_status
+    super(*whatevz)
+  end
+end
+
+class Human
+  attr_reader :name
+  def initialize(name)
+    @name = name
+  end
+end
+
+class Student < Human
+  include InSpace
+  attr_reader :lesson
+  def initialize(lesson, *o_O)
+    @lesson = lesson
+    super *o_O
+  end
+end
+
+students_in_space = Student.new(
+  "The future is quite different to the present",
+  "Though one thing we have in common with the present is we still call it the present, even though its the future",
+  "What you call 'the present', we call 'the past', so... you guys are way behind"
+)
+
+# -- nokogiri challenge --
+# https://github.com/CodePlatoon/daily/blob/master/week-02/2016-02-11-thu.md
+require 'nokogiri'
+require 'net/http'
+
+url  = URI('http://www.imdb.com/title/tt1431045/fullcredits?ref_=tt_cl_sm#cast')
+html = Net::HTTP.get(url)
+doc  = Nokogiri::HTML(html)
+
+spans = doc.css(".cast_list .itemprop span")
+names = spans.map { |link| link.content }
+names.each { |name| puts name }
+
+# -- command line calculator --
+left = ARGV.shift.to_f
+while 0 < ARGV.length
+  operator = ARGV.shift
+  right    = ARGV.shift.to_f
+  if '+' == operator
+    left += right
+  elsif '-' == operator
+    left -= right
+  elsif '*' == operator
+    left *= right
+  elsif '/' == operator
+    left /= right
+  end
+end
+puts left
+
+# -- print choose longest --
+longest  = ""
+comparer = ARGV.shift
+ARGV.each do |arg|
+  if comparer == 'first'
+    longest = arg if longest.length < arg.length
+  else
+    longest = arg if longest.length <= arg.length
+  end
+end
+$stdout.puts longest unless longest.length == 0
+
+# -- print first longest --
+longest = ""
+ARGV.each { |arg| longest = arg if longest.length < arg.length }
+$stdout.puts longest unless longest.length == 0
+
+# -- draw pictures --
+require 'chunky_png' # if this fails, you can get it with `gem install chunky_png`
+
+bg_color   = ChunkyPNG::Color.rgb 100, 50, 0
+line_color = ChunkyPNG::Color.rgb 150, 150, 200
+canvas     = ChunkyPNG::Canvas.new 1200, 900, bg_color
+
+i = 0
+
+while i < 100
+  canvas.circle  600 , 450, 100 , line_color
+  canvas.line    500+i, 350+i, 500, 350, line_color
+  canvas.line    400+i, 450+i, 400, 450, line_color
+  i += 1
+end
+
+canvas.save("pic.png")
