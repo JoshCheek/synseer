@@ -1,4 +1,6 @@
 $LOAD_PATH.unshift File.expand_path('rb', __dir__)
+ENV['PATH'] = [File.realdirpath('node_modules/.bin', __dir__), *ENV['PATH'].split(":")].join(":") # so we can call JS executables
+
 task default: :test
 
 # =====  Scripts  =====
