@@ -112,6 +112,7 @@
 
   // ----- Don't track all games, it makes the game take longer the more you play -----
   appState.games = [];
+  appState.gamesById = gamesById;
   localStorage.appState = JSON.stringify(appState);
 
   // -----  Add scores to the games  -----
