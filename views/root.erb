@@ -79,11 +79,15 @@
 <script>
   'use strict';
   // init/load the data from localstorage
-  var appState = {games: []};
+  var appState = {games: [], gamesById: {}};
   if(localStorage.appState === undefined)
     localStorage.appState = JSON.stringify(appState);
   else
-    appState = JSON.parse(localStorage.appState);
+    try {
+      appState = JSON.parse(localStorage.appState);
+    } catch(SyntaxError) {
+      // noop
+    }
 
   var firstGameId = <%= games.first.last.fetch(:id).inspect %>;
 
@@ -96,7 +100,7 @@
   var Synseer = require('synseer');
 
   // -----  Find best games  -----
-  var gamesById = {};
+  var gamesById = appState.gamesById||{};
   for(var i=0; i<appState.games.length; ++i) {
     var game = appState.games[i];
     var best = gamesById[game.id] || game;
@@ -106,6 +110,10 @@
     gamesById[game.id] = best
   }
 
+  // ----- Don't track all games, it makes the game take longer the more you play -----
+  appState.games = [];
+  appState.gamesById = gamesById;
+  localStorage.appState = JSON.stringify(appState);
 
   // -----  Add scores to the games  -----
   var goPrev  = function() { /* noop, override this */ };
