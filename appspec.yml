@@ -1,0 +1,23 @@
+version: 0.0
+os: linux
+
+files:
+  - source: /
+    destination: /home/ec2-user/app
+
+hooks:
+  ApplicationStop:
+    - location: deploy/stop.sh
+      runas: root
+
+  AfterInstall:
+    - location: deploy/after_install_root.sh
+      runas: root
+    - location: deploy/after_install_user.sh
+      runas: ec2-user
+
+  ApplicationStart:
+    - location: deploy/start.sh
+      runas: ec2-user
+    - location: deploy/start_nginx.sh
+      runas: root
