@@ -1,11 +1,11 @@
 "use strict";
 
-const  Keybinding         = require('../js/synseer/keybinding');
-const  defaultKeybindings = require('../js/synseer/default_keybindings');
-const  Mapper             = require('../js/synseer/key_mapper');
-import assert from 'assert'; // https://github.com/joyent/node/blob/9010dd26529cea60b7ee55ddae12688f81a09fcb/lib/assert.js
-import {readFile} from 'fs';
-import {inspect} from 'util';
+const Keybinding         = require('../js/synseer/keybinding');
+const defaultKeybindings = require('../js/synseer/default_keybindings');
+const Mapper             = require('../js/synseer/key_mapper');
+const assert             = require('assert'); // https://github.com/joyent/node/blob/9010dd26529cea60b7ee55ddae12688f81a09fcb/lib/assert.js
+const readFile           = require('fs').readFile;
+const inspect            = require('util').inspect;
 
 let bindingFor = Keybinding.for;
 let groupFor = Keybinding.Group.for;

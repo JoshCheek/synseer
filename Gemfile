@@ -1,14 +1,15 @@
 source 'https://rubygems.org'
 
-ruby '2.4.1'
-gem 'sinatra'
+ruby '2.7.0'
+gem 'sinatra', '~> 2.1.0'
 gem 'parser'
 gem 'sass'
 gem 'rake'
+gem 'puma'
 
 group :development do
   gem 'mrspec'
   gem 'rspec'
-  gem 'poltergeist'
+  gem 'cuprite'
   gem 'pry'
 end
