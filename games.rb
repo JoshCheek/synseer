@@ -82,11 +82,11 @@ num = 1
 # -- text with a leading colon is a symbol --
 :abc
 
-# -- you can choose which type of quote if your --
+# -- you can choose between quote types to avoid escaping --
 "O'malley"
 '"In teaching others, we teach ourselves" -- proverb'
 
-# -- strings with a leading colon are symbold --
+# -- strings with a leading colon are symbol --
 :"O'malley"
 :'"In teaching others, we teach ourselves" -- proverb'
 
@@ -275,7 +275,7 @@ a a
 a = 1
 a()
 
-# -- moar method calls vs locals
+# -- moar method calls vs locals --
 a - a
 a(-a)
 a - a()
@@ -303,7 +303,7 @@ true
 false
 nil
 
-# -- exclamation marks are method calls --
+# -- exclamation marks on boolean literals are method calls --
 !true
 !false
 !nil
@@ -493,7 +493,7 @@ end
 # -- ternaries are short if statements --
 true ? 1 : 2
 
-# -- chained ternaries
+# -- chained ternaries --
 abcd   ? 1 :
   efgh ? 2 :
   ijkl ? 3 :
@@ -515,7 +515,7 @@ until a >= 10
   a += 1
 end
 
-# -- inline unless statement
+# -- inline unless statement --
 b = 1
 b += 1 until b >= 10
 
@@ -848,7 +848,7 @@ rescue
   # ahem
 end
 
-# -- methods can return early with the return keyword
+# -- methods can return early with the return keyword --
 def returnin_early(early)
   return "left early" if early
   "left late"
