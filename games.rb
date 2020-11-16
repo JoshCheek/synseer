@@ -275,7 +275,7 @@ a a
 a = 1
 a()
 
-# -- moar method calls vs locals --
+# moar method calls vs locals
 a - a
 a(-a)
 a - a()
