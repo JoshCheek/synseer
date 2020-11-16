@@ -68,22 +68,25 @@ directory 'public/codemirror' do
 end
 
 file 'public/js/synseer.js' => ['js/synseer/index.js', 'public/js'] do
-  sh 'browserify', '--transform', '[',
-                     'babelify', '--presets', '[', 'es2015', ']',
-                   ']',
-                   '--outfile',   'public/js/synseer.js',
-                   '--require',   './js/synseer/index.js:synseer',
-                   '--require',   './js/synseer/browser/keymap_status.js:synseer/keymap_status'
+  sh 'npx', 'browserify',
+    '--transform', '[',
+      'babelify', '--presets', '[', 'es2015', ']',
+    ']',
+    '--outfile',   'public/js/synseer.js',
+    '--require',   './js/synseer/index.js:synseer',
+    '--require',   './js/synseer/browser/keymap_status.js:synseer/keymap_status'
 end
 
 file 'public/js/mousetrap.js' do
-  sh 'browserify', '--outfile', 'public/js/mousetrap.js',
-                   '--require', 'mousetrap:mousetrap'
+  sh 'npx', 'browserify',
+    '--outfile', 'public/js/mousetrap.js',
+    '--require', 'mousetrap:mousetrap'
 end
 
 file 'public/js/jquery.js' do
-  sh 'browserify', '--outfile', 'public/js/jquery.js',
-                   '--require', 'jquery:jquery'
+  sh 'npx', 'browserify',
+    '--outfile', 'public/js/jquery.js',
+    '--require', 'jquery:jquery'
 end
 
 CLEAN.include 'tmp'
