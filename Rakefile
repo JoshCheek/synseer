@@ -69,9 +69,6 @@ end
 
 file 'public/js/synseer.js' => ['js/synseer/index.js', 'public/js'] do
   sh 'npx', 'browserify',
-    '--transform', '[',
-      'babelify', '--presets', '[', 'es2015', ']',
-    ']',
     '--outfile',   'public/js/synseer.js',
     '--require',   './js/synseer/index.js:synseer',
     '--require',   './js/synseer/browser/keymap_status.js:synseer/keymap_status'
