@@ -24,7 +24,7 @@ GEM
       cliver (~> 0.3)
       concurrent-ruby (~> 1.1)
       websocket-driver (>= 0.6, < 0.8)
-    ffi (1.9.18)
+    ffi (1.13.1)
     method_source (0.8.2)
     mini_mime (1.0.2)
     mini_portile2 (2.4.0)
