@@ -33,7 +33,7 @@ GEM
       minitest (~> 5.0)
       rspec-core (~> 3.0)
       what_weve_got_here_is_an_error_to_communicate (~> 0.0.6)
-    mustermann (1.1.1)
+    mustermann (2.0.2)
       ruby2_keywords (~> 0.0.1)
     nio4r (2.5.4)
     nokogiri (1.10.10)
@@ -47,8 +47,8 @@ GEM
     public_suffix (4.0.6)
     puma (5.0.4)
       nio4r (~> 2.0)
-    rack (2.2.3)
-    rack-protection (2.1.0)
+    rack (2.2.4)
+    rack-protection (2.2.3)
       rack
     rack-test (1.1.0)
       rack (>= 1.0, < 3)
@@ -71,19 +71,19 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.5.0)
     rspec-support (3.5.0)
-    ruby2_keywords (0.0.2)
+    ruby2_keywords (0.0.5)
     sass (3.5.1)
       sass-listen (~> 4.0.0)
     sass-listen (4.0.0)
       rb-fsevent (~> 0.9, >= 0.9.4)
       rb-inotify (~> 0.9, >= 0.9.7)
-    sinatra (2.1.0)
-      mustermann (~> 1.0)
+    sinatra (2.2.3)
+      mustermann (~> 2.0)
       rack (~> 2.2)
-      rack-protection (= 2.1.0)
+      rack-protection (= 2.2.3)
       tilt (~> 2.0)
     slop (3.6.0)
-    tilt (2.0.10)
+    tilt (2.0.11)
     websocket-driver (0.7.3)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
@@ -104,7 +104,7 @@ DEPENDENCIES
   rake
   rspec
   sass
-  sinatra (~> 2.1.0)
+  sinatra (~> 2.2.3)
 
 RUBY VERSION
    ruby 2.7.2p137
